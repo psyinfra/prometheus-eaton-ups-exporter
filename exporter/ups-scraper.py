@@ -1,11 +1,12 @@
 #! bin/python3
 
 import json
+import getpass
 import argparse
 from requests_html import HTMLSession
 import urllib3
 
-# disable warnings created because of ignoring cerificates
+# disable warnings created because of ignoring certificates
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
@@ -48,10 +49,14 @@ class UPSScraper:
             headers=headers,
             data=json.dumps(data))  # needs to be json encoded
         login_response = login_request.json()
-        token_type = login_response['token_type']
-        access_token = login_response['access_token']
+        try:
+            token_type = login_response['token_type']
+            access_token = login_response['access_token']
 
-        return token_type, access_token
+            return token_type, access_token
+        except KeyError:
+            print("Authentication failed")
+            exit(0)
 
     def load_logmeasures(self, token_type, access_token):
         csv_headers = {
@@ -95,23 +100,17 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "-p", "--password",
-        help="specify the user password",
-        required=True,
-        type=str
-    )
-
-    parser.add_argument(
         "-f", '--file',
         help="save output in the given path",
         required=False,
     )
+    pswd = getpass.getpass('Password:')
     try:
         args_parsed = parser.parse_args()  # parse sys.args
         scraper = UPSScraper(
             args_parsed.host,
             args_parsed.username,
-            args_parsed.password,
+            pswd,
             args_parsed.file
         )
     except argparse.ArgumentError:
