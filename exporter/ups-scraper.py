@@ -3,7 +3,7 @@
 import json
 import getpass
 import argparse
-from requests_html import HTMLSession
+from requests import Session
 import urllib3
 
 # disable warnings created because of ignoring certificates
@@ -19,8 +19,8 @@ class UPSScraper:
         self.ups_url = ups_url
         self.username = username
         self.password = password
-        self.session = HTMLSession()
-        self.session.verify = False # ignore self signed certificate
+        self.session = Session()
+        self.session.verify = False  # ignore self signed certificate
 
         token_type, access_token = self.login()
         logmeasures = self.load_logmeasures(token_type, access_token)
