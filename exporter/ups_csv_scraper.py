@@ -3,7 +3,7 @@
 import json
 import getpass
 import argparse
-from requests import Session
+from requests import Session, ConnectionError
 import urllib3
 
 # disable warnings created because of ignoring certificates
@@ -15,16 +15,18 @@ class UPSScraper:
     login_auth_path = '/rest/mbdetnrs/1.0/oauth2/token'
     logmeasures_path = '/logs/logMeasures.csv'
 
-    def __init__(self, ups_url, username, password, output=None):
-        self.ups_url = ups_url
+    def __init__(self, ups_address, username, password, verify=False):
+        self.ups_address = ups_address
         self.username = username
         self.password = password
         self.session = Session()
-        self.session.verify = False  # ignore self signed certificate
+        self.session.verify = verify  # ignore self signed certificate
+        self.logged_in = False
 
+    def get_measures(self):
         token_type, access_token = self.login()
-        logmeasures = self.load_logmeasures(token_type, access_token)
-        self.save_logmeasures(logmeasures, output)
+        logmeasures = self.load_measures(token_type, access_token)
+        return logmeasures
 
     def login(self) -> (str, str):
         headers = {
@@ -44,21 +46,27 @@ class UPSScraper:
             "scope": "GUIAccess"
         }
 
-        login_request = self.session.post(
-            self.ups_url + self.login_auth_path,
-            headers=headers,
-            data=json.dumps(data))  # needs to be json encoded
-        login_response = login_request.json()
         try:
+            login_request = self.session.post(
+                self.ups_address + self.login_auth_path,
+                headers=headers,
+                data=json.dumps(data))  # needs to be json encoded
+            login_response = login_request.json()
+
             token_type = login_response['token_type']
             access_token = login_response['access_token']
 
+            print("Authentication successful")
+            self.logged_in = True  # Todo
             return token_type, access_token
         except KeyError:
             print("Authentication failed")
             exit(0)
+        except ConnectionError:
+            print("Connection refused")
+            exit(0)
 
-    def load_logmeasures(self, token_type, access_token):
+    def load_measures(self, token_type, access_token):
         csv_headers = {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; "
                           "rv:82.0) Gecko/20100101 Firefox/82.0",
@@ -69,17 +77,19 @@ class UPSScraper:
             "Authorization": token_type + " " + access_token
         }
         csv = self.session.get(
-            self.ups_url + self.logmeasures_path,
-            headers=csv_headers)
+            self.ups_address + self.logmeasures_path,
+            headers=csv_headers
+        )
 
         return csv.text
 
-    def save_logmeasures(self, logmeasures, output=None):
+    @staticmethod
+    def save_measures(measures, output=None):
         if output:
             with open(output, 'w') as file:
-                file.write(logmeasures)
-        else:
-            print(logmeasures)
+                file.write(measures)
+            return True
+        return False
 
 
 if __name__ == "__main__":
@@ -90,7 +100,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "host",
-        help="Specify a host"
+        help="Specify the address of the UPS device"
     )
 
     parser.add_argument(
@@ -104,14 +114,21 @@ if __name__ == "__main__":
         help="save output in the given path",
         required=False,
     )
+
     pswd = getpass.getpass('Password:')
     try:
         args_parsed = parser.parse_args()  # parse sys.args
         scraper = UPSScraper(
             args_parsed.host,
             args_parsed.username,
-            pswd,
-            args_parsed.file
+            pswd
         )
+
+        measures = scraper.get_measures()
+        if not scraper.save_measures(
+                measures, args_parsed.file):
+            print(measures)
     except argparse.ArgumentError:
         parser.print_help()
+    except ConnectionError:
+        print("Can't resolve host name")
