@@ -13,10 +13,20 @@ from prometheus_client.core import GaugeMetricFamily, Gauge
 
 class UPSExporter:
 
-    def __init__(self, ups_id=None, rack_id=None):
+    def __init__(
+            self,
+            ups_address,
+            username,
+            password,
+            ups_id=None,
+            rack_id=None):
+        self.ups_scraper = UPSScraper(
+            ups_address,
+            username,
+            password
+        )
         self.ups_id = ups_id
         self.rack_id = rack_id
-        pass
 
     def collect(self):
         """
@@ -24,9 +34,7 @@ class UPSExporter:
         :return:
         """
 
-        latest_measures = self.get_latest_measures(
-            measure_file="../logMeasures.csv"
-        )
+        latest_measures = self.get_latest_measures()
 
         # define measure label tags
         measure_labels = [
@@ -49,7 +57,6 @@ class UPSExporter:
 
         label_tags = []
         label_vals = []
-        self.rack_id = 1
         if self.ups_id:
             label_tags.append('ups_id')
             label_vals.append(str(self.ups_id))
@@ -67,23 +74,15 @@ class UPSExporter:
                 g.add_metric(label_vals, value)
                 yield g
 
-    @staticmethod
-    def get_latest_measures(measures=None, measure_file=None) -> list:
+    def get_latest_measures(self) -> list:
         """
         Get last line (latest entry) of the measure csv output.
 
-        :param measures: measures as str
-        :param measure_file: measure file path as str
         :return: last entry row as list
         """
-        if measures:
-            _measures = StringIO(measures)
-        elif measure_file:
-            with open(measure_file) as readfile:
-                content = readfile.read()
-                _measures = StringIO(content)
-
-        reader = csv.reader(_measures, dialect='excel')
+        _measures = self.ups_scraper.get_measures()
+        measures = StringIO(_measures)
+        reader = csv.reader(measures, dialect='excel')
         header = next(reader)
         if "SEP=" in ",".join(header):
             header = next(reader)
@@ -112,6 +111,11 @@ def parse_args() -> argparse.Namespace:
         help="Listen to this port",
         default=8000
     )
+    parser.add_argument(
+        "--host-address",
+        help="Address by what the prometheus metrics will be accessible",
+        default="127.0.0.1"
+    )
     # parser.add_argument(
     #     '-k', '--insecure',
     #     dest='insecure',
@@ -129,28 +133,23 @@ if __name__ == '__main__':
         args = parse_args()
         pswd = getpass.getpass('Password:')
         port = int(args.port)
-
-        # ups_scraper = UPSScraper(
-        #     args.address,
-        #     args.username,
-        #     pswd
-        # )
-        # measures = ups_scraper.get_measures()
-
-        ups_exporter = UPSExporter()
+        ups_exporter = UPSExporter(
+            args.address,
+            args.username,
+            pswd
+        )
 
         REGISTRY.register(
-            UPSExporter()
+            ups_exporter
         )
 
         # Start up the server to expose the metrics.
-        start_http_server(port)
+        start_http_server(port, addr=args.host_address)
         # Generate some requests.
         while True:
-            time.sleep(15)
+            time.sleep(1)
     except TypeError as err:
-        print(err.with_traceback())
+        print(err)
 
     except KeyboardInterrupt:
         exit(0)
-
