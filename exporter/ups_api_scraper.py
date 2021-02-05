@@ -94,9 +94,6 @@ class UPSScraper:
         )
         inputs = inputs_request.json()
         inputs_rm = inputs['measures']['realtime']
-        ups_input_voltage_in_volt = inputs_rm['voltage']
-        ups_input_frequency_in_herz = inputs_rm['frequency']
-        ups_input_current_in_ampere = inputs_rm['current']
 
         outputs_request = self.load_page(
             self.ups_address +
@@ -104,13 +101,6 @@ class UPSScraper:
         )
         outputs = outputs_request.json()
         outputs_rm = outputs['measures']['realtime']
-        ups_output_voltage_in_volt = outputs_rm['voltage']
-        ups_output_frequency_in_herz = outputs_rm['frequency']
-        ups_output_current_in_ampere = outputs_rm['current']
-        ups_output_apparent_power_in_voltampere = outputs_rm['apparentPower']
-        ups_output_active_power_in_watt = outputs_rm['activePower']
-        ups_output_power_factor = outputs_rm['powerFactor']
-        ups_output_percent_load_in_percent = outputs_rm['percentLoad']
 
         # bypass_request = self.load_page(
         #     self.ups_address + '/rest/mbdetnrs/1.0/powerDistributions/1/bypass/1'
@@ -128,9 +118,6 @@ class UPSScraper:
         )
         powerbank = battery_request.json()
         battery_m = powerbank['measures']
-        ups_battery_voltage_in_volt = battery_m['voltage']
-        ups_battery_capacity_in_percent = battery_m['remainingChargeCapacity']
-        ups_battery_remaining_time = battery_m['remainingTime']
 
         return {
             "ups_id": ups_id,
