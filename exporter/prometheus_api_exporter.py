@@ -36,6 +36,7 @@ class UPSExporter:
         inputs_rm = inputs['measures']['realtime']
         outputs_rm = outputs['measures']['realtime']
         powerbank_m = powerbank_details['measures']
+        powerbank_s = powerbank_details['status']
 
         relevant_measures = {
             "ups_input_voltage_in_volt": inputs_rm['voltage'],
@@ -50,7 +51,8 @@ class UPSExporter:
             "ups_output_percent_load_in_percent": outputs_rm['percentLoad'],
             "ups_battery_voltage_in_volt": powerbank_m['voltage'],
             "ups_battery_capacity_in_percent": powerbank_m['remainingChargeCapacity'],
-            "ups_battery_remaining_time": powerbank_m['remainingTime']
+            "ups_battery_remaining_time": powerbank_m['remainingTime'],
+            "ups_battery_health": powerbank_s['health']
         }
 
         for measure_label, value in relevant_measures.items():
