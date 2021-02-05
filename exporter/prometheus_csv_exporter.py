@@ -6,7 +6,7 @@ import csv
 import getpass
 from io import StringIO
 
-from ups_scraper import UPSScraper
+from ups_csv_scraper import UPSScraper
 from prometheus_client import start_http_server, REGISTRY
 from prometheus_client.core import GaugeMetricFamily, Gauge
 
