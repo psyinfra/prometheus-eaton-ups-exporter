@@ -21,12 +21,13 @@ class UPSScraper:
         self.password = password
         self.session = Session()
         self.session.verify = verify  # ignore self signed certificate
-        self.logged_in = False
+        self.token_type, self.access_token = None, None
 
     def get_measures(self):
-        token_type, access_token = self.login()
-        logmeasures = self.load_measures(token_type, access_token)
-        return logmeasures
+        measure_request = self.load_page(
+            self.ups_address + self.logmeasures_path
+        )
+        return measure_request.text
 
     def login(self) -> (str, str):
         headers = {
@@ -57,7 +58,6 @@ class UPSScraper:
             access_token = login_response['access_token']
 
             print("Authentication successful")
-            self.logged_in = True  # Todo
             return token_type, access_token
         except KeyError:
             print("Authentication failed")
@@ -66,22 +66,25 @@ class UPSScraper:
             print("Connection refused")
             exit(0)
 
-    def load_measures(self, token_type, access_token):
-        csv_headers = {
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; "
-                          "rv:82.0) Gecko/20100101 Firefox/82.0",
-            "Accept": "application/json, text/plain, */*",
-            "Accept-Language": "de,en-US;q=0.7,en;q=0.3",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Connection": "keep-alive",
-            "Authorization": token_type + " " + access_token
-        }
-        csv = self.session.get(
-            self.ups_address + self.logmeasures_path,
-            headers=csv_headers
-        )
-
-        return csv.text
+    def load_page(self, url):
+        try:
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; "
+                              "rv:82.0) Gecko/20100101 Firefox/82.0",
+                "Accept": "application/json, text/plain, */*",
+                "Accept-Language": "de,en-US;q=0.7,en;q=0.3",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Connection": "keep-alive",
+                "Authorization": f"{self.token_type} {self.access_token}"
+            }
+            request = self.session.get(url, headers=headers)
+            if "Unauthorized" in request.text:
+                self.token_type, self.access_token = self.login()
+                return self.load_page(url)
+            return request
+        except ConnectionError:
+            self.token_type, self.access_token = self.login()
+            return self.load_page(url)
 
     @staticmethod
     def save_measures(measures, output=None):
