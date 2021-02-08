@@ -164,7 +164,7 @@ class UPSScraper:
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
-        description="Get the log measures from the UPS Web UI"
+        description="Get the measures from the UPS Web UI"
     )
 
     parser.add_argument(
@@ -195,7 +195,7 @@ if __name__ == "__main__":
         )
 
         measures = scraper.get_measures()
-        print(measures)
+        print(json.dumps(measures, indent=1))
     except argparse.ArgumentError:
         parser.print_help()
     except ConnectionError:
