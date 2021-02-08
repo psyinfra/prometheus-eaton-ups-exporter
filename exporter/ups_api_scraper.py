@@ -3,11 +3,9 @@
 import json
 import getpass
 import argparse
-from requests import Session, ConnectionError
+from requests import Session, Response
+from requests.exceptions import SSLError, ConnectionError
 import urllib3
-
-# disable warnings created because of ignoring certificates
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 class UPSScraper:
@@ -15,15 +13,32 @@ class UPSScraper:
     login_auth_path = '/rest/mbdetnrs/1.0/oauth2/token'
     rest_api_path = '/rest/mbdetnrs/1.0/powerDistributions/1'
 
-    def __init__(self, ups_address, username, password, verify=False):
+    def __init__(self, ups_address, username, password, insecure=False):
+        """Create a UPS Scraper based on the UPS API."""
         self.ups_address = ups_address
         self.username = username
         self.password = password
         self.session = Session()
-        self.session.verify = verify  # ignore self signed certificate
+
+        self.session.verify = not insecure  # ignore self signed certificate
+        if not self.session.verify:
+            # disable warnings created because of ignoring certificates
+            urllib3.disable_warnings(
+                urllib3.exceptions.InsecureRequestWarning
+            )
+
         self.token_type, self.access_token = None, None
 
     def login(self) -> (str, str):
+        """
+        Login to the UPS Web UI.
+
+        Based on analysing the UPS Web UI this will create a POST request
+        with the authentication details to successfully create a session
+        on the specified UPS device.
+
+        :return: two for the authentication necessary string values
+        """
         headers = {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; "
                           "rv:82.0) Gecko/20100101 Firefox/82.0",
@@ -55,12 +70,28 @@ class UPSScraper:
             return token_type, access_token
         except KeyError:
             print("Authentication failed")
-            exit(0)
+            exit(1)
+        except SSLError as err:
+            print("Connection refused")
+            if 'CERTIFICATE_VERIFY_FAILED' in str(err):
+                print("Try -k to allow insecure server "
+                      "connections when using SSL")
+            exit(2)
         except ConnectionError:
             print("Connection refused")
-            exit(0)
+            exit(3)
 
-    def load_page(self, url):
+    def load_page(self, url) -> Response:
+        """
+        Load a webpage of the UPS Web UI or API.
+
+        This will try to load the page by the given url.
+        If authentication is needed first, the login function gets executed
+        before loading the specified page.
+
+        :param url: ups web url
+        :return: request.Response
+        """
         try:
             headers = {
                 "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; "
@@ -72,52 +103,55 @@ class UPSScraper:
                 "Authorization": f"{self.token_type} {self.access_token}"
             }
             request = self.session.get(url, headers=headers)
+
             if "Unauthorized" in request.text:
+                # try to login, if not authorized
                 self.token_type, self.access_token = self.login()
                 return self.load_page(url)
+
             return request
         except ConnectionError:
             self.token_type, self.access_token = self.login()
             return self.load_page(url)
 
-    def get_measures(self):
+    def get_measures(self) -> dict:
+        """
+        Get most relevant ups measures.
+
+        :return: dict
+        """
         power_dist_request = self.load_page(
             self.ups_address+self.rest_api_path
         )
         power_dist_overview = power_dist_request.json()
-        configuration = power_dist_overview['configuration']
         ups_id = power_dist_overview['id']
+        ups_inputs_api = power_dist_overview['inputs']['@id']
+        ups_ouptups_api = power_dist_overview['outputs']['@id']
 
+        # take first member
+        i_member_id = 1
         inputs_request = self.load_page(
-            self.ups_address +
-            '/rest/mbdetnrs/1.0/powerDistributions/1/inputs/1'
+            self.ups_address + ups_inputs_api + f'/{i_member_id}'
         )
         inputs = inputs_request.json()
-        inputs_rm = inputs['measures']['realtime']
 
+        # take first member
+        o_member_id = 1
         outputs_request = self.load_page(
-            self.ups_address +
-            '/rest/mbdetnrs/1.0/powerDistributions/1/outputs/1'
+            self.ups_address + ups_ouptups_api + f'/{o_member_id}'
         )
         outputs = outputs_request.json()
-        outputs_rm = outputs['measures']['realtime']
 
-        # bypass_request = self.load_page(
-        #     self.ups_address + '/rest/mbdetnrs/1.0/powerDistributions/1/bypass/1'
-        # )
-        # bypass_overview = bypass_request.json()
-        # bypass_rm = outputs['measures']['realtime']
-        # print(json.dumps(bypass_overview, indent=2))
-
-        # "ups_bypass_voltage_in_volt",
-        # "ups_bypass_frequency_in_herz",
-
-        battery_request = self.load_page(
-            self.ups_address +
-            '/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank'
+        ups_backup_sys_api = power_dist_overview['backupSystem']['@id']
+        backup_request = self.load_page(
+            self.ups_address + ups_backup_sys_api
         )
-        powerbank = battery_request.json()
-        battery_m = powerbank['measures']
+        backup = backup_request.json()
+        ups_powerbank_api = backup['powerBank']['@id']
+        powerbank_request = self.load_page(
+            self.ups_address + ups_powerbank_api
+        )
+        powerbank = powerbank_request.json()
 
         return {
             "ups_id": ups_id,
@@ -125,23 +159,6 @@ class UPSScraper:
             "ups_outputs": outputs,
             "ups_powerbank": powerbank
         }
-
-    def load_measures(self, token_type, access_token):
-        csv_headers = {
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; "
-                          "rv:82.0) Gecko/20100101 Firefox/82.0",
-            "Accept": "application/json, text/plain, */*",
-            "Accept-Language": "de,en-US;q=0.7,en;q=0.3",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Connection": "keep-alive",
-            "Authorization": token_type + " " + access_token
-        }
-        csv = self.session.get(
-            self.ups_address + self.rest_api_path,
-            headers=csv_headers
-        )
-
-        return csv.text
 
 
 if __name__ == "__main__":
@@ -160,6 +177,12 @@ if __name__ == "__main__":
         help="specify a user name",
         required=True,
     )
+    parser.add_argument(
+        '-k', '--insecure',
+        action='store_true',
+        help='allow a connection to an insecure UPS API',
+        default=False
+    )
 
     pswd = getpass.getpass('Password:')
     try:
@@ -167,11 +190,11 @@ if __name__ == "__main__":
         scraper = UPSScraper(
             args_parsed.host,
             args_parsed.username,
-            pswd
+            pswd,
+            insecure=args_parsed.insecure
         )
 
         measures = scraper.get_measures()
-
         print(measures)
     except argparse.ArgumentError:
         parser.print_help()

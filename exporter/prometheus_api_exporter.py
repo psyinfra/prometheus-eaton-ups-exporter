@@ -1,12 +1,11 @@
-
+"""Create and run a prometheus exporter for a UPS device."""
 import argparse
 import time
-import json
 import getpass
 
 from ups_api_scraper import UPSScraper
 from prometheus_client import start_http_server, REGISTRY
-from prometheus_client.core import GaugeMetricFamily, Gauge
+from prometheus_client.core import GaugeMetricFamily
 
 
 class UPSExporter:
@@ -15,18 +14,18 @@ class UPSExporter:
             self,
             ups_address,
             username,
-            password):
+            password,
+            insecure):
+        """Create an UPS prometheus exporter."""
         self.ups_scraper = UPSScraper(
             ups_address,
             username,
-            password
+            password,
+            insecure
         )
 
     def collect(self):
-        """
-        Prometheus will call this function in a specified cycle
-        :return:
-        """
+        """Export UPS metrics on request."""
 
         measures = self.ups_scraper.get_measures()
         ups_id = measures.get('ups_id')
@@ -39,20 +38,34 @@ class UPSExporter:
         powerbank_s = powerbank_details['status']
 
         relevant_measures = {
-            "ups_input_voltage_in_volt": inputs_rm['voltage'],
-            "ups_input_frequency_in_herz": inputs_rm['frequency'],
-            "ups_input_current_in_ampere": inputs_rm['current'],
-            "ups_output_voltage_in_volt": outputs_rm['voltage'],
-            "ups_output_frequency_in_herz": outputs_rm['frequency'],
-            "ups_output_current_in_ampere": outputs_rm['current'],
-            "ups_output_apparent_power_in_voltampere": outputs_rm['apparentPower'],
-            "ups_output_active_power_in_watt": outputs_rm['activePower'],
-            "ups_output_power_factor": outputs_rm['powerFactor'],
-            "ups_output_percent_load_in_percent": outputs_rm['percentLoad'],
-            "ups_battery_voltage_in_volt": powerbank_m['voltage'],
-            "ups_battery_capacity_in_percent": powerbank_m['remainingChargeCapacity'],
-            "ups_battery_remaining_time": powerbank_m['remainingTime'],
-            "ups_battery_health": powerbank_s['health']
+            "ups_input_voltage_in_volt":
+                inputs_rm['voltage'],
+            "ups_input_frequency_in_herz":
+                inputs_rm['frequency'],
+            "ups_input_current_in_ampere":
+                inputs_rm['current'],
+            "ups_output_voltage_in_volt":
+                outputs_rm['voltage'],
+            "ups_output_frequency_in_herz":
+                outputs_rm['frequency'],
+            "ups_output_current_in_ampere":
+                outputs_rm['current'],
+            "ups_output_apparent_power_in_voltampere":
+                outputs_rm['apparentPower'],
+            "ups_output_active_power_in_watt":
+                outputs_rm['activePower'],
+            "ups_output_power_factor":
+                outputs_rm['powerFactor'],
+            "ups_output_percent_load_in_percent":
+                outputs_rm['percentLoad'],
+            "ups_battery_voltage_in_volt":
+                powerbank_m['voltage'],
+            "ups_battery_capacity_in_percent":
+                powerbank_m['remainingChargeCapacity'],
+            "ups_battery_remaining_time":
+                powerbank_m['remainingTime'],
+            "ups_battery_health":
+                powerbank_s['health']
         }
 
         for measure_label, value in relevant_measures.items():
@@ -64,14 +77,6 @@ class UPSExporter:
             )
             g.add_metric([ups_id], value)
             yield g
-
-    def get_measures(self) -> list:
-        """
-        Get last line (latest entry) of the measure csv output.
-
-        :return: last entry row as list
-        """
-        _measures = self.ups_scraper.get_measures()
 
 
 def parse_args() -> argparse.Namespace:
@@ -98,14 +103,12 @@ def parse_args() -> argparse.Namespace:
         help="Address by what the prometheus metrics will be accessible",
         default="127.0.0.1"
     )
-    # parser.add_argument(
-    #     '-k', '--insecure',
-    #     dest='insecure',
-    #     required=False,
-    #     action='store_true',
-    #     help='allow a connection to an insecure raritan API',
-    #     default=False
-    # )
+    parser.add_argument(
+        '-k', '--insecure',
+        action='store_true',
+        help='allow a connection to an insecure UPS API',
+        default=False
+    )
 
     return parser.parse_args()
 
@@ -118,7 +121,8 @@ if __name__ == '__main__':
         ups_exporter = UPSExporter(
             args.address,
             args.username,
-            pswd
+            pswd,
+            insecure=args.insecure
         )
 
         REGISTRY.register(
@@ -127,12 +131,13 @@ if __name__ == '__main__':
 
         # Start up the server to expose the metrics.
         start_http_server(port, addr=args.host_address)
-        # Generate some requests.
+        print(f"Starting Prometheus exporter on {args.host_address}:{port}")
         while True:
-            time.sleep(15)
+            time.sleep(1)
 
     except TypeError as err:
         print(err)
 
     except KeyboardInterrupt:
+        print("Prometheus exporter shut down")
         exit(0)
