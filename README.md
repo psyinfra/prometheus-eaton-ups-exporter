@@ -1,5 +1,4 @@
-# UPS Prometheus Exporter
-#### based on an API approach
+# Eaton UPS Prometheus Exporter
 
 ## Description
 
