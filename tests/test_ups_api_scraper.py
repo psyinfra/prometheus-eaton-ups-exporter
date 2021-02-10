@@ -3,8 +3,6 @@ import pytest
 import getpass
 import os
 import sys
-import requests
-import vcr
 from exporter.ups_api_scraper import UPSScraper
 
 cassette_path = (
