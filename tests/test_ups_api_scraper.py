@@ -6,13 +6,6 @@ import sys
 from exporter.ups_api_scraper import UPSScraper
 
 
-def vcr_config():
-    return {
-        "filter_headers": ["authorization"],
-        "ignore_hosts": ['https://localhost:4430/rest/mbdetnrs/1.0/oauth2/token']
-    }
-
-
 @pytest.mark.vcr()
 def test_ups_web_ui():
     if not os.path.exists(
@@ -69,12 +62,6 @@ def test_ups_web_ui():
     assert list(ups_powerbank.get('measures')) == [
         'voltage', 'remainingChargeCapacity', 'remainingTime'
     ]
-    assert type(
-        ups_powerbank.get('measures').get('voltage')
-    ) == int
-    assert type(
-        ups_powerbank.get('measures').get('remainingChargeCapacity')
-    ) == int
-    assert type(
-        ups_powerbank.get('measures').get('remainingTime')
-    ) == int
+    assert ups_powerbank.get('measures').get('voltage')
+    assert ups_powerbank.get('measures').get('remainingChargeCapacity')
+    assert ups_powerbank.get('measures').get('remainingTime')
