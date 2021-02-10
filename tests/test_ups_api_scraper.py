@@ -3,25 +3,33 @@ import pytest
 import getpass
 import os
 import sys
+import requests
+import vcr
 from exporter.ups_api_scraper import UPSScraper
 
+cassette_path = (
+        sys.prefix +
+        '/ups-exporter/tests/cassettes/test_ups_web_ui.yaml'
+)
 
-@pytest.mark.vcr()
+
+@pytest.mark.vcr(cassette_path)
 def test_ups_web_ui():
-    if not os.path.exists(
-            sys.prefix +
-            '/ups-exporter/tests/cassettes/test_ups_web_ui.yaml'
-    ):
+    address = 'https://localhost:4430'
+    if not os.path.exists(cassette_path):
+        username = input('Username:')
+        password = getpass.getpass('Password:')
         scraper = UPSScraper(
-            'https://localhost:4430',
-            input('Username:'),
-            getpass.getpass('Password:'),
-            insecure=bool(input('Insecure (true|false):'))
+            address,
+            username,
+            password,
+            insecure=True
         )
+
         measures = scraper.get_measures()
     else:
         scraper = UPSScraper(
-            'https://localhost:4430',
+            address,
             None,
             None,
             insecure=True
