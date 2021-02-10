@@ -100,7 +100,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--host-address",
-        help="Address by what the prometheus metrics will be accessible",
+        help="Address by which the prometheus metrics will be accessible",
         default="127.0.0.1"
     )
     parser.add_argument(
