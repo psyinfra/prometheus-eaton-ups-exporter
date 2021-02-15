@@ -3,9 +3,10 @@
 import json
 import getpass
 import argparse
+
+import urllib3
 from requests import Session, Response
 from requests.exceptions import SSLError, ConnectionError, ReadTimeout
-import urllib3
 
 
 class UPSScraper:

@@ -4,7 +4,7 @@ import time
 import getpass
 import json
 
-from eaton_ups.scraper.api_scraper import UPSScraper
+from eaton_ups.api_scraper import UPSScraper
 from prometheus_client import start_http_server, REGISTRY
 from prometheus_client.core import GaugeMetricFamily
 
