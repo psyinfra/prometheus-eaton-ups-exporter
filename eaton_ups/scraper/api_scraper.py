@@ -4,7 +4,7 @@ import json
 import getpass
 import argparse
 from requests import Session, Response
-from requests.exceptions import SSLError, ConnectionError
+from requests.exceptions import SSLError, ConnectionError, ReadTimeout
 import urllib3
 
 
@@ -55,12 +55,16 @@ class UPSScraper:
             "grant_type": "password",
             "scope": "GUIAccess"
         }
-
         try:
+            print(self.ups_address + self.login_auth_path)
+            print(headers)
+            print(json.dumps(data))
             login_request = self.session.post(
                 self.ups_address + self.login_auth_path,
                 headers=headers,
-                data=json.dumps(data))  # needs to be json encoded
+                data=json.dumps(data),
+                timeout=5
+            )  # needs to be json encoded
             login_response = login_request.json()
 
             token_type = login_response['token_type']
@@ -80,6 +84,9 @@ class UPSScraper:
         except ConnectionError:
             print("Connection refused")
             exit(3)
+        except ReadTimeout:
+            print("Login Timeout > 5 seconds")
+            exit(4)
 
     def load_page(self, url) -> Response:
         """
@@ -102,7 +109,7 @@ class UPSScraper:
                 "Connection": "keep-alive",
                 "Authorization": f"{self.token_type} {self.access_token}"
             }
-            request = self.session.get(url, headers=headers)
+            request = self.session.get(url, headers=headers, timeout=2)
 
             if "Unauthorized" in request.text:
                 # try to login, if not authorized
@@ -113,6 +120,9 @@ class UPSScraper:
         except ConnectionError:
             self.token_type, self.access_token = self.login()
             return self.load_page(url)
+        except ReadTimeout:
+            print("Request Timeout > 2 seconds")
+            exit(4)
 
     def get_measures(self) -> dict:
         """
