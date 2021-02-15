@@ -13,7 +13,7 @@ def parse_args():
     )
     parser.add_argument(
         "-c", "--config",
-        help="Provide a json like config for more than one ups device",
+        help="configuration json file containing UPS addresses and login info",
         required=True
     )
     parser.add_argument(
