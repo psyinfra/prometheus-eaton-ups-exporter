@@ -1,11 +1,11 @@
 {
     "ups1_name": {
-        "address": "https://address.to.pdu",
+        "address": "https://address.to.ups1",
         "user": "username",
         "password": "password"
     },
     "ups2_name": {
-        "address": "https://address.to.pdu",
+        "address": "https://address.to.ups2",
         "user": "username",
         "password": "password"
     }
