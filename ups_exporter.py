@@ -68,5 +68,5 @@ if __name__ == "__main__":
         print(err)
 
     except KeyboardInterrupt:
-        print("Prometheus prometheus_exporter shut down")
+        print("Prometheus exporter shut down")
         exit(0)
