@@ -6,7 +6,7 @@ import csv
 import getpass
 from io import StringIO
 
-from csv_scraper import UPSScraper
+from ..csv_scraper import UPSScraper
 from prometheus_client import start_http_server, REGISTRY
 from prometheus_client.core import GaugeMetricFamily, Gauge
 
@@ -94,7 +94,7 @@ class UPSExporter:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Prometheus prometheus-exporter for Eaton UPS measures"
+        description="Prometheus prometheus_exporter for Eaton UPS measures"
     )
 
     parser.add_argument(

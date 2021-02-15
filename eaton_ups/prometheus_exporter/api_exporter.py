@@ -1,9 +1,10 @@
-"""Create and run a prometheus prometheus-exporter for a UPS device."""
+"""Create and run a prometheus prometheus_exporter for a UPS device."""
 import argparse
 import time
 import getpass
+import json
 
-from api_scraper import UPSScraper
+from eaton_ups.scraper.api_scraper import UPSScraper
 from prometheus_client import start_http_server, REGISTRY
 from prometheus_client.core import GaugeMetricFamily
 
@@ -16,7 +17,7 @@ class UPSExporter:
             username,
             password,
             insecure):
-        """Create an UPS prometheus prometheus-exporter."""
+        """Create an UPS prometheus prometheus_exporter."""
         self.ups_scraper = UPSScraper(
             ups_address,
             username,
@@ -87,7 +88,7 @@ class UPSMultiExporter(UPSExporter):
     """
     Prometheus exporter for multiple UPS devices.
 
-    Collects metrics from multiple PDUs at the same time. If threading is
+    Collects metrics from multiple UPS at the same time. If threading is
     enabled, multiple threads will be used to collect sensor readings which is
     considerably faster.
 
@@ -98,30 +99,39 @@ class UPSMultiExporter(UPSExporter):
         and password combinations for all PDUs to be monitored
     threading : bool, optional
         Whether to use multithreading or serial processing. Note that serial
-        processing becomes slower when more PDUs are added. Since the HTTP
-        request to the json-rpc API and waiting for its response takes longest,
-        threading is recommended when more than 1 PDU is being monitored
+        processing becomes slower when more UPS devices are added.
+        Since the HTTP request to the json API and waiting
+        for its response takes longest,
+        threading is recommended when more than 1 UPS is being monitored
     insecure : bool, optional
-        Whether to allow a connection to an insecure raritan API
-
+        Whether to allow a connection to an insecure UPS API
     """
 
-    def __init__(self, config=str, threading=False,insecure=False):
-        pass
+    def __init__(self, config=str, threading=False, insecure=False):
+        self.ups_devices = self.get_ups_devices(config, insecure)
 
-    def get_ups_devices(self):
-        pass
+    @staticmethod
+    def get_ups_devices(config, insecure) -> list:
+        with open(config) as json_file:
+            data = json.load(json_file)
+
+        return [UPSScraper(v['address'], v['user'], v['password'], insecure)
+                for k, v in data.items()]
 
     def scrape_data(self) -> list:
-        pass
-
-
-
+        return [
+            ups.get_measures() for ups in self.ups_devices
+        ]
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Prometheus prometheus-exporter for Eaton UPS measures"
+        description="Prometheus prometheus_exporter for Eaton UPS measures"
+    )
+
+    parser.add_argument(
+        "-c", "--config",
+        help="Provide a json like config for more than one ups device"
     )
 
     parser.add_argument(
@@ -171,7 +181,8 @@ if __name__ == '__main__':
 
         # Start up the server to expose the metrics.
         start_http_server(port, addr=args.host_address)
-        print(f"Starting Prometheus prometheus-exporter on {args.host_address}:{port}")
+        print(f"Starting Prometheus prometheus_exporter on "
+              f"{args.host_address}:{port}")
         while True:
             time.sleep(1)
 
@@ -179,5 +190,5 @@ if __name__ == '__main__':
         print(err)
 
     except KeyboardInterrupt:
-        print("Prometheus prometheus-exporter shut down")
+        print("Prometheus prometheus_exporter shut down")
         exit(0)
