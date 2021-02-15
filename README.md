@@ -28,19 +28,19 @@ Data scraped:
 * Might work on other devices as well, with the same API
 
 ### Usage:
-```
-python3 prometheus_api_exporter.py [-h] -u USERNAME [-p PORT] [--host-address HOST_ADDRESS] [-k] address
+To provide measures of multiple ups devices on one exporter \
+with a JSON file looking like the given *config.json*
 
-positional arguments:
-  address               Specify the address of the UPS device
+```
+python3 ups_multi_exporter.py [-h] -c CONFIG [-p PORT] [--host-address HOST_ADDRESS] [-k]
 
 optional arguments:
   -h, --help            show this help message and exit
-  -u USERNAME, --username USERNAME
-                        Specify a user name
+  -c CONFIG, --config CONFIG
+                        configuration json file containing UPS addresses and login info
   -p PORT, --port PORT  Listen to this port
   --host-address HOST_ADDRESS
-                        Address by what the prometheus metrics will be accessible
+                        Address by which the prometheus metrics will be accessible
   -k, --insecure        allow a connection to an insecure UPS API
 ```
 
@@ -48,4 +48,5 @@ optional arguments:
 - requests
 - urllib3
 - json
+- [prometheus_client](https://github.com/prometheus/client_python)
 
