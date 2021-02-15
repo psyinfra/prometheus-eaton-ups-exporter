@@ -2,7 +2,7 @@
 import argparse
 import time
 
-from eaton_ups.api_exporter import UPSMultiExporter
+from eaton_ups.exporter import UPSMultiExporter
 from prometheus_client import start_http_server, REGISTRY
 
 
