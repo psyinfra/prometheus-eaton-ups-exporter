@@ -48,7 +48,8 @@ def parse_multi_args():
     )
     parser.add_argument(
         "-c", "--config",
-        help="Provide a json like config for more than one ups device"
+        help="Provide a json like config for more than one ups device",
+        required=True
     )
     parser.add_argument(
         "-p", "--port",
