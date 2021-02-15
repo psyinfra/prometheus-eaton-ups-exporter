@@ -22,7 +22,7 @@ class UPSExporter:
             ups_address,
             username,
             password,
-            insecure
+            insecure=insecure
         )
 
     def collect(self):
@@ -115,7 +115,8 @@ class UPSMultiExporter(UPSExporter):
         with open(config) as json_file:
             data = json.load(json_file)
 
-        return [UPSScraper(v['address'], v['user'], v['password'], insecure)
+        return [UPSScraper(v['address'], v['user'],
+                           v['password'], k, insecure)
                 for k, v in data.items()]
 
     def scrape_data(self) -> list:

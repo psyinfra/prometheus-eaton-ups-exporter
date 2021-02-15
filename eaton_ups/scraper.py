@@ -6,7 +6,8 @@ import argparse
 
 import urllib3
 from requests import Session, Response
-from requests.exceptions import SSLError, ConnectionError, ReadTimeout
+from requests.exceptions import SSLError,ConnectionError,\
+    ReadTimeout, MissingSchema
 
 
 class UPSScraper:
@@ -14,11 +15,17 @@ class UPSScraper:
     login_auth_path = '/rest/mbdetnrs/1.0/oauth2/token'
     rest_api_path = '/rest/mbdetnrs/1.0/powerDistributions/1'
 
-    def __init__(self, ups_address, username, password, insecure=False):
+    def __init__(self,
+                 ups_address,
+                 username,
+                 password,
+                 name=None,
+                 insecure=False):
         """Create a UPS Scraper based on the UPS API."""
         self.ups_address = ups_address
         self.username = username
         self.password = password
+        self.name = name
         self.session = Session()
 
         self.session.verify = not insecure  # ignore self signed certificate
@@ -121,6 +128,10 @@ class UPSScraper:
         except ReadTimeout:
             print("Request Timeout > 2 seconds")
             exit(4)
+        except MissingSchema as err:
+            print(err)
+            exit(5)
+
 
     def get_measures(self) -> dict:
         """
@@ -132,7 +143,10 @@ class UPSScraper:
             self.ups_address+self.rest_api_path
         )
         power_dist_overview = power_dist_request.json()
-        ups_id = power_dist_overview['id']
+
+        if not self.name:
+            self.name = f"ups_{power_dist_overview['id']}"
+
         ups_inputs_api = power_dist_overview['inputs']['@id']
         ups_ouptups_api = power_dist_overview['outputs']['@id']
 
@@ -162,7 +176,7 @@ class UPSScraper:
         powerbank = powerbank_request.json()
 
         return {
-            "ups_id": ups_id,
+            "ups_id": self.name,
             "ups_inputs": inputs,
             "ups_outputs": outputs,
             "ups_powerbank": powerbank
