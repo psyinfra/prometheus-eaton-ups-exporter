@@ -57,9 +57,6 @@ class UPSScraper:
             "scope": "GUIAccess"
         }
         try:
-            print(self.ups_address + self.login_auth_path)
-            print(headers)
-            print(json.dumps(data))
             login_request = self.session.post(
                 self.ups_address + self.login_auth_path,
                 headers=headers,
