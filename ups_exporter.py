@@ -3,7 +3,7 @@ import argparse
 import getpass
 import time
 
-from eaton_ups.api_exporter import UPSExporter
+from eaton_ups.exporter import UPSExporter
 from prometheus_client import start_http_server, REGISTRY
 
 
