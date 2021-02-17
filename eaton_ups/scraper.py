@@ -1,5 +1,4 @@
-#! bin/python3
-
+"""REST API web scraper for Eaton UPS measure data."""
 import json
 import getpass
 import argparse
