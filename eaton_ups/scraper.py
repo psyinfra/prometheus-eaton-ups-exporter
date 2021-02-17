@@ -6,7 +6,7 @@ import argparse
 
 import urllib3
 from requests import Session, Response
-from requests.exceptions import SSLError,ConnectionError,\
+from requests.exceptions import SSLError, ConnectionError,\
     ReadTimeout, MissingSchema
 
 
@@ -131,7 +131,6 @@ class UPSScraper:
         except MissingSchema as err:
             print(err)
             exit(5)
-
 
     def get_measures(self) -> dict:
         """

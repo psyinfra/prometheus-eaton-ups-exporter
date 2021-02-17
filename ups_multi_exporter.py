@@ -1,10 +1,11 @@
 """Multi Prometheus exporter for UPS measures."""
 
+import sys
 import argparse
 import time
 
-from eaton_ups.exporter import UPSMultiExporter
 from prometheus_client import start_http_server, REGISTRY
+from eaton_ups.exporter import UPSMultiExporter
 
 
 def parse_args():
@@ -62,4 +63,4 @@ if __name__ == "__main__":
 
     except KeyboardInterrupt:
         print("Prometheus exporter shut down")
-        exit(0)
+        sys.exit(0)

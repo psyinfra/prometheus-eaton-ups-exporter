@@ -29,7 +29,6 @@ class UPSExporter:
             username,
             password,
             insecure):
-        """Create an UPS prometheus prometheus_exporter."""
         self.ups_scraper = UPSScraper(
             ups_address,
             username,
@@ -84,13 +83,13 @@ class UPSExporter:
 
             for measure_label, value in relevant_measures.items():
 
-                g = GaugeMetricFamily(
+                gauge = GaugeMetricFamily(
                     measure_label,
                     'Measure collected from the ups device',
                     labels=['ups_id']
                 )
-                g.add_metric([ups_id], value)
-                yield g
+                gauge.add_metric([ups_id], value)
+                yield gauge
 
     def scrape_data(self) -> list:
         """
@@ -122,7 +121,6 @@ class UPSMultiExporter(UPSExporter):
     :param insecure: bool
         Whether to allow a connection to an insecure UPS API
     """
-
     def __init__(self, config=str, threading=False, insecure=False):
         self.ups_devices = self.get_ups_devices(config, insecure)
 
@@ -225,4 +223,4 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         print("Prometheus prometheus_exporter shut down")
-        exit(0)
+        sys.exit(0)

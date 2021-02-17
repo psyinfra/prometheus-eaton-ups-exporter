@@ -4,8 +4,8 @@ import argparse
 import getpass
 import time
 
-from eaton_ups.exporter import UPSExporter
 from prometheus_client import start_http_server, REGISTRY
+from eaton_ups.exporter import UPSExporter
 
 
 def parse_args() -> argparse.Namespace:
@@ -71,4 +71,4 @@ if __name__ == "__main__":
 
     except KeyboardInterrupt:
         print("Prometheus exporter shut down")
-        exit(0)
+        sys.exit(0)
