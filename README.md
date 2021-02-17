@@ -16,7 +16,7 @@ by scraping the UPS REST API of one or more Eaton UPS devices,
 * Default port is  9790 (Free slot regarding [prometheus default port allocations](https://github.com/prometheus/prometheus/wiki/Default-port-allocations))
 * Login timeout is set to 5 seconds
 * other request timeouts are set to 2 seconds
-* static values are described in *eaton_ups_prometheus_exporter/scraper_globals.py*
+* static values are described in *prometheus_eaton_ups_exporter/scraper_globals.py*
 
 ### Supported Devices:
 * Eaton 5P 1550iR ([user guide](https://www.eaton.com/content/dam/eaton/products/backup-power-ups-surge-it-power-distribution/power-management-software-connectivity/eaton-gigabit-network-card/eaton-network-m2-user-guide.pdf))

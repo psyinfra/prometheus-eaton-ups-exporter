@@ -8,7 +8,7 @@ import json
 from prometheus_client import start_http_server, REGISTRY
 from prometheus_client.core import GaugeMetricFamily
 
-from eaton_ups_prometheus_exporter.scraper import UPSScraper
+from prometheus_eaton_ups_exporter.scraper import UPSScraper
 
 NORMAL_EXECUTION = 0
 

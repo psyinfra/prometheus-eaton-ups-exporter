@@ -3,7 +3,7 @@ import argparse
 import sys
 import time
 
-from eaton_ups_prometheus_exporter.exporter import UPSMultiExporter
+from prometheus_eaton_ups_exporter.exporter import UPSMultiExporter
 from prometheus_client import start_http_server, REGISTRY
 
 # Free slot according to
