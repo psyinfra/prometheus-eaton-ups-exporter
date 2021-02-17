@@ -8,11 +8,10 @@ from requests import Session, Response
 from requests.exceptions import SSLError, ConnectionError,\
     ReadTimeout, MissingSchema
 
+from eaton_ups.scraper_globals import *
+
 
 class UPSScraper:
-
-    login_auth_path = '/rest/mbdetnrs/1.0/oauth2/token'
-    rest_api_path = '/rest/mbdetnrs/1.0/powerDistributions/1'
 
     def __init__(self,
                  ups_address,
@@ -46,26 +45,15 @@ class UPSScraper:
 
         :return: two for the authentication necessary string values
         """
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; "
-                          "rv:82.0) Gecko/20100101 Firefox/82.0",
-            "Accept": "application/json, text/plain, */*",
-            "Accept-Language": "de,en-US;q=0.7,en;q=0.3",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Content-Type": "application/json;charset=utf-8",
-            "Content-Length": "103",
-            "Connection": "keep-alive",
-        }
-        data = {
-            "username": self.username,
-            "password": self.password,
-            "grant_type": "password",
-            "scope": "GUIAccess"
-        }
+
         try:
+            data = LOGIN_DATA
+            data["username"] = self.username
+            data["password"] = self.password
+
             login_request = self.session.post(
-                self.ups_address + self.login_auth_path,
-                headers=headers,
+                self.ups_address + LOGIN_AUTH_PATH,
+                headers=LOGIN_HEADERS,
                 data=json.dumps(data),
                 timeout=5
             )  # needs to be json encoded
@@ -104,15 +92,8 @@ class UPSScraper:
         :return: request.Response
         """
         try:
-            headers = {
-                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; "
-                              "rv:82.0) Gecko/20100101 Firefox/82.0",
-                "Accept": "application/json, text/plain, */*",
-                "Accept-Language": "de,en-US;q=0.7,en;q=0.3",
-                "Accept-Encoding": "gzip, deflate, br",
-                "Connection": "keep-alive",
-                "Authorization": f"{self.token_type} {self.access_token}"
-            }
+            headers = AUTH_HEADERS
+            headers["Authorization"] = f"{self.token_type} {self.access_token}"
             request = self.session.get(url, headers=headers, timeout=2)
 
             if "Unauthorized" in request.text:
@@ -138,7 +119,7 @@ class UPSScraper:
         :return: dict
         """
         power_dist_request = self.load_page(
-            self.ups_address+self.rest_api_path
+            self.ups_address+REST_API_PATH
         )
         power_dist_overview = power_dist_request.json()
 
