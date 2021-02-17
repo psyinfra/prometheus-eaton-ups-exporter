@@ -1,34 +1,32 @@
-"""Starts an prometheus exporter for a single Eaton UPS device."""
-import sys
+"""Multi Prometheus exporter for UPS measures."""
 import argparse
-import getpass
+import sys
 import time
 
+from eaton_ups_prometheus_exporter.exporter import UPSMultiExporter
 from prometheus_client import start_http_server, REGISTRY
-from eaton_ups.exporter import UPSExporter
 
-NORMAL_EXECUTION = 0
+# Free slot according to
+# https://github.com/prometheus/prometheus/wiki/Default-port-allocations
+DEFAULT_PORT = 9790
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args():
     """Prepare command line arguments."""
     parser = argparse.ArgumentParser(
-        description="Prometheus prometheus_exporter for measures "
-                    "of a single Eaton UPS device"
+        description="Prometheus prometheus_exporter for "
+                    "Eaton UPS measures of multiple UPS devices "
     )
     parser.add_argument(
-        "address",
-        help="Specify the address of the UPS device"
-    )
-    parser.add_argument(
-        "-u", "--username",
-        help="Specify a user name",
+        "-c", "--config",
+        help="configuration json file containing UPS addresses and login info",
         required=True
     )
     parser.add_argument(
         "-p", "--port",
         help="Listen to this port",
-        default=8000
+        type=int,
+        default=DEFAULT_PORT
     )
     parser.add_argument(
         "--host-address",
@@ -48,25 +46,25 @@ def parse_args() -> argparse.Namespace:
 if __name__ == "__main__":
     try:
         args = parse_args()
-        pswd = getpass.getpass('Password:')
         port = int(args.port)
-        ups_exporter = UPSExporter(
-            args.address,
-            (args.username, pswd),
-            args.insecure
-        )
 
         REGISTRY.register(
-            ups_exporter
+            UPSMultiExporter(
+                args.config,
+                insecure=args.insecure
+            )
         )
 
         # Start up the server to expose the metrics.
         start_http_server(port, addr=args.host_address)
-        print(f"Starting Prometheus exporter on "
+        print(f"Starting Prometheus prometheus_exporter on "
               f"{args.host_address}:{port}")
         while True:
             time.sleep(1)
 
+    except TypeError as err:
+        print(err)
+
     except KeyboardInterrupt:
         print("Prometheus exporter shut down")
-        sys.exit(NORMAL_EXECUTION)
+        sys.exit(0)
