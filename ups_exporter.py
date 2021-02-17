@@ -7,6 +7,8 @@ import time
 from prometheus_client import start_http_server, REGISTRY
 from eaton_ups.exporter import UPSExporter
 
+NORMAL_EXECUTION = 0
+
 
 def parse_args() -> argparse.Namespace:
     """Prepare command line arguments."""
@@ -50,9 +52,8 @@ if __name__ == "__main__":
         port = int(args.port)
         ups_exporter = UPSExporter(
             args.address,
-            args.username,
-            pswd,
-            insecure=args.insecure
+            (args.username, pswd),
+            args.insecure
         )
 
         REGISTRY.register(
@@ -61,14 +62,11 @@ if __name__ == "__main__":
 
         # Start up the server to expose the metrics.
         start_http_server(port, addr=args.host_address)
-        print(f"Starting Prometheus prometheus_exporter on "
+        print(f"Starting Prometheus exporter on "
               f"{args.host_address}:{port}")
         while True:
             time.sleep(1)
 
-    except TypeError as err:
-        print(err)
-
     except KeyboardInterrupt:
         print("Prometheus exporter shut down")
-        sys.exit(0)
+        sys.exit(NORMAL_EXECUTION)
