@@ -10,6 +10,8 @@ from prometheus_client.core import GaugeMetricFamily
 
 from eaton_ups.scraper import UPSScraper
 
+NORMAL_EXECUTION = 0
+
 
 class UPSExporter:
     """
@@ -30,7 +32,7 @@ class UPSExporter:
         self.ups_scraper = UPSScraper(
             ups_address,
             authentication,
-            insecure
+            insecure=insecure
         )
 
     def collect(self):
@@ -194,8 +196,7 @@ if __name__ == '__main__':
         port = int(args.port)
         ups_exporter = UPSExporter(
             args.address,
-            args.username,
-            pswd,
+            (args.username, pswd),
             insecure=args.insecure
         )
 
@@ -205,14 +206,11 @@ if __name__ == '__main__':
 
         # Start up the server to expose the metrics.
         start_http_server(port, addr=args.host_address)
-        print(f"Starting Prometheus prometheus_exporter on "
+        print(f"Starting Prometheus exporter on "
               f"{args.host_address}:{port}")
         while True:
             time.sleep(1)
 
-    except TypeError as err:
-        print(err)
-
     except KeyboardInterrupt:
-        print("Prometheus prometheus_exporter shut down")
-        sys.exit(0)
+        print("Prometheus exporter shut down")
+        sys.exit(NORMAL_EXECUTION)
