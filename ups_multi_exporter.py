@@ -1,5 +1,4 @@
 """Multi Prometheus exporter for UPS measures."""
-
 import sys
 import argparse
 import time
