@@ -1,4 +1,4 @@
-"""Create and run a prometheus exporter for a UPS device."""
+"""Create and run a Prometheus Exporter for an Eaton UPS."""
 import sys
 import argparse
 import time
@@ -18,11 +18,11 @@ class UPSExporter:
     Prometheus single exporter.
 
     :param ups_address: str
-        Address to a ups device, either an IP address or a dns entry
+        Address to a UPS, either an IP address or a DNS hostname
     :param authentication: (username: str, password: str)
-        Username and password for the WEB UI on that UPS device
+        Username and password for the web UI of the UPS
     :param insecure: bool
-        Whether to allow a connection to an insecure UPS API
+        Whether to connect to UPSs with self-signed SSL certificates
     """
     def __init__(
             self,
@@ -36,7 +36,7 @@ class UPSExporter:
         )
 
     def collect(self):
-        """Export UPS metrics on request."""
+        """Export UPS metrics on request"""
 
         ups_data = self.scrape_data()
         for measures in ups_data:
@@ -102,17 +102,17 @@ class UPSExporter:
 
 class UPSMultiExporter(UPSExporter):
     """
-    Prometheus exporter for multiple UPS devices.
+    Prometheus exporter for multiple UPSs.
 
-    Collects metrics from multiple UPS at the same time. If threading is
+    Collects metrics from multiple UPSs at the same time. If threading is
     enabled, multiple threads will be used to collect sensor readings which is
     considerably faster.
 
     :param config: str
-        Path to the configuration file, containing PDU location, username,
-        and password combinations for all PDUs to be monitored
+        Path to the configuration file, containing UPS ip/hostname, username,
+        and password combinations for all UPSs to be monitored
     :param insecure: bool
-        Whether to allow a connection to an insecure UPS API
+        Whether to connect to UPSs with self-signed SSL certificates
     """
     def __init__(self, config=str, insecure=False):
         self.ups_devices = self.get_ups_devices(config, insecure)
@@ -123,9 +123,9 @@ class UPSMultiExporter(UPSExporter):
         Creates multiple UPSScraper.
 
         :param config: str
-            Path to a json based config file
+            Path to a JSON-based config file
         :param insecure:
-            Whether to allow a connection to an insecure UPS API
+            Whether to connect to UPSs with self-signed SSL certificates
         :return: list
             List of UPSScrapers
         """
@@ -142,7 +142,7 @@ class UPSMultiExporter(UPSExporter):
         Scrape measure data.
 
         :return: list
-            List with measure from each device
+            List with measurements from each UPS
         """
         return [
             ups.get_measures() for ups in self.ups_devices
@@ -152,12 +152,12 @@ class UPSMultiExporter(UPSExporter):
 def parse_args() -> argparse.Namespace:
     """Prepare command line arguments."""
     parser = argparse.ArgumentParser(
-        description="Prometheus prometheus_exporter for Eaton UPS measures"
+        description="Prometheus Exporter for Eaton UPSs."
     )
 
     parser.add_argument(
         "-c", "--config",
-        help="Provide a json like config for more than one ups device"
+        help="Configuration JSON file containing UPS addresses and login info"
     )
 
     parser.add_argument(
@@ -171,18 +171,18 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "-p", "--port",
-        help="Listen to this port",
+        help="Listen on this port",
         default=8000
     )
     parser.add_argument(
         "--host-address",
-        help="Address by which the prometheus metrics will be accessible",
+        help="Address on which the Prometheus metrics will be accessible",
         default="127.0.0.1"
     )
     parser.add_argument(
         '-k', '--insecure',
         action='store_true',
-        help='allow a connection to an insecure UPS API',
+        help='Allow the exporter to connect to UPSs with self-signed SSL certificates',
         default=False
     )
 
@@ -206,11 +206,11 @@ if __name__ == '__main__':
 
         # Start up the server to expose the metrics.
         start_http_server(port, addr=args.host_address)
-        print(f"Starting Prometheus exporter on "
+        print(f"Starting Prometheus Eaton UPS Exporter on "
               f"{args.host_address}:{port}")
         while True:
             time.sleep(1)
 
     except KeyboardInterrupt:
-        print("Prometheus exporter shut down")
+        print("Prometheus Eaton UPS Exporter shut down")
         sys.exit(NORMAL_EXECUTION)
