@@ -1,4 +1,5 @@
 """REST API web scraper for Eaton UPS measure data."""
+import sys
 import json
 import getpass
 import argparse
@@ -12,17 +13,28 @@ from eaton_ups.scraper_globals import *
 
 
 class UPSScraper:
+    """
+    Create a UPS Scraper based on the UPS API.
 
+    :param ups_address: str
+        Address to a ups device, either an IP address or a dns entry
+    :param authentication: (username: str, password: str)
+        Username and password for the WEB UI on that UPS device
+    :param name: str
+        Name of the UPS device.
+        Used as identifier to differentiate
+        between multiple ups devices.
+    :param insecure: bool
+        Whether to allow a connection to an insecure UPS API
+
+    """
     def __init__(self,
                  ups_address,
-                 username,
-                 password,
+                 authentication,
                  name=None,
                  insecure=False):
-        """Create a UPS Scraper based on the UPS API."""
         self.ups_address = ups_address
-        self.username = username
-        self.password = password
+        self.username, self.password = authentication
         self.name = name
         self.session = Session()
 
@@ -54,9 +66,9 @@ class UPSScraper:
             login_request = self.session.post(
                 self.ups_address + LOGIN_AUTH_PATH,
                 headers=LOGIN_HEADERS,
-                data=json.dumps(data),
-                timeout=5
-            )  # needs to be json encoded
+                data=json.dumps(data),  # needs to be json encoded
+                timeout=LOGIN_TIMEOUT
+            )
             login_response = login_request.json()
 
             token_type = login_response['token_type']
@@ -66,19 +78,20 @@ class UPSScraper:
             return token_type, access_token
         except KeyError:
             print("Authentication failed")
-            exit(1)
+            sys.exit(AUTHENTICATION_FAILED)
         except SSLError as err:
             print("Connection refused")
             if 'CERTIFICATE_VERIFY_FAILED' in str(err):
                 print("Try -k to allow insecure server "
                       "connections when using SSL")
-            exit(2)
+                sys.exit(CERTIFICATE_VERIFY_FAILED)
+            sys.exit(SSL_ERROR)
         except ConnectionError:
             print("Connection refused")
-            exit(3)
+            sys.exit(CONNECTION_ERROR)
         except ReadTimeout:
-            print("Login Timeout > 5 seconds")
-            exit(4)
+            print(f"Login Timeout > {LOGIN_TIMEOUT} seconds")
+            sys.exit(TIMEOUT_ERROR)
 
     def load_page(self, url) -> Response:
         """
@@ -94,7 +107,11 @@ class UPSScraper:
         try:
             headers = AUTH_HEADERS
             headers["Authorization"] = f"{self.token_type} {self.access_token}"
-            request = self.session.get(url, headers=headers, timeout=2)
+            request = self.session.get(
+                url,
+                headers=headers,
+                timeout=REQUEST_TIMEOUT
+            )
 
             if "Unauthorized" in request.text:
                 # try to login, if not authorized
@@ -106,11 +123,11 @@ class UPSScraper:
             self.token_type, self.access_token = self.login()
             return self.load_page(url)
         except ReadTimeout:
-            print("Request Timeout > 2 seconds")
-            exit(4)
+            print(f"Request Timeout > {REQUEST_TIMEOUT} seconds")
+            sys.exit(TIMEOUT_ERROR)
         except MissingSchema as err:
             print(err)
-            exit(5)
+            sys.exit(MISSING_SCHEMA)
 
     def get_measures(self) -> dict:
         """
@@ -129,17 +146,13 @@ class UPSScraper:
         ups_inputs_api = power_dist_overview['inputs']['@id']
         ups_ouptups_api = power_dist_overview['outputs']['@id']
 
-        # take first member
-        i_member_id = 1
         inputs_request = self.load_page(
-            self.ups_address + ups_inputs_api + f'/{i_member_id}'
+            self.ups_address + ups_inputs_api + f'/{INPUT_MEMBER_ID}'
         )
         inputs = inputs_request.json()
 
-        # take first member
-        o_member_id = 1
         outputs_request = self.load_page(
-            self.ups_address + ups_ouptups_api + f'/{o_member_id}'
+            self.ups_address + ups_ouptups_api + f'/{OUTPUT_MEMBER_ID}'
         )
         outputs = outputs_request.json()
 
