@@ -9,7 +9,11 @@ from requests import Session, Response
 from requests.exceptions import SSLError, ConnectionError,\
     ReadTimeout, MissingSchema
 
-from eaton_ups.scraper_globals import *
+from eaton_ups.scraper_globals import LOGIN_AUTH_PATH, REST_API_PATH, \
+    INPUT_MEMBER_ID, OUTPUT_MEMBER_ID, LOGIN_HEADERS, LOGIN_DATA, \
+    AUTH_HEADERS, LOGIN_TIMEOUT, REQUEST_TIMEOUT, \
+    AUTHENTICATION_FAILED, SSL_ERROR, CERTIFICATE_VERIFY_FAILED,\
+    CONNECTION_ERROR, TIMEOUT_ERROR, MISSING_SCHEMA
 
 
 class UPSScraper:
