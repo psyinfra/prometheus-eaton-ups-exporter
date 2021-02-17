@@ -1,4 +1,5 @@
-"""Create and run a prometheus prometheus_exporter for a UPS device."""
+"""Create and run a prometheus exporter for a UPS device."""
+import sys
 import argparse
 import time
 import getpass
@@ -10,7 +11,18 @@ from prometheus_client.core import GaugeMetricFamily
 
 
 class UPSExporter:
+    """
+    Prometheus single exporter.
 
+    :param ups_address: str
+        Address to a ups device, either an IP address or a dns entry
+    :param username: str
+        Username for the WEB UI on that UPS device
+    :param password: str
+        Password for the user
+    :param insecure: bool
+        Whether to allow a connection to an insecure UPS API
+    """
     def __init__(
             self,
             ups_address,
@@ -81,6 +93,12 @@ class UPSExporter:
                 yield g
 
     def scrape_data(self) -> list:
+        """
+        Scrape measure data.
+
+        :return: list
+            Returns measures as a list with one entry
+        """
         return [self.ups_scraper.get_measures()]
 
 
@@ -92,18 +110,16 @@ class UPSMultiExporter(UPSExporter):
     enabled, multiple threads will be used to collect sensor readings which is
     considerably faster.
 
-    Parameters
-    ----------
-    config : str
+    :param config: str
         Path to the configuration file, containing PDU location, username,
         and password combinations for all PDUs to be monitored
-    threading : bool, optional
+    :param threading: bool
         Whether to use multithreading or serial processing. Note that serial
         processing becomes slower when more UPS devices are added.
         Since the HTTP request to the json API and waiting
         for its response takes longest,
         threading is recommended when more than 1 UPS is being monitored
-    insecure : bool, optional
+    :param insecure: bool
         Whether to allow a connection to an insecure UPS API
     """
 
@@ -112,6 +128,16 @@ class UPSMultiExporter(UPSExporter):
 
     @staticmethod
     def get_ups_devices(config, insecure) -> list:
+        """
+        Creates multiple UPSScraper.
+
+        :param config: str
+            Path to a json based config file
+        :param insecure:
+            Whether to allow a connection to an insecure UPS API
+        :return: list
+            List of UPSScrapers
+        """
         with open(config) as json_file:
             data = json.load(json_file)
 
@@ -120,12 +146,19 @@ class UPSMultiExporter(UPSExporter):
                 for k, v in data.items()]
 
     def scrape_data(self) -> list:
+        """
+        Scrape measure data.
+
+        :return: list
+            List with measure from each device
+        """
         return [
             ups.get_measures() for ups in self.ups_devices
         ]
 
 
 def parse_args() -> argparse.Namespace:
+    """Prepare command line arguments."""
     parser = argparse.ArgumentParser(
         description="Prometheus prometheus_exporter for Eaton UPS measures"
     )

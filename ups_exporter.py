@@ -1,4 +1,5 @@
-
+"""Starts an prometheus exporter for a single Eaton UPS device."""
+import sys
 import argparse
 import getpass
 import time
@@ -8,6 +9,7 @@ from prometheus_client import start_http_server, REGISTRY
 
 
 def parse_args() -> argparse.Namespace:
+    """Prepare command line arguments."""
     parser = argparse.ArgumentParser(
         description="Prometheus prometheus_exporter for measures "
                     "of a single Eaton UPS device"

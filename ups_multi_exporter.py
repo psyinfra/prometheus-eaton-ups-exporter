@@ -1,3 +1,4 @@
+"""Multi Prometheus exporter for UPS measures."""
 
 import argparse
 import time
@@ -7,6 +8,7 @@ from prometheus_client import start_http_server, REGISTRY
 
 
 def parse_args():
+    """Prepare command line arguments."""
     parser = argparse.ArgumentParser(
         description="Prometheus prometheus_exporter for "
                     "Eaton UPS measures of multiple UPS devices "
