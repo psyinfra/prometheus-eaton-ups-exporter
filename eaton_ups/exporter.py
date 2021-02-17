@@ -5,9 +5,10 @@ import time
 import getpass
 import json
 
-from eaton_ups.scraper import UPSScraper
 from prometheus_client import start_http_server, REGISTRY
 from prometheus_client.core import GaugeMetricFamily
+
+from eaton_ups.scraper import UPSScraper
 
 
 class UPSExporter:
@@ -16,24 +17,20 @@ class UPSExporter:
 
     :param ups_address: str
         Address to a ups device, either an IP address or a dns entry
-    :param username: str
-        Username for the WEB UI on that UPS device
-    :param password: str
-        Password for the user
+    :param authentication: (username: str, password: str)
+        Username and password for the WEB UI on that UPS device
     :param insecure: bool
         Whether to allow a connection to an insecure UPS API
     """
     def __init__(
             self,
             ups_address,
-            username,
-            password,
+            authentication,
             insecure):
         self.ups_scraper = UPSScraper(
             ups_address,
-            username,
-            password,
-            insecure=insecure
+            authentication,
+            insecure
         )
 
     def collect(self):
@@ -112,16 +109,10 @@ class UPSMultiExporter(UPSExporter):
     :param config: str
         Path to the configuration file, containing PDU location, username,
         and password combinations for all PDUs to be monitored
-    :param threading: bool
-        Whether to use multithreading or serial processing. Note that serial
-        processing becomes slower when more UPS devices are added.
-        Since the HTTP request to the json API and waiting
-        for its response takes longest,
-        threading is recommended when more than 1 UPS is being monitored
     :param insecure: bool
         Whether to allow a connection to an insecure UPS API
     """
-    def __init__(self, config=str, threading=False, insecure=False):
+    def __init__(self, config=str, insecure=False):
         self.ups_devices = self.get_ups_devices(config, insecure)
 
     @staticmethod
@@ -139,9 +130,10 @@ class UPSMultiExporter(UPSExporter):
         with open(config) as json_file:
             data = json.load(json_file)
 
-        return [UPSScraper(v['address'], v['user'],
-                           v['password'], k, insecure)
-                for k, v in data.items()]
+        return [
+            UPSScraper(v['address'], (v['user'], v['password']), k, insecure)
+            for k, v in data.items()
+        ]
 
     def scrape_data(self) -> list:
         """
