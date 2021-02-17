@@ -203,8 +203,7 @@ if __name__ == "__main__":
         args_parsed = parser.parse_args()  # parse sys.args
         scraper = UPSScraper(
             args_parsed.host,
-            args_parsed.username,
-            pswd,
+            (args_parsed.username, pswd),
             insecure=args_parsed.insecure
         )
 
