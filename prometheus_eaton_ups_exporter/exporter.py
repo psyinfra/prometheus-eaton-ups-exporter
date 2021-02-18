@@ -1,13 +1,7 @@
 """Create and run a Prometheus Exporter for an Eaton UPS."""
-import sys
-import argparse
-import time
-import getpass
 import json
 
-from prometheus_client import start_http_server, REGISTRY
 from prometheus_client.core import GaugeMetricFamily
-
 from prometheus_eaton_ups_exporter.scraper import UPSScraper
 
 NORMAL_EXECUTION = 0

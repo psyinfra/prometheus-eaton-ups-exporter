@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Prometheus exporter for single or multiple Eaton UPSs."""
-import argparse
 import sys
 import time
+import argparse
 
 from argparse import RawTextHelpFormatter
-from prometheus_eaton_ups_exporter.exporter import UPSMultiExporter
+
 from prometheus_client import start_http_server, REGISTRY
+from prometheus_eaton_ups_exporter.exporter import UPSMultiExporter
 
 # Free port according to
 # https://github.com/prometheus/prometheus/wiki/Default-port-allocations
@@ -45,7 +46,8 @@ def parse_args():
     return parser.parse_args()
 
 
-if __name__ == "__main__":
+def main():
+    """Execute the Prometheus Eaton UPS Exporter"""
     try:
         args = parse_args()
         port = DEFAULT_PORT
@@ -78,3 +80,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("Prometheus Eaton UPS Exporter shut down")
         sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()
