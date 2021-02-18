@@ -34,12 +34,13 @@ UPSs to monitor and their credentials are defined in a config file. See
 
 optional arguments:
   -h, --help            show this help message and exit
+  -w WEB.LISTEN_ADDRESS, --web.listen-address WEB.LISTEN_ADDRESS
+                        Interface and port to listen on, in the format of "ip_address:port".
+                        The IP can be omitted to listen on all interfaces.
   -c CONFIG, --config CONFIG
                         Configuration JSON file containing UPS addresses and login info
-  -p PORT, --port PORT  Listen on this port
-  --host-address HOST_ADDRESS
-                        Address on which the prometheus metrics will be accessible
   -k, --insecure        Allow the exporter to connect to UPSs with self-signed SSL certificates
+
 ```
 
 ## Defaults:
