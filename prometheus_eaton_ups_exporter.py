@@ -4,46 +4,41 @@ import argparse
 import sys
 import time
 
+from argparse import RawTextHelpFormatter
 from prometheus_eaton_ups_exporter.exporter import UPSMultiExporter
 from prometheus_client import start_http_server, REGISTRY
 
 # Free port according to
 # https://github.com/prometheus/prometheus/wiki/Default-port-allocations
 DEFAULT_PORT = 9790
+DEFAULT_HOST = "127.0.0.1"
 
 
 def parse_args():
     """Prepare command line arguments."""
     parser = argparse.ArgumentParser(
-        description="Prometheus Exporter for Eaton UPSs."
-    )
-    parser.add_argument(
-        "-p", "--port",
-        help="Listen on this port",
-        type=int,
-        default=DEFAULT_PORT
-    )
-
-    parser.add_argument(
-        "--host-address",
-        help="Address on which the Prometheus metrics will be accessible",
-        default="127.0.0.1"
+        description="Prometheus Exporter for Eaton UPSs.",
+        formatter_class=RawTextHelpFormatter
     )
     parser.add_argument(
         '-w', '--web.listen-address',
-        help='Interface and port to listen on, in the format of "ip_address:port". The IP can be omitted to listen on all interfaces.'
+        help='Interface and port to listen on, '
+             'in the format of "ip_address:port".\n'
+             'The IP can be omitted to listen on all interfaces.',
     )
 
     parser.add_argument(
         "-c", "--config",
-        help="Configuration JSON file containing UPS addresses and login info",
+        help="Configuration JSON file containing "
+             "UPS addresses and login info",
         required=True
     )
 
     parser.add_argument(
         '-k', '--insecure',
         action='store_true',
-        help='Allow the exporter to connect to UPSs with self-signed SSL certificates',
+        help='Allow the exporter to connect to UPSs '
+             'with self-signed SSL certificates',
         default=False
     )
 
@@ -53,8 +48,8 @@ def parse_args():
 if __name__ == "__main__":
     try:
         args = parse_args()
-        port = args.port
-        host_address = args.host_address
+        port = DEFAULT_PORT
+        host_address = DEFAULT_HOST
 
         listen_address = args.__getattribute__('web.listen_address')
         if listen_address:
@@ -73,7 +68,7 @@ if __name__ == "__main__":
         # Start up the server to expose the metrics.
         start_http_server(int(port), addr=host_address)
         print(f"Starting Prometheus Eaton UPS Exporter on "
-              f"{args.host_address}:{port}")
+              f"{host_address}:{port}")
         while True:
             time.sleep(1)
 
