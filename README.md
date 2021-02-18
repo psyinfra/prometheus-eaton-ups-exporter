@@ -30,7 +30,7 @@ UPSs to monitor and their credentials are defined in a config file. See
 `config.json` for an example.
 
 ```
-python3 ups_exporter.py [-h] -c CONFIG [-p PORT] [--host-address HOST_ADDRESS] [-k]
+./prometheus_eaton_ups_exporter.py [-h] -c CONFIG [-p PORT] [--host-address HOST_ADDRESS] [-k]
 
 optional arguments:
   -h, --help            show this help message and exit

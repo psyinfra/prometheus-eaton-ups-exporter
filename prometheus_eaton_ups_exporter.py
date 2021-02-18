@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Prometheus exporter for single or multiple Eaton UPSs."""
 import argparse
 import sys
