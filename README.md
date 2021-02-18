@@ -2,27 +2,12 @@
 
 ## Description
 
-Create an automated prometheus exporter for Eaton UPS measures, 
-by scraping the UPS REST API of one or more Eaton UPS devices,
+A Prometheus exporter for Eaton UPSs. Data is collected from the REST API of the
+web UI of Eaton UPSs and is made available for Prometheus to scrape.
 
+The exporter can monitor multiple UPSs.
 
-### Conventions:
-##### Hardcoded API calls:
-* POST *web_ui*/rest/mbdetnrs/1.0/oauth2/token   (for authentification)
-* GET *web_ui*/rest/mbdetnrs/1.0/powerDistributions/1   (to receive current measure data)
-
-##### Defaults:
-* Default host-address is *localhost* (*127.0.0.1*)
-* Default port is  9790 (Free slot regarding [prometheus default port allocations](https://github.com/prometheus/prometheus/wiki/Default-port-allocations))
-* Login timeout is set to 5 seconds
-* other request timeouts are set to 2 seconds
-* static values are described in *eaton_ups_prometheus_exporter/scraper_globals.py*
-
-### Supported Devices:
-* Eaton 5P 1550iR ([user guide](https://www.eaton.com/content/dam/eaton/products/backup-power-ups-surge-it-power-distribution/power-management-software-connectivity/eaton-gigabit-network-card/eaton-network-m2-user-guide.pdf))
-* Might work on other devices as well, with the same API
-
-Data scraped:
+## Information Exported
 - Input Voltage (V)
 - Input Frequency (Hz)
 - Output Voltage (V)
@@ -36,26 +21,35 @@ Data scraped:
 - Battery Capacity (%)
 - Battery Remaining Time (s)
 
+## Supported Devices:
+* Eaton 5P 1550iR ([user guide](https://www.eaton.com/content/dam/eaton/products/backup-power-ups-surge-it-power-distribution/power-management-software-connectivity/eaton-gigabit-network-card/eaton-network-m2-user-guide.pdf))
+* Other devices might also work, if they use the same API
 
 ## Usage:
-To provide measures of one or more ups devices on one exporter \
-with a JSON file looking like the given *config.json* use this:
+UPSs to monitor and their credentials are defined in a config file. See
+`config.json` for an example.
 
 ```
-python3 ups_exporter.py [-h] -c CONFIG [-p PORT] [--host-address HOST_ADDRESS] [-k]
+./prometheus_eaton_ups_exporter.py [-h] -c CONFIG [-p PORT] [--host-address HOST_ADDRESS] [-k]
 
 optional arguments:
   -h, --help            show this help message and exit
   -c CONFIG, --config CONFIG
-                        configuration json file containing UPS addresses and login info
-  -p PORT, --port PORT  Listen to this port
+                        Configuration JSON file containing UPS addresses and login info
+  -p PORT, --port PORT  Listen on this port
   --host-address HOST_ADDRESS
-                        Address by which the prometheus metrics will be accessible
-  -k, --insecure        allow a connection to an insecure UPS API
+                        Address on which the prometheus metrics will be accessible
+  -k, --insecure        Allow the exporter to connect to UPSs with self-signed SSL certificates
 ```
 
-### Requirements:
+## Defaults:
+* Default host-address is localhost
+* Default port is 9790 (a free port according to [Prometheus default port allocations](https://github.com/prometheus/prometheus/wiki/Default-port-allocations))
+* Login timeout is set to 5 seconds
+* Other request timeouts are set to 2 seconds
+* Static values are described in `prometheus_eaton_ups_exporter/scraper_globals.py`
+
+## Requirements:
 - requests
 - urllib3
 - [prometheus_client](https://github.com/prometheus/client_python)
-

@@ -1,12 +1,13 @@
-"""Multi Prometheus exporter for UPS measures."""
+#!/usr/bin/env python3
+"""Prometheus exporter for single or multiple Eaton UPSs."""
 import argparse
 import sys
 import time
 
-from eaton_ups_prometheus_exporter.exporter import UPSMultiExporter
+from prometheus_eaton_ups_exporter.exporter import UPSMultiExporter
 from prometheus_client import start_http_server, REGISTRY
 
-# Free slot according to
+# Free port according to
 # https://github.com/prometheus/prometheus/wiki/Default-port-allocations
 DEFAULT_PORT = 9790
 
@@ -14,36 +15,35 @@ DEFAULT_PORT = 9790
 def parse_args():
     """Prepare command line arguments."""
     parser = argparse.ArgumentParser(
-        description="Prometheus prometheus_exporter for "
-                    "Eaton UPS measures of multiple UPS devices "
+        description="Prometheus Exporter for Eaton UPSs."
     )
     parser.add_argument(
         "-p", "--port",
-        help="Listen to this port",
+        help="Listen on this port",
         type=int,
         default=DEFAULT_PORT
     )
 
     parser.add_argument(
         "--host-address",
-        help="Address by which the prometheus metrics will be accessible",
+        help="Address on which the Prometheus metrics will be accessible",
         default="127.0.0.1"
     )
     parser.add_argument(
         '-w', '--web.listen-address',
-        help='Provide a host address in the form of "ip_address:port"'
+        help='Interface and port to listen on, in the format of "ip_address:port". The IP can be omitted to listen on all interfaces.'
     )
 
     parser.add_argument(
         "-c", "--config",
-        help="Configuration json file containing UPS addresses and login info",
+        help="Configuration JSON file containing UPS addresses and login info",
         required=True
     )
 
     parser.add_argument(
         '-k', '--insecure',
         action='store_true',
-        help='Allow a connection to an insecure UPS API',
+        help='Allow the exporter to connect to UPSs with self-signed SSL certificates',
         default=False
     )
 
@@ -72,7 +72,7 @@ if __name__ == "__main__":
 
         # Start up the server to expose the metrics.
         start_http_server(int(port), addr=host_address)
-        print(f"Starting Prometheus prometheus_exporter on "
+        print(f"Starting Prometheus Eaton UPS Exporter on "
               f"{args.host_address}:{port}")
         while True:
             time.sleep(1)
@@ -81,5 +81,5 @@ if __name__ == "__main__":
         print(err)
 
     except KeyboardInterrupt:
-        print("Prometheus exporter shut down")
+        print("Prometheus Eaton UPS Exporter shut down")
         sys.exit(0)
