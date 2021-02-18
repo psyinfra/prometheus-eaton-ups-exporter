@@ -44,31 +44,31 @@ class UPSExporter:
             powerbank_s = powerbank_details['status']
 
             relevant_measures = {
-                "ups_input_voltage_in_volt":
+                "ups_input_voltage_volts":
                     inputs_rm['voltage'],
-                "ups_input_frequency_in_herz":
+                "ups_input_frequency_herz":
                     inputs_rm['frequency'],
-                "ups_input_current_in_ampere":
+                "ups_input_current_amperes":
                     inputs_rm['current'],
-                "ups_output_voltage_in_volt":
+                "ups_output_voltage_volts":
                     outputs_rm['voltage'],
-                "ups_output_frequency_in_herz":
+                "ups_output_frequency_herz":
                     outputs_rm['frequency'],
-                "ups_output_current_in_ampere":
+                "ups_output_current_amperes":
                     outputs_rm['current'],
-                "ups_output_apparent_power_in_voltampere":
+                "ups_output_apparent_power_voltamperes":
                     outputs_rm['apparentPower'],
-                "ups_output_active_power_in_watt":
+                "ups_output_active_power_watts":
                     outputs_rm['activePower'],
                 "ups_output_power_factor":
                     outputs_rm['powerFactor'],
-                "ups_output_percent_load_in_percent":
+                "ups_output_load_percent":
                     outputs_rm['percentLoad'],
-                "ups_battery_voltage_in_volt":
+                "ups_battery_voltage_volts":
                     powerbank_m['voltage'],
-                "ups_battery_capacity_in_percent":
+                "ups_battery_capacity_percent":
                     powerbank_m['remainingChargeCapacity'],
-                "ups_battery_remaining_time":
+                "ups_battery_remaining_seconds":
                     powerbank_m['remainingTime'],
                 "ups_battery_health":
                     powerbank_s['health']
