@@ -8,26 +8,26 @@ from requests.exceptions import SSLError, ConnectionError,\
     ReadTimeout, MissingSchema
 
 from prometheus_eaton_ups_exporter.scraper_globals import LOGIN_AUTH_PATH, \
-    REST_API_PATH, INPUT_MEMBER_ID, OUTPUT_MEMBER_ID, LOGIN_HEADERS, \
-    LOGIN_DATA, AUTH_HEADERS, LOGIN_TIMEOUT, REQUEST_TIMEOUT, \
+    REST_API_PATH, INPUT_MEMBER_ID, OUTPUT_MEMBER_ID, \
+    LOGIN_DATA, LOGIN_TIMEOUT, REQUEST_TIMEOUT, \
     AUTHENTICATION_FAILED, SSL_ERROR, CERTIFICATE_VERIFY_FAILED,\
     CONNECTION_ERROR, TIMEOUT_ERROR, MISSING_SCHEMA
 
 
 class UPSScraper:
     """
-    Create a UPS Scraper based on the Eaton UPS's API.
+    Create a UPS Scraper based on the UPS API.
 
     :param ups_address: str
-        Address to a UPS, either an IP address or a DNS hostname
+        Address to a ups device, either an IP address or a dns entry
     :param authentication: (username: str, password: str)
-        Username and password for the web UI of the UPS
+        Username and password for the WEB UI on that UPS device
     :param name: str
-        Name of the UPS.
+        Name of the UPS device.
         Used as identifier to differentiate
-        between multiple UPSs.
+        between multiple ups devices.
     :param insecure: bool
-        Whether to connect to UPSs with self-signed SSL certificates
+        Whether to allow a connection to an insecure UPS API
 
     """
     def __init__(self,
@@ -53,7 +53,7 @@ class UPSScraper:
         """
         Login to the UPS Web UI.
 
-        Based on analysing the UPS Web UI, this will create a POST request
+        Based on analysing the UPS Web UI this will create a POST request
         with the authentication details to successfully create a session
         on the specified UPS device.
 
@@ -67,8 +67,7 @@ class UPSScraper:
 
             login_request = self.session.post(
                 self.ups_address + LOGIN_AUTH_PATH,
-                headers=LOGIN_HEADERS,
-                data=json.dumps(data),  # needs to be JSON encoded
+                data=json.dumps(data),  # needs to be json encoded
                 timeout=LOGIN_TIMEOUT
             )
             login_response = login_request.json()
@@ -76,7 +75,8 @@ class UPSScraper:
             token_type = login_response['token_type']
             access_token = login_response['access_token']
 
-            print("Authentication successful")
+            print(f"Authentication successful on ({self.ups_address})")
+
             return token_type, access_token
         except KeyError:
             print("Authentication failed")
@@ -99,21 +99,32 @@ class UPSScraper:
         """
         Load a webpage of the UPS Web UI or API.
 
-        This will try to load the page by the given URL.
+        This will try to load the page by the given url.
         If authentication is needed first, the login function gets executed
         before loading the specified page.
 
         :param url: ups web url
         :return: request.Response
         """
+
         try:
-            headers = AUTH_HEADERS
-            headers["Authorization"] = f"{self.token_type} {self.access_token}"
+            headers = {
+                "Connection": "keep-alive",
+                "Authorization": f"{self.token_type} {self.access_token}",
+            }
             request = self.session.get(
                 url,
                 headers=headers,
                 timeout=REQUEST_TIMEOUT
             )
+
+            # Session might be expired, connect again
+            try:
+                if "errorCode" in request.json():
+                    self.token_type, self.access_token = self.login()
+                    return self.load_page(url)
+            except ValueError:
+                pass
 
             if "Unauthorized" in request.text:
                 # try to login, if not authorized
@@ -133,7 +144,7 @@ class UPSScraper:
 
     def get_measures(self) -> dict:
         """
-        Get most relevant UPS metrics.
+        Get most relevant ups measures.
 
         :return: dict
         """
