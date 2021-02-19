@@ -126,8 +126,8 @@ class UPSScraper:
             except ValueError:
                 pass
 
+            # try to login, if not authorized
             if "Unauthorized" in request.text:
-                # try to login, if not authorized
                 self.token_type, self.access_token = self.login()
                 return self.load_page(url)
 
