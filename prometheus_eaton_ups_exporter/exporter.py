@@ -43,46 +43,121 @@ class UPSExporter:
             powerbank_m = powerbank_details['measures']
             powerbank_s = powerbank_details['status']
 
-            relevant_measures = {
-                "ups_input_voltage_volts":
-                    inputs_rm['voltage'],
-                "ups_input_frequency_herz":
-                    inputs_rm['frequency'],
-                "ups_input_current_amperes":
-                    inputs_rm['current'],
-                "ups_output_voltage_volts":
-                    outputs_rm['voltage'],
-                "ups_output_frequency_herz":
-                    outputs_rm['frequency'],
-                "ups_output_current_amperes":
-                    outputs_rm['current'],
-                "ups_output_apparent_power_voltamperes":
-                    outputs_rm['apparentPower'],
-                "ups_output_active_power_watts":
-                    outputs_rm['activePower'],
-                "ups_output_power_factor":
-                    outputs_rm['powerFactor'],
-                "ups_output_load_percent":
-                    outputs_rm['percentLoad'],
-                "ups_battery_voltage_volts":
-                    powerbank_m['voltage'],
-                "ups_battery_capacity_percent":
-                    powerbank_m['remainingChargeCapacity'],
-                "ups_battery_remaining_seconds":
-                    powerbank_m['remainingTime'],
-                "ups_battery_health":
-                    powerbank_s['health']
-            }
+            gauge = GaugeMetricFamily(
+                "ups_input_voltage_volts",
+                'UPS input voltage (V)',
+                labels=['ups_id']
+            )
+            gauge.add_metric([ups_id], inputs_rm['voltage'])
+            yield gauge
 
-            for measure_label, value in relevant_measures.items():
+            gauge = GaugeMetricFamily(
+                "ups_input_frequency_herz",
+                'UPS input frequency (H)',
+                labels=['ups_id']
+            )
+            gauge.add_metric([ups_id],  inputs_rm['frequency'])
+            yield gauge
 
-                gauge = GaugeMetricFamily(
-                    measure_label,
-                    'Measure collected from the ups device',
-                    labels=['ups_id']
-                )
-                gauge.add_metric([ups_id], value)
-                yield gauge
+            gauge = GaugeMetricFamily(
+                "ups_input_current_amperes",
+                'UPS input current (A)',
+                labels=['ups_id']
+            )
+            gauge.add_metric([ups_id], inputs_rm['current'])
+            yield gauge
+
+            gauge = GaugeMetricFamily(
+                "ups_output_voltage_volts",
+                'UPS output voltage (V)',
+                labels=['ups_id']
+            )
+            gauge.add_metric([ups_id], outputs_rm['voltage'])
+            yield gauge
+
+            gauge = GaugeMetricFamily(
+                "ups_output_frequency_herz",
+                'UPS output frequency (H)',
+                labels=['ups_id']
+            )
+            gauge.add_metric([ups_id], outputs_rm['frequency'])
+            yield gauge
+
+            gauge = GaugeMetricFamily(
+                "ups_output_current_amperes",
+                'UPS output current (A)',
+                labels=['ups_id']
+            )
+            gauge.add_metric([ups_id], outputs_rm['current'])
+            yield gauge
+
+            gauge = GaugeMetricFamily(
+                "ups_output_apparent_power_voltamperes",
+                'UPS output apperent power (VA)',
+                labels=['ups_id']
+            )
+            gauge.add_metric([ups_id], outputs_rm['apparentPower'])
+            yield gauge
+
+            gauge = GaugeMetricFamily(
+                "ups_output_active_power_watts",
+                'UPS output active power (W)',
+                labels=['ups_id']
+            )
+            gauge.add_metric([ups_id], outputs_rm['activePower'])
+            yield gauge
+
+            gauge = GaugeMetricFamily(
+                "ups_output_power_factor",
+                'UPS output power factor',
+                labels=['ups_id']
+            )
+            gauge.add_metric([ups_id], outputs_rm['powerFactor'])
+            yield gauge
+
+            gauge = GaugeMetricFamily(
+                "ups_output_load_ratio",
+                'UPS output load ratio',
+                labels=['ups_id']
+            )
+            gauge.add_metric([ups_id], int(outputs_rm['percentLoad'])/100)
+            yield gauge
+
+            gauge = GaugeMetricFamily(
+                "ups_battery_voltage_volts",
+                'UPS battery voltage (V)',
+                labels=['ups_id']
+            )
+            gauge.add_metric([ups_id], powerbank_m['voltage'])
+            yield gauge
+
+            gauge = GaugeMetricFamily(
+                "ups_battery_capacity_ratio",
+                'UPS remaining battery charge capacity ratio',
+                labels=['ups_id']
+            )
+            gauge.add_metric(
+                [ups_id], int(powerbank_m['remainingChargeCapacity'])/100
+            )
+            yield gauge
+
+            gauge = GaugeMetricFamily(
+                "ups_battery_remaining_seconds",
+                'UPS remaining battery time (s)',
+                labels=['ups_id']
+            )
+            gauge.add_metric([ups_id], powerbank_m['remainingTime'])
+            yield gauge
+
+            gauge = GaugeMetricFamily(
+                "ups_battery_health",
+                'UPS health status',
+                labels=['ups_id']
+            )
+            gauge.add_metric([ups_id], powerbank_s['health'])
+            yield gauge
+
+
 
     def scrape_data(self) -> list:
         """
