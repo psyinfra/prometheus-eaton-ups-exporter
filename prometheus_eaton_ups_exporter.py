@@ -57,6 +57,10 @@ def main():
         if listen_address:
             if ':' in listen_address:
                 host_address, port = tuple(listen_address.split(':'))
+                if host_address == "":
+                    host_address = DEFAULT_HOST
+                if port == "":
+                    port = DEFAULT_PORT
             else:
                 host_address = listen_address
 
