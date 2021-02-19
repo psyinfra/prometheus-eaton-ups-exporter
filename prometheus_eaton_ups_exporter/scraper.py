@@ -16,18 +16,18 @@ from prometheus_eaton_ups_exporter.scraper_globals import LOGIN_AUTH_PATH, \
 
 class UPSScraper:
     """
-    Create a UPS Scraper based on the UPS API.
+    Create a UPS Scraper based on the Eaton UPS's API.
 
     :param ups_address: str
-        Address to a ups device, either an IP address or a dns entry
+        Address to a UPS, either an IP address or a DNS hostname
     :param authentication: (username: str, password: str)
-        Username and password for the WEB UI on that UPS device
+        Username and password for the web UI of the UPS
     :param name: str
-        Name of the UPS device.
+        Name of the UPS.
         Used as identifier to differentiate
-        between multiple ups devices.
+        between multiple UPSs.
     :param insecure: bool
-        Whether to allow a connection to an insecure UPS API
+        Whether to connect to UPSs with self-signed SSL certificates
 
     """
     def __init__(self,
@@ -53,7 +53,7 @@ class UPSScraper:
         """
         Login to the UPS Web UI.
 
-        Based on analysing the UPS Web UI this will create a POST request
+        Based on analysing the UPS Web UI, this will create a POST request
         with the authentication details to successfully create a session
         on the specified UPS device.
 
@@ -68,7 +68,7 @@ class UPSScraper:
             login_request = self.session.post(
                 self.ups_address + LOGIN_AUTH_PATH,
                 headers=LOGIN_HEADERS,
-                data=json.dumps(data),  # needs to be json encoded
+                data=json.dumps(data),  # needs to be JSON encoded
                 timeout=LOGIN_TIMEOUT
             )
             login_response = login_request.json()
@@ -99,7 +99,7 @@ class UPSScraper:
         """
         Load a webpage of the UPS Web UI or API.
 
-        This will try to load the page by the given url.
+        This will try to load the page by the given URL.
         If authentication is needed first, the login function gets executed
         before loading the specified page.
 
@@ -133,7 +133,7 @@ class UPSScraper:
 
     def get_measures(self) -> dict:
         """
-        Get most relevant ups measures.
+        Get most relevant UPS metrics.
 
         :return: dict
         """
