@@ -82,10 +82,10 @@ class UPSScraper:
 
             return token_type, access_token
         except KeyError:
-            print("Authentication failed")
+            print(f"Authentication failed on ({self.ups_address})")
             sys.exit(AUTHENTICATION_FAILED)
         except SSLError as err:
-            print("Connection refused")
+            print("Connection refused on ({self.ups_address})")
             if 'CERTIFICATE_VERIFY_FAILED' in str(err):
                 print("Try -k to allow insecure server "
                       "connections when using SSL")
