@@ -44,7 +44,7 @@ class UPSExporter:
             powerbank_s = powerbank_details['status']
 
             gauge = GaugeMetricFamily(
-                "ups_input_volts",
+                "eaton_ups_input_volts",
                 'UPS input voltage (V)',
                 labels=['ups_id']
             )
@@ -52,7 +52,7 @@ class UPSExporter:
             yield gauge
 
             gauge = GaugeMetricFamily(
-                "ups_input_herz",
+                "eaton_ups_input_herz",
                 'UPS input frequency (H)',
                 labels=['ups_id']
             )
@@ -60,7 +60,7 @@ class UPSExporter:
             yield gauge
 
             gauge = GaugeMetricFamily(
-                "ups_input_amperes",
+                "eaton_ups_input_amperes",
                 'UPS input current (A)',
                 labels=['ups_id']
             )
@@ -68,7 +68,7 @@ class UPSExporter:
             yield gauge
 
             gauge = GaugeMetricFamily(
-                "ups_output_volts",
+                "eaton_ups_output_volts",
                 'UPS output voltage (V)',
                 labels=['ups_id']
             )
@@ -76,7 +76,7 @@ class UPSExporter:
             yield gauge
 
             gauge = GaugeMetricFamily(
-                "ups_output_herz",
+                "eaton_ups_output_herz",
                 'UPS output frequency (H)',
                 labels=['ups_id']
             )
@@ -84,7 +84,7 @@ class UPSExporter:
             yield gauge
 
             gauge = GaugeMetricFamily(
-                "ups_output_amperes",
+                "eaton_ups_output_amperes",
                 'UPS output current (A)',
                 labels=['ups_id']
             )
@@ -92,7 +92,7 @@ class UPSExporter:
             yield gauge
 
             gauge = GaugeMetricFamily(
-                "ups_output_voltamperes",
+                "eaton_ups_output_voltamperes",
                 'UPS output apparent power (VA)',
                 labels=['ups_id']
             )
@@ -100,7 +100,7 @@ class UPSExporter:
             yield gauge
 
             gauge = GaugeMetricFamily(
-                "ups_output_watts",
+                "eaton_ups_output_watts",
                 'UPS output active power (W)',
                 labels=['ups_id']
             )
@@ -108,7 +108,7 @@ class UPSExporter:
             yield gauge
 
             gauge = GaugeMetricFamily(
-                "ups_output_power_factor",
+                "eaton_ups_output_power_factor",
                 'UPS output power factor',
                 labels=['ups_id']
             )
@@ -116,7 +116,7 @@ class UPSExporter:
             yield gauge
 
             gauge = GaugeMetricFamily(
-                "ups_output_load_ratio",
+                "eaton_ups_output_load_ratio",
                 'UPS output load ratio',
                 labels=['ups_id']
             )
@@ -124,7 +124,7 @@ class UPSExporter:
             yield gauge
 
             gauge = GaugeMetricFamily(
-                "ups_battery_volts",
+                "eaton_ups_battery_volts",
                 'UPS battery voltage (V)',
                 labels=['ups_id']
             )
@@ -132,7 +132,7 @@ class UPSExporter:
             yield gauge
 
             gauge = GaugeMetricFamily(
-                "ups_battery_capacity_ratio",
+                "eaton_ups_battery_capacity_ratio",
                 'UPS remaining battery charge capacity ratio',
                 labels=['ups_id']
             )
@@ -142,7 +142,7 @@ class UPSExporter:
             yield gauge
 
             gauge = GaugeMetricFamily(
-                "ups_battery_remaining_seconds",
+                "eaton_ups_battery_remaining_seconds",
                 'UPS remaining battery time (s)',
                 labels=['ups_id']
             )
@@ -150,7 +150,7 @@ class UPSExporter:
             yield gauge
 
             gauge = GaugeMetricFamily(
-                "ups_battery_health",
+                "eaton_ups_battery_health",
                 'UPS health status',
                 labels=['ups_id']
             )
