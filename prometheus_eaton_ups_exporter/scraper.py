@@ -31,6 +31,7 @@ class UPSScraper:
         Whether to connect to UPSs with self-signed SSL certificates
 
     """
+
     def __init__(self,
                  ups_address,
                  authentication,
@@ -82,21 +83,33 @@ class UPSScraper:
 
             return token_type, access_token
         except KeyError:
-            print(f"Authentication failed on ({self.ups_address})")
-            sys.exit(AUTHENTICATION_FAILED)
+            raise self.LoginFailedExcepion(
+                AUTHENTICATION_FAILED,
+                f"Authentication failed on ({self.ups_address})"
+            ) from None
         except SSLError as err:
             print("Connection refused on ({self.ups_address})")
             if 'CERTIFICATE_VERIFY_FAILED' in str(err):
-                print("Try -k to allow insecure server "
-                      "connections when using SSL")
-                sys.exit(CERTIFICATE_VERIFY_FAILED)
-            sys.exit(SSL_ERROR)
+                # print("Try -k to allow insecure server "
+                #       "connections when using SSL")
+                raise self.LoginFailedException(
+                    CERTIFICATE_VERIFY_FAILED,
+                    "Invalid certificate, connection to host failed"
+                )
+            raise self.LoginFailedException(
+                SSL_ERROR,
+                "Connection refused due to an SSL Error"
+            ) from None
         except ConnectionError:
-            print("Connection refused")
-            sys.exit(CONNECTION_ERROR)
+            raise self.LoginFailedException(
+                CONNECTION_ERROR,
+                "Connection refused, host might be out of reach."
+            ) from None
         except ReadTimeout:
-            print(f"Login Timeout > {LOGIN_TIMEOUT} seconds")
-            sys.exit(TIMEOUT_ERROR)
+            raise self.LoginFailedException(
+                TIMEOUT_ERROR,
+                f"Login Timeout > {LOGIN_TIMEOUT} seconds"
+            ) from None
 
     def load_page(self, url) -> Response:
         """
@@ -109,12 +122,12 @@ class UPSScraper:
         :param url: ups web url
         :return: request.Response
         """
+        headers = {
+            "Connection": "keep-alive",
+            "Authorization": f"{self.token_type} {self.access_token}",
+        }
 
         try:
-            headers = {
-                "Connection": "keep-alive",
-                "Authorization": f"{self.token_type} {self.access_token}",
-            }
             request = self.session.get(
                 url,
                 headers=headers,
@@ -140,14 +153,16 @@ class UPSScraper:
             return request
         except ConnectionError:
             self.logger.debug('Connection Error try to login again')
-            self.token_type, self.access_token = self.login()
-            return self.load_page(url)
-        except ReadTimeout:
-            print(f"Request Timeout > {REQUEST_TIMEOUT} seconds")
-            sys.exit(TIMEOUT_ERROR)
-        except MissingSchema as err:
-            print(err)
-            sys.exit(MISSING_SCHEMA)
+            try:
+                self.token_type, self.access_token = self.login()
+                return self.load_page(url)
+            except self.LoginFailedException as err:
+                self.logger.error(err)
+                print(f"Login failed after trying to reconnect on {url}\n"
+                      f"({err.message})")
+        except self.LoginFailedException as err:
+            self.logger.error(err)
+            print(f"Login failed on {url} ({err.message})")
 
     def get_measures(self) -> dict:
         """
@@ -193,3 +208,16 @@ class UPSScraper:
             "ups_outputs": outputs,
             "ups_powerbank": powerbank
         }
+
+    class LoginFailedException(Exception):
+
+        """Exception raised for errors in the input.
+
+        Attributes:
+            expression -- input expression in which the error occurred
+            message -- explanation of the error
+        """
+
+        def __init__(self, exit_code, message):
+            self.exit_code = exit_code
+            self.message = message
