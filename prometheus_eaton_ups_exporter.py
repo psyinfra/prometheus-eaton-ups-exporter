@@ -43,6 +43,13 @@ def parse_args():
         default=False
     )
 
+    parser.add_argument(
+        '-v', '--verbose',
+        action='store_true',
+        help='Turn on verbose mode. For development purposes only.',
+        default=False
+    )
+
     return parser.parse_args()
 
 
