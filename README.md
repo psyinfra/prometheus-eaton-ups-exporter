@@ -40,7 +40,8 @@ optional arguments:
   -c CONFIG, --config CONFIG
                         Configuration JSON file containing UPS addresses and login info
   -k, --insecure        Allow the exporter to connect to UPSs with self-signed SSL certificates
-
+  -t, --threading       Whether to use multi-threading for scraping (faster)
+  -v, --verbose         Be more verbose
 ```
 
 ## Defaults:
