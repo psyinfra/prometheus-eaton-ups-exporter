@@ -1,11 +1,10 @@
 """REST API web scraper for Eaton UPS measure data."""
-import sys
 import json
 
 import urllib3
 from requests import Session, Response
 from requests.exceptions import SSLError, ConnectionError,\
-    ReadTimeout, MissingSchema
+    ReadTimeout
 
 from prometheus_eaton_ups_exporter import create_logger
 from prometheus_eaton_ups_exporter.scraper_globals import LOGIN_AUTH_PATH, \
@@ -29,9 +28,9 @@ class UPSScraper:
         between multiple UPSs.
     :param insecure: bool
         Whether to connect to UPSs with self-signed SSL certificates
-
+    :param verbose: bool
+        Turn on verbose mode for development
     """
-
     def __init__(self,
                  ups_address,
                  authentication,
@@ -80,7 +79,8 @@ class UPSScraper:
             access_token = login_response['access_token']
 
             self.logger.debug(
-                f"Authentication successful on ({self.ups_address})"
+                "Authentication successful on (%s)",
+                self.ups_address
             )
 
             return token_type, access_token
@@ -96,7 +96,7 @@ class UPSScraper:
                 raise LoginFailedException(
                     CERTIFICATE_VERIFY_FAILED,
                     "Invalid certificate, connection to host failed"
-                )
+                ) from None
             raise LoginFailedException(
                 SSL_ERROR,
                 "Connection refused due to an SSL Error"
@@ -169,7 +169,6 @@ class UPSScraper:
 
         :return: dict
         """
-
         try:
             power_dist_request = self.load_page(
                 self.ups_address+REST_API_PATH
@@ -216,4 +215,3 @@ class UPSScraper:
             return None
         except Exception:
             raise
-
