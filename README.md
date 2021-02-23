@@ -30,7 +30,7 @@ UPSs to monitor and their credentials are defined in a config file. See
 `config.json` for an example.
 
 ```
-./prometheus_eaton_ups_exporter.py [-h] -c CONFIG [--web.listen-address WEB.LISTEN_ADDRESS] [-k]
+./prometheus_eaton_ups_exporter.py [-h] -c CONFIG [--web.listen-address WEB.LISTEN_ADDRESS] [-k] [-t] [-v]
 
 optional arguments:
   -h, --help            show this help message and exit
