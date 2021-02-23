@@ -1,17 +1,17 @@
 """REST API web scraper for Eaton UPS measure data."""
-import sys
 import json
 
 import urllib3
 from requests import Session, Response
 from requests.exceptions import SSLError, ConnectionError,\
-    ReadTimeout, MissingSchema
+    ReadTimeout
 
+from prometheus_eaton_ups_exporter import create_logger
 from prometheus_eaton_ups_exporter.scraper_globals import LOGIN_AUTH_PATH, \
     REST_API_PATH, INPUT_MEMBER_ID, OUTPUT_MEMBER_ID, \
     LOGIN_DATA, LOGIN_TIMEOUT, REQUEST_TIMEOUT, \
     AUTHENTICATION_FAILED, SSL_ERROR, CERTIFICATE_VERIFY_FAILED,\
-    CONNECTION_ERROR, TIMEOUT_ERROR, MISSING_SCHEMA
+    CONNECTION_ERROR, TIMEOUT_ERROR, LoginFailedException
 
 
 class UPSScraper:
@@ -28,17 +28,20 @@ class UPSScraper:
         between multiple UPSs.
     :param insecure: bool
         Whether to connect to UPSs with self-signed SSL certificates
-
+    :param verbose: bool
+        Allow logging output for development.
     """
     def __init__(self,
                  ups_address,
                  authentication,
                  name=None,
-                 insecure=False):
+                 insecure=False,
+                 verbose=False):
         self.ups_address = ups_address
         self.username, self.password = authentication
         self.name = name
         self.session = Session()
+        self.logger = create_logger(__name__, not verbose)
 
         self.session.verify = not insecure  # ignore self signed certificate
         if not self.session.verify:
@@ -59,7 +62,6 @@ class UPSScraper:
 
         :return: two for the authentication necessary string values
         """
-
         try:
             data = LOGIN_DATA
             data["username"] = self.username
@@ -75,25 +77,40 @@ class UPSScraper:
             token_type = login_response['token_type']
             access_token = login_response['access_token']
 
-            print(f"Authentication successful on ({self.ups_address})")
+            self.logger.debug(
+                "Authentication successful on (%s)",
+                self.ups_address
+            )
 
             return token_type, access_token
         except KeyError:
-            print("Authentication failed")
-            sys.exit(AUTHENTICATION_FAILED)
+            raise LoginFailedException(
+                AUTHENTICATION_FAILED,
+                f"Authentication failed on ({self.ups_address})"
+            ) from None
         except SSLError as err:
-            print("Connection refused")
             if 'CERTIFICATE_VERIFY_FAILED' in str(err):
-                print("Try -k to allow insecure server "
-                      "connections when using SSL")
-                sys.exit(CERTIFICATE_VERIFY_FAILED)
-            sys.exit(SSL_ERROR)
+                # print("Try -k to allow insecure server "
+                #       "connections when using SSL")
+                raise LoginFailedException(
+                    CERTIFICATE_VERIFY_FAILED,
+                    "Invalid certificate, connection to host failed"
+                ) from None
+            raise LoginFailedException(
+                SSL_ERROR,
+                "Connection refused due to an SSL Error"
+            ) from None
         except ConnectionError:
-            print("Connection refused")
-            sys.exit(CONNECTION_ERROR)
+            raise LoginFailedException(
+                CONNECTION_ERROR,
+                "Connection refused, host might be out of reach."
+            ) from None
         except ReadTimeout:
-            print(f"Login Timeout > {LOGIN_TIMEOUT} seconds")
-            sys.exit(TIMEOUT_ERROR)
+            raise LoginFailedException(
+                TIMEOUT_ERROR,
+                f"Login Timeout > {LOGIN_TIMEOUT} seconds,\n"
+                f"check your username and password"
+            ) from None
 
     def load_page(self, url) -> Response:
         """
@@ -106,12 +123,12 @@ class UPSScraper:
         :param url: ups web url
         :return: request.Response
         """
+        headers = {
+            "Connection": "keep-alive",
+            "Authorization": f"{self.token_type} {self.access_token}",
+        }
 
         try:
-            headers = {
-                "Connection": "keep-alive",
-                "Authorization": f"{self.token_type} {self.access_token}",
-            }
             request = self.session.get(
                 url,
                 headers=headers,
@@ -121,6 +138,7 @@ class UPSScraper:
             # Session might be expired, connect again
             try:
                 if "errorCode" in request.json():
+                    self.logger.debug('Session expired, reconnect')
                     self.token_type, self.access_token = self.login()
                     return self.load_page(url)
             except ValueError:
@@ -128,61 +146,76 @@ class UPSScraper:
 
             # try to login, if not authorized
             if "Unauthorized" in request.text:
+                self.logger.debug('Unauthorized, try to login')
                 self.token_type, self.access_token = self.login()
                 return self.load_page(url)
 
+            self.logger.debug('GET %s', url)
             return request
         except ConnectionError:
-            self.token_type, self.access_token = self.login()
-            return self.load_page(url)
-        except ReadTimeout:
-            print(f"Request Timeout > {REQUEST_TIMEOUT} seconds")
-            sys.exit(TIMEOUT_ERROR)
-        except MissingSchema as err:
-            print(err)
-            sys.exit(MISSING_SCHEMA)
+            self.logger.debug('Connection Error try to login again')
+            try:
+                self.token_type, self.access_token = self.login()
+                return self.load_page(url)
+            except LoginFailedException:
+                raise
+        except LoginFailedException:
+            raise
 
     def get_measures(self) -> dict:
         """
         Get most relevant UPS metrics.
 
-        :return: dict
-        """
-        power_dist_request = self.load_page(
-            self.ups_address+REST_API_PATH
-        )
-        power_dist_overview = power_dist_request.json()
-
-        if not self.name:
-            self.name = f"ups_{power_dist_overview['id']}"
-
-        ups_inputs_api = power_dist_overview['inputs']['@id']
-        ups_ouptups_api = power_dist_overview['outputs']['@id']
-
-        inputs_request = self.load_page(
-            self.ups_address + ups_inputs_api + f'/{INPUT_MEMBER_ID}'
-        )
-        inputs = inputs_request.json()
-
-        outputs_request = self.load_page(
-            self.ups_address + ups_ouptups_api + f'/{OUTPUT_MEMBER_ID}'
-        )
-        outputs = outputs_request.json()
-
-        ups_backup_sys_api = power_dist_overview['backupSystem']['@id']
-        backup_request = self.load_page(
-            self.ups_address + ups_backup_sys_api
-        )
-        backup = backup_request.json()
-        ups_powerbank_api = backup['powerBank']['@id']
-        powerbank_request = self.load_page(
-            self.ups_address + ups_powerbank_api
-        )
-        powerbank = powerbank_request.json()
-
-        return {
+        :return: {
             "ups_id": self.name,
             "ups_inputs": inputs,
             "ups_outputs": outputs,
             "ups_powerbank": powerbank
-        }
+            }
+        """
+        try:
+            power_dist_request = self.load_page(
+                self.ups_address+REST_API_PATH
+            )
+            power_dist_overview = power_dist_request.json()
+
+            if not self.name:
+                self.name = f"ups_{power_dist_overview['id']}"
+
+            ups_inputs_api = power_dist_overview['inputs']['@id']
+            ups_ouptups_api = power_dist_overview['outputs']['@id']
+
+            inputs_request = self.load_page(
+                self.ups_address + ups_inputs_api + f'/{INPUT_MEMBER_ID}'
+            )
+            inputs = inputs_request.json()
+
+            outputs_request = self.load_page(
+                self.ups_address + ups_ouptups_api + f'/{OUTPUT_MEMBER_ID}'
+            )
+            outputs = outputs_request.json()
+
+            ups_backup_sys_api = power_dist_overview['backupSystem']['@id']
+            backup_request = self.load_page(
+                self.ups_address + ups_backup_sys_api
+            )
+            backup = backup_request.json()
+            ups_powerbank_api = backup['powerBank']['@id']
+            powerbank_request = self.load_page(
+                self.ups_address + ups_powerbank_api
+            )
+            powerbank = powerbank_request.json()
+
+            return {
+                "ups_id": self.name,
+                "ups_inputs": inputs,
+                "ups_outputs": outputs,
+                "ups_powerbank": powerbank
+            }
+        except LoginFailedException as err:
+            self.logger.debug(err)
+            print(f"{err.__class__.__name__} - ({self.ups_address}): "
+                  f"{err.message}")
+            return None
+        except Exception:
+            raise

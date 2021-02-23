@@ -43,6 +43,20 @@ def parse_args():
         default=False
     )
 
+    parser.add_argument(
+        '-t', '--threading',
+        action='store_true',
+        help='Whether to use multi-threading for scraping (faster)',
+        default=False
+    )
+
+    parser.add_argument(
+        '-v', '--verbose',
+        action='store_true',
+        help='Turn on verbose mode. For development purposes only.',
+        default=False
+    )
+
     return parser.parse_args()
 
 
@@ -65,7 +79,9 @@ def main():
         REGISTRY.register(
             UPSMultiExporter(
                 args.config,
-                insecure=args.insecure
+                insecure=args.insecure,
+                verbose=args.verbose,
+                threading=args.threading
             )
         )
 
