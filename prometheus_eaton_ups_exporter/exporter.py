@@ -1,14 +1,16 @@
 """Create and run a Prometheus Exporter for an Eaton UPS."""
 import json
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures._base import TimeoutError
 from prometheus_client.core import GaugeMetricFamily
 
 from prometheus_eaton_ups_exporter import create_logger
 from prometheus_eaton_ups_exporter.scraper import UPSScraper
 
-from prometheus_eaton_ups_exporter import create_logger
-
 NORMAL_EXECUTION = 0
+# this should be higher than the Login Timeout in scraper_globals
+WAIT_FOR_RESPONSE = 7
 
 
 class UPSExporter:
@@ -22,6 +24,7 @@ class UPSExporter:
     :param insecure: bool
         Whether to connect to UPSs with self-signed SSL certificates
     """
+
     def __init__(
             self,
             ups_address,
@@ -44,6 +47,9 @@ class UPSExporter:
 
         ups_data = self.scrape_data()
         for measures in ups_data:
+            if not measures:
+                continue
+
             ups_id = measures.get('ups_id')
             inputs = measures.get('ups_inputs')
             outputs = measures.get('ups_outputs')
@@ -66,7 +72,7 @@ class UPSExporter:
                 'UPS input frequency (H)',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id],  inputs_rm['frequency'])
+            gauge.add_metric([ups_id], inputs_rm['frequency'])
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -130,7 +136,7 @@ class UPSExporter:
                 'UPS output load ratio',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], int(outputs_rm['percentLoad'])/100)
+            gauge.add_metric([ups_id], int(outputs_rm['percentLoad']) / 100)
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -147,7 +153,7 @@ class UPSExporter:
                 labels=['ups_id']
             )
             gauge.add_metric(
-                [ups_id], int(powerbank_m['remainingChargeCapacity'])/100
+                [ups_id], int(powerbank_m['remainingChargeCapacity']) / 100
             )
             yield gauge
 
@@ -166,8 +172,6 @@ class UPSExporter:
             )
             gauge.add_metric([ups_id], powerbank_s['health'])
             yield gauge
-
-
 
     def scrape_data(self) -> list:
         """
@@ -192,19 +196,31 @@ class UPSMultiExporter(UPSExporter):
         and password combinations for all UPSs to be monitored
     :param insecure: bool
         Whether to connect to UPSs with self-signed SSL certificates
+    :param verbose:
+        Allow logging output for development.
     """
-    def __init__(self, config=str, insecure=False):
-        self.ups_devices = self.get_ups_devices(config, insecure)
 
-    @staticmethod
-    def get_ups_devices(config, insecure) -> list:
+    def __init__(
+            self,
+            config=str,
+            insecure=False,
+            threading=False,
+            verbose=False
+    ):
+        self.logger = create_logger(
+            f"{__name__}.{self.__class__.__name__}", not verbose
+        )
+        self.insecure = insecure
+        self.threading = threading
+        self.verbose = verbose
+        self.ups_devices = self.get_ups_devices(config)
+
+    def get_ups_devices(self, config) -> list:
         """
         Creates multiple UPSScraper.
 
         :param config: str
             Path to a JSON-based config file
-        :param insecure:
-            Whether to connect to UPSs with self-signed SSL certificates
         :return: list
             List of UPSScrapers
         """
@@ -212,8 +228,14 @@ class UPSMultiExporter(UPSExporter):
             data = json.load(json_file)
 
         return [
-            UPSScraper(v['address'], (v['user'], v['password']), k, insecure)
-            for k, v in data.items()
+            UPSScraper(
+                value['address'],
+                (value['user'], value['password']),
+                key,
+                insecure=self.insecure,
+                verbose=self.verbose
+            )
+            for key, value in data.items()
         ]
 
     def scrape_data(self) -> list:
@@ -223,6 +245,18 @@ class UPSMultiExporter(UPSExporter):
         :return: list
             List with measurements from each UPS
         """
-        return [
-            ups.get_measures() for ups in self.ups_devices
-        ]
+        if self.threading:
+            with ThreadPoolExecutor() as executor:
+                futures = [
+                    executor.submit(ups.get_measures)
+                    for ups in self.ups_devices
+                ]
+                try:
+                    for future in as_completed(futures, WAIT_FOR_RESPONSE):
+                        yield future.result()
+                except TimeoutError:
+                    pass
+
+        else:
+            for ups in self.ups_devices:
+                yield ups.get_measures()
