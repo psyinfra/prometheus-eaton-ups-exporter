@@ -23,14 +23,14 @@ The exporter can monitor multiple UPSs.
 
 ## Supported Devices:
 * Eaton 5P 1550iR ([user guide](https://www.eaton.com/content/dam/eaton/products/backup-power-ups-surge-it-power-distribution/power-management-software-connectivity/eaton-gigabit-network-card/eaton-network-m2-user-guide.pdf))
-* Other devices might also work, if they use the same API
+* Other models may also work if they use the same API
 
 ## Usage:
 UPSs to monitor and their credentials are defined in a config file. See
 `config.json` for an example.
 
 ```
-./prometheus_eaton_ups_exporter.py [-h] -c CONFIG [-p PORT] [--web.listen-address WEB.LISTEN_ADDRESS] [-k]
+./prometheus_eaton_ups_exporter.py [-h] -c CONFIG [--web.listen-address WEB.LISTEN_ADDRESS] [-k]
 
 optional arguments:
   -h, --help            show this help message and exit
