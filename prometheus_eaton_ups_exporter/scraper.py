@@ -29,7 +29,7 @@ class UPSScraper:
     :param insecure: bool
         Whether to connect to UPSs with self-signed SSL certificates
     :param verbose: bool
-        Turn on verbose mode for development
+        Allow logging output for development.
     """
     def __init__(self,
                  ups_address,
@@ -62,7 +62,6 @@ class UPSScraper:
 
         :return: two for the authentication necessary string values
         """
-
         try:
             data = LOGIN_DATA
             data["username"] = self.username
@@ -167,7 +166,12 @@ class UPSScraper:
         """
         Get most relevant UPS metrics.
 
-        :return: dict
+        :return: {
+            "ups_id": self.name,
+            "ups_inputs": inputs,
+            "ups_outputs": outputs,
+            "ups_powerbank": powerbank
+            }
         """
         try:
             power_dist_request = self.load_page(

@@ -23,8 +23,9 @@ class UPSExporter:
         Username and password for the web UI of the UPS
     :param insecure: bool
         Whether to connect to UPSs with self-signed SSL certificates
+    :param verbose: bool
+        Allow logging output for development.
     """
-
     def __init__(
             self,
             ups_address,
@@ -44,7 +45,6 @@ class UPSExporter:
 
     def collect(self):
         """Export UPS metrics on request"""
-
         ups_data = self.scrape_data()
         for measures in ups_data:
             if not measures:
@@ -196,7 +196,10 @@ class UPSMultiExporter(UPSExporter):
         and password combinations for all UPSs to be monitored
     :param insecure: bool
         Whether to connect to UPSs with self-signed SSL certificates
-    :param verbose:
+    :param threading: bool
+        Whether to use multiple threads to scrape the data 'parallel'.
+        This is surely the best way to increase the speed
+    :param verbose: bool
         Allow logging output for development.
     """
 
