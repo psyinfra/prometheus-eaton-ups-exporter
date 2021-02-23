@@ -7,6 +7,7 @@ from requests import Session, Response
 from requests.exceptions import SSLError, ConnectionError,\
     ReadTimeout, MissingSchema
 
+from prometheus_eaton_ups_exporter import create_logger
 from prometheus_eaton_ups_exporter.scraper_globals import LOGIN_AUTH_PATH, \
     REST_API_PATH, INPUT_MEMBER_ID, OUTPUT_MEMBER_ID, \
     LOGIN_DATA, LOGIN_TIMEOUT, REQUEST_TIMEOUT, \
@@ -34,11 +35,13 @@ class UPSScraper:
                  ups_address,
                  authentication,
                  name=None,
-                 insecure=False):
+                 insecure=False,
+                 verbose=False):
         self.ups_address = ups_address
         self.username, self.password = authentication
         self.name = name
         self.session = Session()
+        self.logger = create_logger(__name__, not verbose)
 
         self.session.verify = not insecure  # ignore self signed certificate
         if not self.session.verify:
@@ -75,7 +78,7 @@ class UPSScraper:
             token_type = login_response['token_type']
             access_token = login_response['access_token']
 
-            print(f"Authentication successful on ({self.ups_address})")
+            self.logger.debug(f"Authentication successful on ({self.ups_address})")
 
             return token_type, access_token
         except KeyError:
@@ -121,6 +124,7 @@ class UPSScraper:
             # Session might be expired, connect again
             try:
                 if "errorCode" in request.json():
+                    self.logger.debug('Session expired, reconnect')
                     self.token_type, self.access_token = self.login()
                     return self.load_page(url)
             except ValueError:
@@ -128,11 +132,14 @@ class UPSScraper:
 
             # try to login, if not authorized
             if "Unauthorized" in request.text:
+                self.logger.debug('Unauthorized, try to login')
                 self.token_type, self.access_token = self.login()
                 return self.load_page(url)
 
+            self.logger.debug(f'GET {url}')
             return request
         except ConnectionError:
+            self.logger.debug('Connection Error try to login again')
             self.token_type, self.access_token = self.login()
             return self.load_page(url)
         except ReadTimeout:

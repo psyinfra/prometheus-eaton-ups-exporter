@@ -72,7 +72,8 @@ def main():
         REGISTRY.register(
             UPSMultiExporter(
                 args.config,
-                insecure=args.insecure
+                insecure=args.insecure,
+                verbose=args.verbose
             )
         )
 

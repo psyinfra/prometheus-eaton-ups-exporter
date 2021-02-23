@@ -4,6 +4,8 @@ import json
 from prometheus_client.core import GaugeMetricFamily
 from prometheus_eaton_ups_exporter.scraper import UPSScraper
 
+from prometheus_eaton_ups_exporter import create_logger
+
 NORMAL_EXECUTION = 0
 
 
@@ -22,11 +24,14 @@ class UPSExporter:
             self,
             ups_address,
             authentication,
-            insecure):
+            insecure=False,
+            verbose=False
+    ):
         self.ups_scraper = UPSScraper(
             ups_address,
             authentication,
-            insecure=insecure
+            insecure=insecure,
+            verbose=verbose
         )
 
     def collect(self):
