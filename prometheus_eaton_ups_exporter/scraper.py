@@ -150,7 +150,7 @@ class UPSScraper:
                 self.token_type, self.access_token = self.login()
                 return self.load_page(url)
 
-            self.logger.debug(f'GET {url}')
+            self.logger.debug('GET %s', url)
             return request
         except ConnectionError:
             self.logger.debug('Connection Error try to login again')
