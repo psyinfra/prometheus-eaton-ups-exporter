@@ -12,7 +12,7 @@ from prometheus_eaton_ups_exporter.scraper_globals import LOGIN_AUTH_PATH, \
     REST_API_PATH, INPUT_MEMBER_ID, OUTPUT_MEMBER_ID, \
     LOGIN_DATA, LOGIN_TIMEOUT, REQUEST_TIMEOUT, \
     AUTHENTICATION_FAILED, SSL_ERROR, CERTIFICATE_VERIFY_FAILED,\
-    CONNECTION_ERROR, TIMEOUT_ERROR, MISSING_SCHEMA
+    CONNECTION_ERROR, TIMEOUT_ERROR, LoginFailedException
 
 
 class UPSScraper:
@@ -79,36 +79,38 @@ class UPSScraper:
             token_type = login_response['token_type']
             access_token = login_response['access_token']
 
-            self.logger.debug(f"Authentication successful on ({self.ups_address})")
+            self.logger.debug(
+                f"Authentication successful on ({self.ups_address})"
+            )
 
             return token_type, access_token
         except KeyError:
-            raise self.LoginFailedExcepion(
+            raise LoginFailedException(
                 AUTHENTICATION_FAILED,
                 f"Authentication failed on ({self.ups_address})"
             ) from None
         except SSLError as err:
-            print("Connection refused on ({self.ups_address})")
             if 'CERTIFICATE_VERIFY_FAILED' in str(err):
                 # print("Try -k to allow insecure server "
                 #       "connections when using SSL")
-                raise self.LoginFailedException(
+                raise LoginFailedException(
                     CERTIFICATE_VERIFY_FAILED,
                     "Invalid certificate, connection to host failed"
                 )
-            raise self.LoginFailedException(
+            raise LoginFailedException(
                 SSL_ERROR,
                 "Connection refused due to an SSL Error"
             ) from None
         except ConnectionError:
-            raise self.LoginFailedException(
+            raise LoginFailedException(
                 CONNECTION_ERROR,
                 "Connection refused, host might be out of reach."
             ) from None
         except ReadTimeout:
-            raise self.LoginFailedException(
+            raise LoginFailedException(
                 TIMEOUT_ERROR,
-                f"Login Timeout > {LOGIN_TIMEOUT} seconds"
+                f"Login Timeout > {LOGIN_TIMEOUT} seconds,\n"
+                f"check your username and password"
             ) from None
 
     def load_page(self, url) -> Response:
@@ -156,13 +158,10 @@ class UPSScraper:
             try:
                 self.token_type, self.access_token = self.login()
                 return self.load_page(url)
-            except self.LoginFailedException as err:
-                self.logger.error(err)
-                print(f"Login failed after trying to reconnect on {url}\n"
-                      f"({err.message})")
-        except self.LoginFailedException as err:
-            self.logger.error(err)
-            print(f"Login failed on {url} ({err.message})")
+            except LoginFailedException:
+                raise
+        except LoginFailedException:
+            raise
 
     def get_measures(self) -> dict:
         """
@@ -170,54 +169,51 @@ class UPSScraper:
 
         :return: dict
         """
-        power_dist_request = self.load_page(
-            self.ups_address+REST_API_PATH
-        )
-        power_dist_overview = power_dist_request.json()
 
-        if not self.name:
-            self.name = f"ups_{power_dist_overview['id']}"
+        try:
+            power_dist_request = self.load_page(
+                self.ups_address+REST_API_PATH
+            )
+            power_dist_overview = power_dist_request.json()
 
-        ups_inputs_api = power_dist_overview['inputs']['@id']
-        ups_ouptups_api = power_dist_overview['outputs']['@id']
+            if not self.name:
+                self.name = f"ups_{power_dist_overview['id']}"
 
-        inputs_request = self.load_page(
-            self.ups_address + ups_inputs_api + f'/{INPUT_MEMBER_ID}'
-        )
-        inputs = inputs_request.json()
+            ups_inputs_api = power_dist_overview['inputs']['@id']
+            ups_ouptups_api = power_dist_overview['outputs']['@id']
 
-        outputs_request = self.load_page(
-            self.ups_address + ups_ouptups_api + f'/{OUTPUT_MEMBER_ID}'
-        )
-        outputs = outputs_request.json()
+            inputs_request = self.load_page(
+                self.ups_address + ups_inputs_api + f'/{INPUT_MEMBER_ID}'
+            )
+            inputs = inputs_request.json()
 
-        ups_backup_sys_api = power_dist_overview['backupSystem']['@id']
-        backup_request = self.load_page(
-            self.ups_address + ups_backup_sys_api
-        )
-        backup = backup_request.json()
-        ups_powerbank_api = backup['powerBank']['@id']
-        powerbank_request = self.load_page(
-            self.ups_address + ups_powerbank_api
-        )
-        powerbank = powerbank_request.json()
+            outputs_request = self.load_page(
+                self.ups_address + ups_ouptups_api + f'/{OUTPUT_MEMBER_ID}'
+            )
+            outputs = outputs_request.json()
 
-        return {
-            "ups_id": self.name,
-            "ups_inputs": inputs,
-            "ups_outputs": outputs,
-            "ups_powerbank": powerbank
-        }
+            ups_backup_sys_api = power_dist_overview['backupSystem']['@id']
+            backup_request = self.load_page(
+                self.ups_address + ups_backup_sys_api
+            )
+            backup = backup_request.json()
+            ups_powerbank_api = backup['powerBank']['@id']
+            powerbank_request = self.load_page(
+                self.ups_address + ups_powerbank_api
+            )
+            powerbank = powerbank_request.json()
 
-    class LoginFailedException(Exception):
+            return {
+                "ups_id": self.name,
+                "ups_inputs": inputs,
+                "ups_outputs": outputs,
+                "ups_powerbank": powerbank
+            }
+        except LoginFailedException as err:
+            self.logger.debug(err)
+            print(f"{err.__class__.__name__} - ({self.ups_address}): "
+                  f"{err.message}")
+            return None
+        except Exception:
+            raise
 
-        """Exception raised for errors in the input.
-
-        Attributes:
-            expression -- input expression in which the error occurred
-            message -- explanation of the error
-        """
-
-        def __init__(self, exit_code, message):
-            self.exit_code = exit_code
-            self.message = message
