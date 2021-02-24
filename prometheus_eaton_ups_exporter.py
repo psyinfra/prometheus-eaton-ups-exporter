@@ -97,6 +97,7 @@ def parse_args():
         '--login-timeout',
         type=float,
         help='The login timeout for the UPSs in seconds',
+        choices=[Range(0.01, 10)],
         default=3
     )
 
