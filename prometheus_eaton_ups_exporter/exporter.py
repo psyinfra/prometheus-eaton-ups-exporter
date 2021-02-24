@@ -70,8 +70,8 @@ class UPSExporter:
             yield gauge
 
             gauge = GaugeMetricFamily(
-                "eaton_ups_input_herz",
-                'UPS input frequency (H)',
+                "eaton_ups_input_hertz",
+                'UPS input frequency (Hz)',
                 labels=['ups_id']
             )
             gauge.add_metric([ups_id], inputs_rm['frequency'])
@@ -94,8 +94,8 @@ class UPSExporter:
             yield gauge
 
             gauge = GaugeMetricFamily(
-                "eaton_ups_output_herz",
-                'UPS output frequency (H)',
+                "eaton_ups_output_hertz",
+                'UPS output frequency (Hz)',
                 labels=['ups_id']
             )
             gauge.add_metric([ups_id], outputs_rm['frequency'])
@@ -135,7 +135,8 @@ class UPSExporter:
 
             gauge = GaugeMetricFamily(
                 "eaton_ups_output_load_ratio",
-                'UPS output load ratio',
+                "Ratio of the output apparent power vs. "
+                "the UPS's capacity in VA.",
                 labels=['ups_id']
             )
             gauge.add_metric([ups_id], int(outputs_rm['percentLoad']) / 100)
@@ -151,7 +152,7 @@ class UPSExporter:
 
             gauge = GaugeMetricFamily(
                 "eaton_ups_battery_capacity_ratio",
-                'UPS remaining battery charge capacity ratio',
+                'Ratio of the remaining charge vs the total battery capacity',
                 labels=['ups_id']
             )
             gauge.add_metric(
@@ -169,7 +170,8 @@ class UPSExporter:
 
             gauge = GaugeMetricFamily(
                 "eaton_ups_battery_health",
-                'UPS health status',
+                'UPS health status given as the '
+                'remaining lifetime (years) [uncertain]',
                 labels=['ups_id']
             )
             gauge.add_metric([ups_id], powerbank_s['health'])
