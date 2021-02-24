@@ -25,6 +25,8 @@ class UPSExporter:
         Whether to connect to UPSs with self-signed SSL certificates
     :param verbose: bool
         Allow logging output for development.
+    :param login_timeout: float
+        Login timeout for authentication
     """
     def __init__(
             self,
@@ -202,7 +204,9 @@ class UPSMultiExporter(UPSExporter):
         Whether to use multiple threads to scrape the data 'parallel'.
         This is surely the best way to increase the speed
     :param verbose: bool
-        Allow logging output for development.
+        Allow logging output for development
+    :param login_timeout: float
+        Login timeout for authentication
     """
 
     def __init__(

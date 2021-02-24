@@ -24,12 +24,13 @@ class UPSScraper:
         Username and password for the web UI of the UPS
     :param name: str
         Name of the UPS.
-        Used as identifier to differentiate
-        between multiple UPSs.
+        Used as identifier to differentiate between multiple UPSs.
     :param insecure: bool
         Whether to connect to UPSs with self-signed SSL certificates
     :param verbose: bool
-        Allow logging output for development.
+        Allow logging output for development
+    :param login_timeout: float
+        Login timeout for authentication
     """
     def __init__(self,
                  ups_address,
