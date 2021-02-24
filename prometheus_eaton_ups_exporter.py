@@ -7,6 +7,7 @@ import argparse
 from argparse import HelpFormatter, SUPPRESS, OPTIONAL, ZERO_OR_MORE
 
 from prometheus_client import start_http_server, REGISTRY
+from prometheus_eaton_ups_exporter.scraper_globals import REQUEST_TIMEOUT
 from prometheus_eaton_ups_exporter.exporter import UPSMultiExporter
 
 # Free port according to
@@ -97,7 +98,7 @@ def parse_args():
         '--login-timeout',
         type=float,
         help='The login timeout for the UPSs in seconds',
-        choices=[Range(0.01, 10)],
+        choices=[Range(REQUEST_TIMEOUT, 10)],
         default=3
     )
 
