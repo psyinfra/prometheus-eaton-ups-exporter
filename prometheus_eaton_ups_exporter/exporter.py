@@ -181,8 +181,7 @@ class UPSExporter:
         """
         Scrape measure data.
 
-        :return: list
-            Returns measures as a list with one entry
+        :return: measures
         """
         return [self.ups_scraper.get_measures()]
 
@@ -254,8 +253,7 @@ class UPSMultiExporter(UPSExporter):
         """
         Scrape measure data.
 
-        :return: list
-            List with measurements from each UPS
+        :return: measures
         """
         if self.threading:
             with ThreadPoolExecutor() as executor:
