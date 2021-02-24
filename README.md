@@ -20,7 +20,7 @@ The exporter can monitor multiple UPSs.
 - Battery Voltage (V)
 - Battery Capacity (%)
 - Battery Remaining Time (s)
-- Battery Health Status (is likely given as the remaining lifetime in years [uncertain, contribute to [#19](https://github.com/psyinfra/prometheus-eaton-ups-exporter/issues/19)])
+- Battery Health Status (given as the remaining lifetime in years [uncertain, contribute to [#19](https://github.com/psyinfra/prometheus-eaton-ups-exporter/issues/19)])
 
 ## Supported Devices:
 * Eaton 5P 1550iR ([user guide](https://www.eaton.com/content/dam/eaton/products/backup-power-ups-surge-it-power-distribution/power-management-software-connectivity/eaton-gigabit-network-card/eaton-network-m2-user-guide.pdf))
