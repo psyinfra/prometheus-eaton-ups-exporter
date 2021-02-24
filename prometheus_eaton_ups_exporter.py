@@ -112,14 +112,13 @@ def main():
         args = parse_args()
 
         listen_address = args.__getattribute__('web.listen_address')
-        if listen_address:
-            if ':' in listen_address:
-                host_address, port = listen_address.split(':')
-                if port == "":
-                    port = DEFAULT_PORT
-            else:
-                host_address = listen_address
+        if ':' in listen_address:
+            host_address, port = listen_address.split(':')
+            if port == "":
                 port = DEFAULT_PORT
+        else:
+            host_address = listen_address
+            port = DEFAULT_PORT
 
         REGISTRY.register(
             UPSMultiExporter(
