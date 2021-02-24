@@ -70,8 +70,8 @@ class UPSExporter:
             yield gauge
 
             gauge = GaugeMetricFamily(
-                "eaton_ups_input_herz",
-                'UPS input frequency (H)',
+                "eaton_ups_input_hertz",
+                'UPS input frequency (Hz)',
                 labels=['ups_id']
             )
             gauge.add_metric([ups_id], inputs_rm['frequency'])
@@ -94,8 +94,8 @@ class UPSExporter:
             yield gauge
 
             gauge = GaugeMetricFamily(
-                "eaton_ups_output_herz",
-                'UPS output frequency (H)',
+                "eaton_ups_output_hertz",
+                'UPS output frequency (Hz)',
                 labels=['ups_id']
             )
             gauge.add_metric([ups_id], outputs_rm['frequency'])
