@@ -155,6 +155,8 @@ class UPSScraper:
                             AUTHENTICATION_FAILED,
                             "Authentication failed"
                         ) from err
+                    else:
+                        raise err
 
             self.logger.debug('GET %s', url)
             return request
