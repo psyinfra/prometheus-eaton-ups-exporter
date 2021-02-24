@@ -48,7 +48,7 @@ class Range(object):
         return self.start <= other <= self.end
 
     def __repr__(self):
-        return f"(choose from range {self.start} - {self.end})"
+        return f"range {self.start} - {self.end}"
 
 
 def parse_args():
