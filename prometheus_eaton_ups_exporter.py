@@ -37,6 +37,20 @@ class CustomFormatter(HelpFormatter):
         return help
 
 
+class Range(object):
+
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+        self._name_parser_map = {}
+
+    def __eq__(self, other):
+        return self.start <= other <= self.end
+
+    def __repr__(self):
+        return f"(choose from range {self.start} - {self.end})"
+
+
 def parse_args():
     """Prepare command line arguments."""
     parser = argparse.ArgumentParser(
