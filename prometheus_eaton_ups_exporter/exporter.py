@@ -175,7 +175,7 @@ class UPSExporter:
             gauge.add_metric([ups_id], powerbank_s['health'])
             yield gauge
 
-    def scrape_data(self) -> list:
+    def scrape_data(self):
         """
         Scrape measure data.
 
@@ -247,7 +247,7 @@ class UPSMultiExporter(UPSExporter):
             for key, value in data.items()
         ]
 
-    def scrape_data(self) -> list:
+    def scrape_data(self):
         """
         Scrape measure data.
 
@@ -262,8 +262,9 @@ class UPSMultiExporter(UPSExporter):
                 try:
                     for future in as_completed(futures, self.login_timeout+1):
                         yield future.result()
-                except TimeoutError:
-                    pass
+                except TimeoutError as err:
+                    self.logger.exception(err)
+                    yield None
 
         else:
             for ups in self.ups_devices:
