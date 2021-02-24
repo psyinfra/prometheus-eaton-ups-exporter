@@ -31,7 +31,8 @@ class UPSExporter:
             ups_address,
             authentication,
             insecure=False,
-            verbose=False
+            verbose=False,
+            login_timeout=3
     ):
         self.logger = create_logger(
             f"{__name__}.{self.__class__.__name__}", not verbose
@@ -40,7 +41,8 @@ class UPSExporter:
             ups_address,
             authentication,
             insecure=insecure,
-            verbose=verbose
+            verbose=verbose,
+            login_timeout=login_timeout
         )
 
     def collect(self):
@@ -208,7 +210,8 @@ class UPSMultiExporter(UPSExporter):
             config=str,
             insecure=False,
             threading=False,
-            verbose=False
+            verbose=False,
+            login_timeout=3
     ):
         self.logger = create_logger(
             f"{__name__}.{self.__class__.__name__}", not verbose
@@ -216,6 +219,7 @@ class UPSMultiExporter(UPSExporter):
         self.insecure = insecure
         self.threading = threading
         self.verbose = verbose
+        self.login_timeout=login_timeout
         self.ups_devices = self.get_ups_devices(config)
 
     def get_ups_devices(self, config) -> list:
@@ -236,7 +240,8 @@ class UPSMultiExporter(UPSExporter):
                 (value['user'], value['password']),
                 key,
                 insecure=self.insecure,
-                verbose=self.verbose
+                verbose=self.verbose,
+                login_timeout=self.login_timeout
             )
             for key, value in data.items()
         ]

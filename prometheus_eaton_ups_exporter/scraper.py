@@ -9,7 +9,7 @@ from requests.exceptions import SSLError, ConnectionError,\
 from prometheus_eaton_ups_exporter import create_logger
 from prometheus_eaton_ups_exporter.scraper_globals import LOGIN_AUTH_PATH, \
     REST_API_PATH, INPUT_MEMBER_ID, OUTPUT_MEMBER_ID, \
-    LOGIN_DATA, LOGIN_TIMEOUT, REQUEST_TIMEOUT, \
+    LOGIN_DATA, REQUEST_TIMEOUT, \
     AUTHENTICATION_FAILED, SSL_ERROR, CERTIFICATE_VERIFY_FAILED,\
     CONNECTION_ERROR, TIMEOUT_ERROR, LoginFailedException
 
@@ -36,10 +36,12 @@ class UPSScraper:
                  authentication,
                  name=None,
                  insecure=False,
-                 verbose=False):
+                 verbose=False,
+                 login_timeout=3):
         self.ups_address = ups_address
         self.username, self.password = authentication
         self.name = name
+        self.login_timeout = login_timeout
         self.session = Session()
         self.logger = create_logger(__name__, not verbose)
 
@@ -70,7 +72,7 @@ class UPSScraper:
             login_request = self.session.post(
                 self.ups_address + LOGIN_AUTH_PATH,
                 data=json.dumps(data),  # needs to be JSON encoded
-                timeout=LOGIN_TIMEOUT
+                timeout=self.login_timeout
             )
             login_response = login_request.json()
 
@@ -108,7 +110,7 @@ class UPSScraper:
         except ReadTimeout:
             raise LoginFailedException(
                 TIMEOUT_ERROR,
-                f"Login Timeout > {LOGIN_TIMEOUT} seconds"
+                f"Login Timeout > {self.login_timeout} seconds"
             ) from None
 
     def load_page(self, url) -> Response:
