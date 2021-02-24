@@ -135,7 +135,7 @@ class UPSExporter:
 
             gauge = GaugeMetricFamily(
                 "eaton_ups_output_load_ratio",
-                'UPS output load ratio',
+                "Ratio of the output apparent power vs the UPS's capacity in VA.",
                 labels=['ups_id']
             )
             gauge.add_metric([ups_id], int(outputs_rm['percentLoad']) / 100)
@@ -151,7 +151,7 @@ class UPSExporter:
 
             gauge = GaugeMetricFamily(
                 "eaton_ups_battery_capacity_ratio",
-                'UPS remaining battery charge capacity ratio',
+                'Ratio of the remaining charge vs the total battery capacity',
                 labels=['ups_id']
             )
             gauge.add_metric(
@@ -169,7 +169,7 @@ class UPSExporter:
 
             gauge = GaugeMetricFamily(
                 "eaton_ups_battery_health",
-                'UPS health status',
+                'UPS health status. The values are undocumented by Eaton. If you figure out what they mean, please submit a patch.',
                 labels=['ups_id']
             )
             gauge.add_metric([ups_id], powerbank_s['health'])
