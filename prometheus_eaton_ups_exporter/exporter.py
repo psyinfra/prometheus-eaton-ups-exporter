@@ -183,7 +183,7 @@ class UPSExporter:
 
         :return: measures
         """
-        return [self.ups_scraper.get_measures()]
+        yield self.ups_scraper.get_measures()
 
 
 class UPSMultiExporter(UPSExporter):
