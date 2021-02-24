@@ -170,7 +170,8 @@ class UPSExporter:
 
             gauge = GaugeMetricFamily(
                 "eaton_ups_battery_health",
-                'UPS health status given as the remaining lifetime (years)',
+                'UPS health status given as the '
+                'remaining lifetime (years) [uncertain]',
                 labels=['ups_id']
             )
             gauge.add_metric([ups_id], powerbank_s['health'])
