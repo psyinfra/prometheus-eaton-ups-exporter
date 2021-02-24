@@ -30,18 +30,22 @@ UPSs to monitor and their credentials are defined in a config file. See
 `config.json` for an example.
 
 ```
-./prometheus_eaton_ups_exporter.py [-h] -c CONFIG [--web.listen-address WEB.LISTEN_ADDRESS] [-k]
+./prometheus_eaton_ups_exporter.py [-h] [-w WEB.LISTEN_ADDRESS] -c CONFIG [-k] [-t] [-v] [--login-timeout LOGIN_TIMEOUT]
+
 
 optional arguments:
   -h, --help            show this help message and exit
   -w WEB.LISTEN_ADDRESS, --web.listen-address WEB.LISTEN_ADDRESS
                         Interface and port to listen on, in the format of "ip_address:port".
-                        The IP can be omitted to listen on all interfaces.
+                        The IP can be omitted to listen on all interfaces. (default: None)
   -c CONFIG, --config CONFIG
-                        Configuration JSON file containing UPS addresses and login info
-  -k, --insecure        Allow the exporter to connect to UPSs with self-signed SSL certificates
-  -t, --threading       Whether to use multi-threading for scraping (faster)
-  -v, --verbose         Be more verbose
+                        Configuration JSON file containing UPS addresses and login info (default: None)
+  -k, --insecure        Allow the exporter to connect to UPSs with self-signed SSL certificates (default: False)
+  -t, --threading       Whether to use multi-threading for scraping (faster) (default: False)
+  -v, --verbose         Be more verbose (default: False)
+  --login-timeout LOGIN_TIMEOUT
+                        The login timeout for the UPSs in seconds (default: 3)
+
 ```
 
 ## Defaults:

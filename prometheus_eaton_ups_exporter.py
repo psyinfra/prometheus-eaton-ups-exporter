@@ -79,6 +79,13 @@ def parse_args():
         default=False
     )
 
+    parser.add_argument(
+        '--login-timeout',
+        type=float,
+        help='The login timeout for the UPSs in seconds',
+        default=3
+    )
+
     return parser.parse_args()
 
 
@@ -103,7 +110,8 @@ def main():
                 args.config,
                 insecure=args.insecure,
                 verbose=args.verbose,
-                threading=args.threading
+                threading=args.threading,
+                login_timeout=args.login_timeout
             )
         )
 
