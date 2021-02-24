@@ -9,8 +9,6 @@ from prometheus_eaton_ups_exporter import create_logger
 from prometheus_eaton_ups_exporter.scraper import UPSScraper
 
 NORMAL_EXECUTION = 0
-# this should be higher than the Login Timeout in scraper_globals
-WAIT_FOR_RESPONSE = 7
 
 
 class UPSExporter:
@@ -262,7 +260,7 @@ class UPSMultiExporter(UPSExporter):
                     for ups in self.ups_devices
                 ]
                 try:
-                    for future in as_completed(futures, WAIT_FOR_RESPONSE):
+                    for future in as_completed(futures, self.login_timeout+1):
                         yield future.result()
                 except TimeoutError:
                     pass
