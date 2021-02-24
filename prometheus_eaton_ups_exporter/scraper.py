@@ -86,7 +86,7 @@ class UPSScraper:
         except KeyError:
             raise LoginFailedException(
                 AUTHENTICATION_FAILED,
-                f"Authentication failed on ({self.ups_address})"
+                "Authentication failed"
             ) from None
         except SSLError as err:
             if 'CERTIFICATE_VERIFY_FAILED' in str(err):
@@ -108,8 +108,7 @@ class UPSScraper:
         except ReadTimeout:
             raise LoginFailedException(
                 TIMEOUT_ERROR,
-                f"Login Timeout > {LOGIN_TIMEOUT} seconds,\n"
-                f"check your username and password"
+                f"Login Timeout > {LOGIN_TIMEOUT} seconds"
             ) from None
 
     def load_page(self, url) -> Response:
@@ -147,8 +146,15 @@ class UPSScraper:
             # try to login, if not authorized
             if "Unauthorized" in request.text:
                 self.logger.debug('Unauthorized, try to login')
-                self.token_type, self.access_token = self.login()
-                return self.load_page(url)
+                try:
+                    self.token_type, self.access_token = self.login()
+                    return self.load_page(url)
+                except LoginFailedException as err:
+                    if err.exit_code == TIMEOUT_ERROR:
+                        raise LoginFailedException(
+                            AUTHENTICATION_FAILED,
+                            "Authentication failed"
+                        ) from err
 
             self.logger.debug('GET %s', url)
             return request
