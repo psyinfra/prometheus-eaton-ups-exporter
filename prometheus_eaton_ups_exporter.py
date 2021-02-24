@@ -63,6 +63,7 @@ def parse_args():
         help='Interface and port to listen on, '
              'in the format of "ip_address:port".\n'
              'The IP can be omitted to listen on all interfaces.',
+        default=f"{DEFAULT_HOST}:{DEFAULT_PORT}"
     )
 
     parser.add_argument(
@@ -109,17 +110,16 @@ def main():
     """Execute the Prometheus Eaton UPS Exporter"""
     try:
         args = parse_args()
-        port = DEFAULT_PORT
-        host_address = DEFAULT_HOST
 
         listen_address = args.__getattribute__('web.listen_address')
         if listen_address:
             if ':' in listen_address:
-                host_address, port = tuple(listen_address.split(':'))
+                host_address, port = listen_address.split(':')
                 if port == "":
                     port = DEFAULT_PORT
             else:
                 host_address = listen_address
+                port = DEFAULT_PORT
 
         REGISTRY.register(
             UPSMultiExporter(
