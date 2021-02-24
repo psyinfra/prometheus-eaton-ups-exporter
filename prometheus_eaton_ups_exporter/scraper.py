@@ -221,9 +221,13 @@ class UPSScraper:
                 "ups_powerbank": powerbank
             }
         except LoginFailedException as err:
-            self.logger.debug(err)
+            self.logger.error(err)
             print(f"{err.__class__.__name__} - ({self.ups_address}): "
                   f"{err.message}")
+            return None
+        except json.decoder.JSONDecodeError as err:
+            self.logger.debug("This needs to be solved by an developer")
+            self.logger.error(err)
             return None
         except Exception:
             raise
