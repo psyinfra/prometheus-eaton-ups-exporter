@@ -20,6 +20,7 @@ The exporter can monitor multiple UPSs.
 - Battery Voltage (V)
 - Battery Capacity (%)
 - Battery Remaining Time (s)
+- Battery Health Status
 
 ## Supported Devices:
 * Eaton 5P 1550iR ([user guide](https://www.eaton.com/content/dam/eaton/products/backup-power-ups-surge-it-power-distribution/power-management-software-connectivity/eaton-gigabit-network-card/eaton-network-m2-user-guide.pdf))
@@ -30,7 +31,7 @@ UPSs to monitor and their credentials are defined in a config file. See
 `config.json` for an example.
 
 ```
-./prometheus_eaton_ups_exporter.py [-h] [-w WEB.LISTEN_ADDRESS] -c CONFIG [-k] [-t] [-v] [--login-timeout {range 1 - 10}]
+./prometheus_eaton_ups_exporter.py [-h] [-w WEB.LISTEN_ADDRESS] -c CONFIG [-k] [-t] [-v] [--login-timeout {range 2 - 10}]
 
 
 optional arguments:
@@ -43,7 +44,7 @@ optional arguments:
   -k, --insecure        Allow the exporter to connect to UPSs with self-signed SSL certificates (default: False)
   -t, --threading       Whether to use multi-threading for scraping (faster) (default: False)
   -v, --verbose         Be more verbose (default: False)
-  --login-timeout {range 1 - 10}
+  --login-timeout {range 2 - 10}
                         The login timeout for the UPSs in seconds (default: 3)
 
 ```
@@ -51,7 +52,7 @@ optional arguments:
 ## Defaults:
 * Default host-address is localhost
 * Default port is 9790 (a free port according to [Prometheus default port allocations](https://github.com/prometheus/prometheus/wiki/Default-port-allocations))
-* Login timeout is set to 5 seconds
+* Login timeout is set to 3 seconds
 * Other request timeouts are set to 2 seconds
 * Static values are described in `prometheus_eaton_ups_exporter/scraper_globals.py`
 
