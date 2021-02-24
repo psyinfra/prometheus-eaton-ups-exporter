@@ -20,7 +20,7 @@ The exporter can monitor multiple UPSs.
 - Battery Voltage (V)
 - Battery Capacity (%)
 - Battery Remaining Time (s)
-- Battery Health Status
+- Battery Health Status (is likely given as the remaining lifetime in years [uncertain, contributions are welcome #19])
 
 ## Supported Devices:
 * Eaton 5P 1550iR ([user guide](https://www.eaton.com/content/dam/eaton/products/backup-power-ups-surge-it-power-distribution/power-management-software-connectivity/eaton-gigabit-network-card/eaton-network-m2-user-guide.pdf))
