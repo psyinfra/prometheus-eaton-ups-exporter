@@ -4,7 +4,7 @@ import sys
 import time
 import argparse
 
-from argparse import RawTextHelpFormatter
+from argparse import HelpFormatter, SUPPRESS, OPTIONAL, ZERO_OR_MORE
 
 from prometheus_client import start_http_server, REGISTRY
 from prometheus_eaton_ups_exporter.exporter import UPSMultiExporter
@@ -15,11 +15,33 @@ DEFAULT_PORT = 9790
 DEFAULT_HOST = "127.0.0.1"
 
 
+class CustomFormatter(HelpFormatter):
+    """Custom argparse formatter to provide defaults and to split newlines."""
+
+    def _split_lines(self, text, width):
+        """
+        Help message formatter which retains formatting of all help text.
+        """
+        return text.splitlines()
+
+    def _get_help_string(self, action):
+        """
+        Help message formatter which adds default values to argument help.
+        """
+        help = action.help
+        if '%(default)' not in action.help:
+            if action.default is not SUPPRESS:
+                defaulting_nargs = [OPTIONAL, ZERO_OR_MORE]
+                if action.option_strings or action.nargs in defaulting_nargs:
+                    help += ' (default: %(default)s)'
+        return help
+
+
 def parse_args():
     """Prepare command line arguments."""
     parser = argparse.ArgumentParser(
         description="Prometheus Exporter for Eaton UPSs.",
-        formatter_class=RawTextHelpFormatter
+        formatter_class=CustomFormatter
     )
     parser.add_argument(
         '-w', '--web.listen-address',
