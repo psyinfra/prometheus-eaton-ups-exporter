@@ -10,9 +10,7 @@ from prometheus_client import start_http_server, REGISTRY
 from prometheus_eaton_ups_exporter.scraper_globals import REQUEST_TIMEOUT
 from prometheus_eaton_ups_exporter.exporter import UPSMultiExporter
 
-# Free port according to
-# https://github.com/prometheus/prometheus/wiki/Default-port-allocations
-DEFAULT_PORT = 9790
+DEFAULT_PORT = 9795
 DEFAULT_HOST = "127.0.0.1"
 
 

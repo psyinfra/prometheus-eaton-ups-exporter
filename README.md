@@ -38,7 +38,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -w WEB.LISTEN_ADDRESS, --web.listen-address WEB.LISTEN_ADDRESS
                         Interface and port to listen on, in the format of "ip_address:port".
-                        The IP can be omitted to listen on all interfaces. (default: 127.0.0.1:9790)
+                        The IP can be omitted to listen on all interfaces. (default: 127.0.0.1:9795)
   -c CONFIG, --config CONFIG
                         Configuration JSON file containing UPS addresses and login info (default: None)
   -k, --insecure        Allow the exporter to connect to UPSs with self-signed SSL certificates (default: False)
@@ -51,7 +51,7 @@ optional arguments:
 
 ## Defaults:
 * Default host-address is localhost
-* Default port is 9790 (a free port according to [Prometheus default port allocations](https://github.com/prometheus/prometheus/wiki/Default-port-allocations))
+* Default port is 9795 (see also: [Prometheus default port allocations](https://github.com/prometheus/prometheus/wiki/Default-port-allocations))
 * Login timeout is set to 3 seconds
 * Other request timeouts are set to 2 seconds
 * Static values are described in `prometheus_eaton_ups_exporter/scraper_globals.py`
