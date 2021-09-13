@@ -222,7 +222,7 @@ class UPSMultiExporter(UPSExporter):
         self.insecure = insecure
         self.threading = threading
         self.verbose = verbose
-        self.login_timeout=login_timeout
+        self.login_timeout = login_timeout
         self.ups_devices = self.get_ups_devices(config)
 
     def get_ups_devices(self, config) -> list:
