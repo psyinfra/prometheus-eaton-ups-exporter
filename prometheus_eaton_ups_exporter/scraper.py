@@ -229,7 +229,7 @@ class UPSScraper:
                   f"{err.message}")
             return None
         except json.decoder.JSONDecodeError as err:
-            self.logger.debug("This needs to be solved by an developer")
+            self.logger.debug("This needs to be solved by a developer")
             self.logger.error(err)
             return None
         except Exception:
