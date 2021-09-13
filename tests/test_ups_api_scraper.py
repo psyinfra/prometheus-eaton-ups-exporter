@@ -2,31 +2,68 @@ import pytest
 import getpass
 import os
 import sys
+import json
 import vcr
-from exporter.ups_api_scraper import UPSScraper
+from prometheus_eaton_ups_exporter.exporter import UPSScraper
 
-cassette_path = (
-        sys.prefix +
-        '/ups-prometheus_exporter/tests/cassettes/test_ups_web_ui.yaml'
+CASSETTE_DIR = os.path.join(
+    os.getcwd(),
+    "tests",
+    "fixtures/cassettes"
 )
 
 
-def test_login():
-    with vcr.use_cassette(
-            cassette_path,
-            filter_post_data_parameters=['client_secret']
-    ) as cass:
-        address = 'https://localhost:4430'
-        username = input('Username:')
-        password = getpass.getpass('Password:')
-        scraper = UPSScraper(
-            address,
-            username,
-            password,
-            insecure=True
-        )
+@pytest.fixture(scope="function")
+def ups_scraper(ups_scraper_conf):
+    ups_name = list(ups_scraper_conf.keys())[0]
+    return UPSScraper(
+        ups_scraper_conf[ups_name]['address'],
+        (
+            ups_scraper_conf[ups_name]['user'],
+            ups_scraper_conf[ups_name]['password']
+        ),
+        ups_name,
+        insecure=True
+    )
 
-        measures = scraper.get_measures()
+
+def scrub_body():
+    def before_record_request(request):
+        try:
+            body_json = json.loads(request.body.decode("utf-8").replace("'", '"'))
+            body_json['username'] = 'username'
+            body_json['password'] = 'password'
+            request.body = str(body_json).replace("'", '"').encode('utf-8')
+            return request
+        except AttributeError:
+            return request
+    return before_record_request
+
+
+def test_login(ups_scraper):
+    with vcr.use_cassette(
+            os.path.join(CASSETTE_DIR, "api_login.yaml"),
+            before_record_request=scrub_body()
+    ):
+        token_type, access_token = ups_scraper.login()
+        assert token_type == "Bearer"
+
+
+def test_get_measures(ups_scraper):
+    with vcr.use_cassette(
+            os.path.join(CASSETTE_DIR, "api_measures.yaml"),
+            before_record_request=scrub_body()
+    ):
+        measures = ups_scraper.get_measures()
+        measures_keys = [
+            'ups_id',
+            'ups_inputs',
+            'ups_outputs',
+            'ups_powerbank'
+        ]
+        assert list(measures.keys()) == measures_keys
+        assert measures['ups_id'] == ups_scraper.name
+        print(measures['ups_inputs'].keys())
 
 
 # @pytest.mark.vcr(cassette_path)
