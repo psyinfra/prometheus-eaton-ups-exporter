@@ -6,7 +6,6 @@ import json
 import vcr
 from prometheus_eaton_ups_exporter.scraper import UPSScraper
 from prometheus_eaton_ups_exporter.scraper_globals import REST_API_PATH
-from
 
 CASSETTE_DIR = os.path.join(
     os.getcwd(),
