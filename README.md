@@ -60,3 +60,22 @@ optional arguments:
 - requests
 - urllib3
 - [prometheus_client](https://github.com/prometheus/client_python)
+
+# Installation:
+    git clone https://github.com/psyinfra/prometheus-eaton-ups-exporter.git
+    cd prometheus-eaton-ups-exporter
+    pip install -r requirements.txt
+
+# Testing:
+
+Install requirements with 
+
+    pip install -r test-requirements.py
+
+Runt tests with
+
+    pytest tests
+
+#### Test-Requirements:
+- [vcrpy](https://vcrpy.readthedocs.io/)
+- pytest
