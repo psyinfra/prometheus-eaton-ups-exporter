@@ -105,6 +105,7 @@ def create_parser():
 
 
 def split_listen_address(listen_address):
+    """Split listen address into host and port."""
     if ':' in listen_address:
         host_address, port = listen_address.split(':')
         if port == "":
@@ -117,7 +118,7 @@ def split_listen_address(listen_address):
 
 
 def run(args):
-    """Execute the Prometheus Eaton UPS Exporter"""
+    """Execute the Prometheus Eaton UPS Exporter."""
     parser = create_parser()
     try:
         args = parser.parse_args(args)
