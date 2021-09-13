@@ -59,10 +59,7 @@ def test_load_rest_api(ups_scraper):
     ):
         # test_login(ups_scraper)
         request = ups_scraper.load_page(
-            os.path.join(
-                ups_scraper.ups_address,
-                REST_API_PATH
-            )
+            ups_scraper.ups_address + REST_API_PATH
         )
         # Todo
         # print(request.json())
