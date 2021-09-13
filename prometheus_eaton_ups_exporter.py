@@ -50,7 +50,7 @@ class Range(object):
         return f"range {self.start} - {self.end}"
 
 
-def parse_args():
+def create_parser():
     """Prepare command line arguments."""
     parser = argparse.ArgumentParser(
         description="Prometheus Exporter for Eaton UPSs.",
@@ -101,22 +101,29 @@ def parse_args():
         default=3
     )
 
-    return parser.parse_args()
+    return parser
 
 
-def main():
+def split_listen_address(listen_address):
+    if ':' in listen_address:
+        host_address, port = listen_address.split(':')
+        if port == "":
+            port = DEFAULT_PORT
+    else:
+        host_address = listen_address
+        port = DEFAULT_PORT
+
+    return host_address, port
+
+
+def run(args):
     """Execute the Prometheus Eaton UPS Exporter"""
+    parser = create_parser()
     try:
-        args = parse_args()
+        args = parser.parse_args(args)
 
         listen_address = args.__getattribute__('web.listen_address')
-        if ':' in listen_address:
-            host_address, port = listen_address.split(':')
-            if port == "":
-                port = DEFAULT_PORT
-        else:
-            host_address = listen_address
-            port = DEFAULT_PORT
+        host_address, port = split_listen_address(listen_address)
 
         REGISTRY.register(
             UPSMultiExporter(
@@ -130,8 +137,10 @@ def main():
 
         # Start up the server to expose the metrics.
         start_http_server(int(port), addr=host_address)
-        print(f"Starting Prometheus Eaton UPS Exporter on "
-              f"{host_address}:{port}")
+        print(
+            f"Starting Prometheus Eaton UPS Exporter on {host_address}:{port}"
+        )
+        # Run forever until an Error Event or Keyboard Interrupt
         while True:
             time.sleep(1)
 
@@ -141,6 +150,10 @@ def main():
     except KeyboardInterrupt:
         print("Prometheus Eaton UPS Exporter shut down")
         sys.exit(0)
+
+
+def main():
+    run(sys.argv[1:])
 
 
 if __name__ == "__main__":
