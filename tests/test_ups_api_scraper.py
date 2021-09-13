@@ -62,7 +62,14 @@ def test_load_rest_api(ups_scraper):
             ups_scraper.ups_address + REST_API_PATH
         )
         # Todo
-        # print(request.json())
+        json_response = request.json()
+        respones_keys = [
+            '@id', 'id', 'identification', 'specification',
+            'configuration', 'ups', 'status', 'inputs',
+            'avr', 'outputs', 'inverters', 'chargers',
+            'backupSystem', 'bypass', 'rectifiers', 'outlets'
+        ]
+        assert respones_keys == list(json_response.keys())
 
 
 def test_get_measures(ups_scraper):
