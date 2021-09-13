@@ -4,7 +4,9 @@ import os
 import sys
 import json
 import vcr
-from prometheus_eaton_ups_exporter.exporter import UPSScraper
+from prometheus_eaton_ups_exporter.scraper import UPSScraper
+from prometheus_eaton_ups_exporter.scraper_globals import REST_API_PATH
+from
 
 CASSETTE_DIR = os.path.join(
     os.getcwd(),
@@ -23,7 +25,8 @@ def ups_scraper(ups_scraper_conf):
             ups_scraper_conf[ups_name]['password']
         ),
         ups_name,
-        insecure=True
+        insecure=True,
+        verbose=True
     )
 
 
@@ -49,6 +52,23 @@ def test_login(ups_scraper):
         assert token_type == "Bearer"
 
 
+def test_load_rest_api(ups_scraper):
+    """Tests load_page function with rest api."""
+    with vcr.use_cassette(
+            os.path.join(CASSETTE_DIR, "api_load_rest.yaml"),
+            before_record_request=scrub_body()
+    ):
+        # test_login(ups_scraper)
+        request = ups_scraper.load_page(
+            os.path.join(
+                ups_scraper.ups_address,
+                REST_API_PATH
+            )
+        )
+        # Todo
+        # print(request.json())
+
+
 def test_get_measures(ups_scraper):
     with vcr.use_cassette(
             os.path.join(CASSETTE_DIR, "api_measures.yaml"),
@@ -63,66 +83,35 @@ def test_get_measures(ups_scraper):
         ]
         assert list(measures.keys()) == measures_keys
         assert measures['ups_id'] == ups_scraper.name
-        print(measures['ups_inputs'].keys())
 
+        ups_inputs = measures.get('ups_inputs')
+        assert list(ups_inputs) == [
+            '@id', 'id', 'measures', 'status', 'phases'
+        ]
+        assert list(ups_inputs.get('measures')) == [
+            'realtime'
+        ]
+        assert list(ups_inputs.get('measures').get('realtime')) == [
+            'frequency', 'voltage', 'current'
+        ]
 
-# @pytest.mark.vcr(cassette_path)
-# def test_ups_web_ui():
-#     address = 'https://localhost:4430'
-#     if not os.path.exists(cassette_path):
-#         username = input('Username:')
-#         password = getpass.getpass('Password:')
-#         scraper = UPSScraper(
-#             address,
-#             username,
-#             password,
-#             insecure=True
-#         )
-#
-#         measures = scraper.get_measures()
-#     else:
-#         scraper = UPSScraper(
-#             address,
-#             None,
-#             None,
-#             insecure=True
-#         )
-#         measures = scraper.get_measures()
-#
-#     assert measures.get('ups_id') == '1'
-#
-#     ups_inputs = measures.get('ups_inputs')
-#     assert list(ups_inputs) == [
-#         '@id', 'id', 'measures', 'status', 'phases'
-#     ]
-#     assert list(ups_inputs.get('measures')) == [
-#         'realtime'
-#     ]
-#     assert list(ups_inputs.get('measures').get('realtime')) == [
-#         'frequency', 'voltage', 'current'
-#     ]
-#
-#     ups_outputs = measures.get('ups_outputs')
-#     assert list(ups_outputs) == [
-#         '@id', 'id', 'measures', 'status', 'phases'
-#     ]
-#     assert list(ups_outputs.get('measures')) == [
-#         'realtime'
-#     ]
-#     assert list(ups_outputs.get('measures').get('realtime')) == [
-#         'frequency', 'voltage', 'current', 'activePower',
-#         'apparentPower', 'powerFactor', 'percentLoad'
-#     ]
-#
-#     assert measures.get('ups_powerbank')
-#     ups_powerbank = measures.get('ups_powerbank')
-#     assert list(ups_powerbank) == [
-#         '@id', 'specification', 'configuration',
-#         'measures', 'status', 'test', 'lcm', 'entities'
-#     ]
-#     assert list(ups_powerbank.get('measures')) == [
-#         'voltage', 'remainingChargeCapacity', 'remainingTime'
-#     ]
-#     assert ups_powerbank.get('measures').get('voltage')
-#     assert ups_powerbank.get('measures').get('remainingChargeCapacity')
-#     assert ups_powerbank.get('measures').get('remainingTime')
+        ups_outputs = measures.get('ups_outputs')
+        assert list(ups_outputs) == [
+            '@id', 'id', 'measures', 'status', 'phases'
+        ]
+        assert list(ups_outputs.get('measures')) == [
+            'realtime'
+        ]
+        assert list(ups_outputs.get('measures').get('realtime')) == [
+            'frequency', 'voltage', 'current', 'activePower',
+            'apparentPower', 'powerFactor', 'percentLoad'
+        ]
+
+        ups_powerbank = measures.get('ups_powerbank')
+        assert list(ups_powerbank) == [
+            '@id', 'specification', 'configuration',
+            'measures', 'status', 'test', 'lcm', 'entities'
+        ]
+        assert list(ups_powerbank.get('measures')) == [
+            'voltage', 'remainingChargeCapacity', 'remainingTime'
+        ]
