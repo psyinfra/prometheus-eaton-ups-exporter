@@ -42,3 +42,4 @@ class LoginFailedException(Exception):
     def __init__(self, exit_code, message):
         self.exit_code = exit_code
         self.message = message
+        super().__init__(self.message)
