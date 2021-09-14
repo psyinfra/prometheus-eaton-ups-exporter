@@ -1,0 +1,54 @@
+interactions:
+- request:
+    body: '{"grant_type": "password", "scope": "GUIAccess", "username": "username",
+      "password": "password"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '110'
+      User-Agent:
+      - python-requests/2.26.0
+    method: POST
+    uri: https://127.0.0.1:4430/rest/mbdetnrs/1.0/oauth2/token
+  response:
+    body:
+      string: '{"expires_in": 899,"token_type": "Bearer","access_token": "YmRmYWZlMjkxMjVhMjg4Mzlh","user_profile":
+        "viewers","user_permissions": "[role-alarm-viewer,role-power-viewer,role-sensor-viewer,role-session-configure-self,role-system-info-viewer,role-user-configure-self,role-cli-access,role-system-info-viewer]"}
+
+
+        '
+    headers:
+      Cache-Control:
+      - no-store
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '309'
+      Content-Security-Policy:
+      - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
+        'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Mon, 13 Sep 2021 11:10:10 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Pragma:
+      - no-cache
+      Server:
+      - Tntnet
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '1'
+    status:
+      code: 200
+      message: OK
+version: 1
