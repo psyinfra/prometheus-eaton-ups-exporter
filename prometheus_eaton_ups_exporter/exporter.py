@@ -210,7 +210,7 @@ class UPSMultiExporter(UPSExporter):
 
     def __init__(
             self,
-            config=str,
+            config,
             insecure=False,
             threading=False,
             verbose=False,
@@ -225,17 +225,28 @@ class UPSMultiExporter(UPSExporter):
         self.login_timeout = login_timeout
         self.ups_devices = self.get_ups_devices(config)
 
+    @staticmethod
+    def get_devices(config):
+        """Take a config file path or config dict of UPSs."""
+        if isinstance(config, str):
+            with open(config) as json_file:
+                devices = json.load(json_file)
+        elif isinstance(config, dict):
+            devices = config
+        else:
+            raise AttributeError("Only config path (str) or dict accepted")
+        return devices
+
     def get_ups_devices(self, config) -> list:
         """
         Creates multiple UPSScraper.
 
-        :param config: str
-            Path to a JSON-based config file
+        :param config: str | dict
+            Path to a JSON-based config file or a config dict
         :return: list
             List of UPSScrapers
         """
-        with open(config) as json_file:
-            data = json.load(json_file)
+        devices = self.get_devices(config)
 
         return [
             UPSScraper(
@@ -246,7 +257,7 @@ class UPSMultiExporter(UPSExporter):
                 verbose=self.verbose,
                 login_timeout=self.login_timeout
             )
-            for key, value in data.items()
+            for key, value in devices.items()
         ]
 
     def scrape_data(self):
