@@ -4,14 +4,9 @@ import os
 import sys
 import json
 import vcr
+from . import CASSETTE_DIR, scrub_body
 from prometheus_eaton_ups_exporter.scraper import UPSScraper
 from prometheus_eaton_ups_exporter.scraper_globals import REST_API_PATH
-
-CASSETTE_DIR = os.path.join(
-    os.getcwd(),
-    "tests",
-    "fixtures/cassettes"
-)
 
 
 @pytest.fixture(scope="function")
@@ -29,19 +24,6 @@ def ups_scraper(ups_scraper_conf):
     )
 
 
-def scrub_body():
-    def before_record_request(request):
-        try:
-            body_json = json.loads(request.body.decode("utf-8").replace("'", '"'))
-            body_json['username'] = 'username'
-            body_json['password'] = 'password'
-            request.body = str(body_json).replace("'", '"').encode('utf-8')
-            return request
-        except AttributeError:
-            return request
-    return before_record_request
-
-
 def test_login(ups_scraper):
     with vcr.use_cassette(
             os.path.join(CASSETTE_DIR, "api_login.yaml"),
@@ -57,7 +39,6 @@ def test_load_rest_api(ups_scraper):
             os.path.join(CASSETTE_DIR, "api_load_rest.yaml"),
             before_record_request=scrub_body()
     ):
-        # test_login(ups_scraper)
         request = ups_scraper.load_page(
             ups_scraper.ups_address + REST_API_PATH
         )
