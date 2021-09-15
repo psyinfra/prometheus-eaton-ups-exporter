@@ -4,14 +4,10 @@ import json
 import urllib3
 from requests import Session, Response
 from requests.exceptions import SSLError, ConnectionError,\
-    ReadTimeout
+    ReadTimeout, MissingSchema, InvalidURL
 
 from prometheus_eaton_ups_exporter import create_logger
-from prometheus_eaton_ups_exporter.scraper_globals import LOGIN_AUTH_PATH, \
-    REST_API_PATH, INPUT_MEMBER_ID, OUTPUT_MEMBER_ID, \
-    LOGIN_DATA, REQUEST_TIMEOUT, \
-    AUTHENTICATION_FAILED, SSL_ERROR, CERTIFICATE_VERIFY_FAILED,\
-    CONNECTION_ERROR, TIMEOUT_ERROR, LoginFailedException
+from prometheus_eaton_ups_exporter.scraper_globals import *
 
 
 class UPSScraper:
@@ -113,6 +109,16 @@ class UPSScraper:
                 TIMEOUT_ERROR,
                 f"Login Timeout > {self.login_timeout} seconds"
             ) from None
+        except MissingSchema:
+            raise LoginFailedException(
+                MISSING_SCHEMA_ERROR,
+                f"Invalid URL, no schema supplied"
+            ) from None
+        except InvalidURL:
+            raise LoginFailedException(
+                INVALID_URL_ERROR,
+                f"Invalid URL, no host supplied"
+            ) from None
 
     def load_page(self, url) -> Response:
         """
@@ -153,7 +159,7 @@ class UPSScraper:
                     self.token_type, self.access_token = self.login()
                     return self.load_page(url)
                 except LoginFailedException as err:
-                    if err.exit_code == TIMEOUT_ERROR:
+                    if err.error_code == TIMEOUT_ERROR:
                         raise LoginFailedException(
                             AUTHENTICATION_FAILED,
                             "Authentication failed"
