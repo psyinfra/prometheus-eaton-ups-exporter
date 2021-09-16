@@ -30,6 +30,7 @@ class UPSExporter:
             self,
             ups_address,
             authentication,
+            name=None,
             insecure=False,
             verbose=False,
             login_timeout=3
@@ -40,6 +41,7 @@ class UPSExporter:
         self.ups_scraper = UPSScraper(
             ups_address,
             authentication,
+            name,
             insecure=insecure,
             verbose=verbose,
             login_timeout=login_timeout
