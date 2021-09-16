@@ -104,16 +104,6 @@ def test_get_measures(scraper_fixture):
     ]
 
 
-def conf_details(conf):
-    ups_name = list(conf.keys())[0]
-    address = conf[ups_name]['address']
-    auth = (
-        conf[ups_name]['user'],
-        conf[ups_name]['password']
-    )
-    return address, auth, ups_name
-
-
 def test_missing_schema_exception():
     scraper = ups_scraper("", ("", ""), "")
     with pytest.raises(LoginFailedException) as pytest_wrapped_e:

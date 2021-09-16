@@ -6,6 +6,16 @@ CASSETTE_DIR = os.path.join(
 )
 
 
+def first_ups_details(conf):
+    ups_name = list(conf.keys())[0]
+    address = conf[ups_name]['address']
+    auth = (
+        conf[ups_name]['user'],
+        conf[ups_name]['password']
+    )
+    return address, auth, ups_name
+
+
 def scrub_body():
     def before_record_request(request):
         try:
