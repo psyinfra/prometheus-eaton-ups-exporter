@@ -30,15 +30,18 @@ SSL_ERROR = 2
 CERTIFICATE_VERIFY_FAILED = 3
 CONNECTION_ERROR = 4
 TIMEOUT_ERROR = 5
+MISSING_SCHEMA_ERROR = 6
+INVALID_URL_ERROR = 7
 
 
 class LoginFailedException(Exception):
     """Exception raised for failed login.
 
-    :param exit_code: Exit code
+    :param error_code: Error code
     :param message: Error description message
     """
 
-    def __init__(self, exit_code, message):
-        self.exit_code = exit_code
+    def __init__(self, error_code, message):
+        self.error_code = error_code
         self.message = message
+        super().__init__(self.error_code, self.message)
