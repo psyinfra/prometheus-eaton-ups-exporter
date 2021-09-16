@@ -1,7 +1,7 @@
 import pytest
 import os
 import vcr
-from . import CASSETTE_DIR, scrub_body
+from . import CASSETTE_DIR, scrub_body, first_ups_details
 from prometheus_eaton_ups_exporter.scraper import UPSScraper
 from prometheus_eaton_ups_exporter.scraper_globals import *
 
@@ -127,56 +127,88 @@ def test_connection_refused_exception():
     assert pytest_wrapped_e.type == LoginFailedException
     assert pytest_wrapped_e.value.error_code == CONNECTION_ERROR
 
-#
-# @vcr.use_cassette(
-#     os.path.join(CASSETTE_DIR, "certificate_exception.yaml"),
-#     before_record_request=scrub_body(),
-#     record_mode="new_episodes"
-# )
-# def test_certificate_exception(ups_scraper_conf):
-#     address, auth, ups_name = conf_details(ups_scraper_conf)
-#     scraper = ups_scraper(
-#         address,
-#         auth,
-#         ups_name,
-#         insecure=False
-#     )
-#     with pytest.raises(LoginFailedException) as pytest_wrapped_e:
-#         scraper.load_page(address)
-#     assert pytest_wrapped_e.type == LoginFailedException
-#     assert pytest_wrapped_e.value.error_code == CERTIFICATE_VERIFY_FAILED
-#
-#
-# @vcr.use_cassette(
-#     os.path.join(CASSETTE_DIR, "login_timeout_exception.yaml"),
-#     record_mode="new_episodes"
-# )
-# def test_login_timeout_exception(ups_scraper_conf):
-#     address, _, ups_name = conf_details(ups_scraper_conf)
-#     scraper = ups_scraper(
-#         address,
-#         ("a", "b"),
-#         ups_name
-#     )
-#     with pytest.raises(LoginFailedException) as pytest_wrapped_e:
-#         scraper.login()
-#     assert pytest_wrapped_e.type == LoginFailedException
-#     assert pytest_wrapped_e.value.error_code == TIMEOUT_ERROR
-#
-#
-# @vcr.use_cassette(
-#     os.path.join(CASSETTE_DIR, "auth_failed_exception.yaml"),
-#     before_record_request=scrub_body(),
-#     record_mode="new_episodes"
-# )
-# def test_auth_failed_exception(ups_scraper_conf):
-#     address, _, ups_name = conf_details(ups_scraper_conf)
-#     scraper = ups_scraper(
-#         address,
-#         (ups_scraper_conf[ups_name]['user'], "abc"),
-#         ups_name
-#     )
-#     with pytest.raises(LoginFailedException) as pytest_wrapped_e:
-#         scraper.load_page(address + REST_API_PATH)
-#     assert pytest_wrapped_e.type == LoginFailedException
-#     assert pytest_wrapped_e.value.error_code == AUTHENTICATION_FAILED
+
+@vcr.use_cassette(
+    os.path.join(CASSETTE_DIR, "certificate_exception.yaml"),
+    before_record_request=scrub_body(),
+    record_mode="new_episodes"
+)
+def test_certificate_exception(ups_scraper_conf):
+    address, auth, ups_name = first_ups_details(ups_scraper_conf)
+    scraper = ups_scraper(
+        address,
+        auth,
+        ups_name,
+        insecure=False
+    )
+    with pytest.raises(LoginFailedException) as pytest_wrapped_e:
+        scraper.load_page(address)
+    assert pytest_wrapped_e.type == LoginFailedException
+    assert pytest_wrapped_e.value.error_code == CERTIFICATE_VERIFY_FAILED
+
+
+class MockLoginFailedException:
+    def __init__(self, *args, **kwargs):
+        raise LoginFailedException(*args, **kwargs)
+
+
+def test_certificate_exception(monkeypatch, ups_scraper_conf):
+    address, auth, ups_name = first_ups_details(ups_scraper_conf)
+    scraper = ups_scraper(
+        address,
+        auth,
+        ups_name,
+        insecure=False
+    )
+
+    with pytest.raises(LoginFailedException) as pytest_wrapped_e:
+        monkeypatch.setattr(
+            scraper, "load_page",
+            MockLoginFailedException(
+                CERTIFICATE_VERIFY_FAILED,
+                "message"
+            )
+        )
+        scraper.load_page(address)
+    assert pytest_wrapped_e.type == LoginFailedException
+    assert pytest_wrapped_e.value.error_code == CERTIFICATE_VERIFY_FAILED
+
+
+def test_login_timeout_exception(monkeypatch, ups_scraper_conf):
+    address, _, ups_name = first_ups_details(ups_scraper_conf)
+    scraper = ups_scraper(
+        address,
+        ("a", "b"),
+        ups_name
+    )
+    with pytest.raises(LoginFailedException) as pytest_wrapped_e:
+        monkeypatch.setattr(
+            scraper, "login",
+            MockLoginFailedException(
+                TIMEOUT_ERROR,
+                "message"
+            )
+        )
+        scraper.login()
+    assert pytest_wrapped_e.type == LoginFailedException
+    assert pytest_wrapped_e.value.error_code == TIMEOUT_ERROR
+
+
+def test_auth_failed_exception(monkeypatch, ups_scraper_conf):
+    address, _, ups_name = first_ups_details(ups_scraper_conf)
+    scraper = ups_scraper(
+        address,
+        (ups_scraper_conf[ups_name]['user'], "abc"),
+        ups_name
+    )
+    with pytest.raises(LoginFailedException) as pytest_wrapped_e:
+        monkeypatch.setattr(
+            scraper, "load_page",
+            MockLoginFailedException(
+                AUTHENTICATION_FAILED,
+                "message"
+            )
+        )
+        scraper.load_page(address + REST_API_PATH)
+    assert pytest_wrapped_e.type == LoginFailedException
+    assert pytest_wrapped_e.value.error_code == AUTHENTICATION_FAILED
