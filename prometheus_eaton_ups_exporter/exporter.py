@@ -126,7 +126,7 @@ class UPSExporter:
                 'UPS output voltage (V)',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], output_measures['voltage'])
+            gauge.add_metric([ups_id], outputs_measures['voltage'])
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -134,7 +134,7 @@ class UPSExporter:
                 'UPS output frequency (Hz)',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], output_measures['frequency'])
+            gauge.add_metric([ups_id], outputs_measures['frequency'])
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -142,7 +142,7 @@ class UPSExporter:
                 'UPS output current (A)',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], output_measures['current'])
+            gauge.add_metric([ups_id], outputs_measures['current'])
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -150,7 +150,7 @@ class UPSExporter:
                 'UPS output apparent power (VA)',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], output_measures['apparentPower'])
+            gauge.add_metric([ups_id], outputs_measures['apparentPower'])
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -158,7 +158,7 @@ class UPSExporter:
                 'UPS output active power (W)',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], output_measures['activePower'])
+            gauge.add_metric([ups_id], outputs_measures['activePower'])
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -166,7 +166,7 @@ class UPSExporter:
                 'UPS output power factor',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], output_measures['powerFactor'])
+            gauge.add_metric([ups_id], outputs_measures['powerFactor'])
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -174,7 +174,7 @@ class UPSExporter:
                 'UPS output average energy',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], output_measures['averageEnergy'])
+            gauge.add_metric([ups_id], outputs_measures['averageEnergy'])
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -182,7 +182,7 @@ class UPSExporter:
                 'UPS output cumulated energy',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], output_measures['cumulatedEnergy'])
+            gauge.add_metric([ups_id], outputs_measures['cumulatedEnergy'])
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -190,7 +190,7 @@ class UPSExporter:
                 'UPS output efficiency',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], output_measures['efficiency'])
+            gauge.add_metric([ups_id], outputs_measures['efficiency'])
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -199,7 +199,7 @@ class UPSExporter:
                 "the UPS's capacity in VA.",
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], int(output_measures['percentLoad']) / 100)
+            gauge.add_metric([ups_id], int(outputs_measures['percentLoad']) / 100)
             yield gauge
 
             if outputs_status['health'] == 'ok':
