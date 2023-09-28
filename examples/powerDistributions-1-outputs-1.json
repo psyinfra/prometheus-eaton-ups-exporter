@@ -1,0 +1,81 @@
+{
+    "@id": "/rest/mbdetnrs/1.0/powerDistributions/1/outputs/1",
+    "id": "1",
+    "identification": {
+        "uuid": "cd84817c-7897-5076-a6f0-42c7b3ce716a",
+        "physicalName": "Output",
+        "friendlyName": "Output"
+    },
+    "measures": {
+        "activePower": 220,
+        "apparentPower": 240,
+        "averageEnergy": 215,
+        "cumulatedEnergy": 127638.99751008,
+        "current": 1,
+        "efficiency": 83,
+        "frequency": 50,
+        "percentLoad": 15,
+        "powerFactor": 0.92,
+        "voltage": 230
+    },
+    "status": {
+        "operating": "in service",
+        "health": "ok",
+        "measureFault": false,
+        "overload": false,
+        "preOverload": false,
+        "shortCircuit": false,
+        "supply": true,
+        "supplierPowerQuality": "protecting"
+    },
+    "specifications": {
+        "activePower": {
+            "highWarningThreshold": 1530,
+            "maxReading": 1650,
+            "minReading": 0,
+            "nominal": 1500
+        },
+        "apparentPower": {
+            "highWarningThreshold": 1530,
+            "maxReading": 1650,
+            "minReading": 0,
+            "nominal": 1500
+        },
+        "current": {
+            "highWarningThreshold": 6.6522,
+            "maxReading": 7.1739,
+            "minReading": 0,
+            "nominal": 6.5217
+        },
+        "frequency": {
+            "highCriticalThreshold": 52.5,
+            "lowCriticalThreshold": 47.5,
+            "maxReading": 75,
+            "minReading": 35,
+            "nominal": 50
+        },
+        "percentLoad": {
+            "highWarningThreshold": 102,
+            "maxReading": 110,
+            "minReading": 0
+        },
+        "powerFactor": {
+            "maxReading": 1,
+            "minReading": -1
+        },
+        "voltage": {
+            "lowCriticalThreshold": 100,
+            "highCriticalThreshold": 276,
+            "maxReading": 286,
+            "minReading": 90,
+            "nominal": 230
+        }
+    },
+    "activeAlarms": {
+        "@id": "/rest/mbdetnrs/1.0/powerDistributions/1/outputs/1/activeAlarms"
+    },
+    "mostCriticalAlarm": null,
+    "phases": {
+        "@id": "/rest/mbdetnrs/1.0/powerDistributions/1/outputs/1/phases"
+    }
+}

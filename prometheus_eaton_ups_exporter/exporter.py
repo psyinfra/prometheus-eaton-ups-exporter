@@ -10,7 +10,6 @@ from prometheus_eaton_ups_exporter.scraper import UPSScraper
 
 NORMAL_EXECUTION = 0
 
-
 class UPSExporter:
     """
     Prometheus single exporter.
@@ -58,17 +57,23 @@ class UPSExporter:
             inputs = measures.get('ups_inputs')
             outputs = measures.get('ups_outputs')
             powerbank_details = measures.get('ups_powerbank')
-            inputs_rm = inputs['measures']['realtime']
-            outputs_rm = outputs['measures']['realtime']
+            inputs_measures = inputs['measures']
+            outputs_measures = outputs['measures']
+            inputs_status = inputs['status']
+            outputs_status = outputs['status']
+            inputs_spec = inputs['specifications']
+            outputs_spec = outputs['specifications']
             powerbank_m = powerbank_details['measures']
             powerbank_s = powerbank_details['status']
 
+
+            ## Input metrics
             gauge = GaugeMetricFamily(
                 "eaton_ups_input_volts",
                 'UPS input voltage (V)',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], inputs_rm['voltage'])
+            gauge.add_metric([ups_id], inputs_measures['voltage'])
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -76,23 +81,52 @@ class UPSExporter:
                 'UPS input frequency (Hz)',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], inputs_rm['frequency'])
+            gauge.add_metric([ups_id], inputs_measures['frequency'])
             yield gauge
 
             gauge = GaugeMetricFamily(
-                "eaton_ups_input_amperes",
-                'UPS input current (A)',
+                "eaton_ups_input_volts_max",
+                'UPS input voltage (V)',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], inputs_rm['current'])
+            gauge.add_metric([ups_id], inputs_spec['voltage']['maxReading'])
             yield gauge
 
+            gauge = GaugeMetricFamily(
+                "eaton_ups_input_volts_min",
+                'UPS input voltage (V)',
+                labels=['ups_id']
+            )
+            gauge.add_metric([ups_id], inputs_spec['voltage']['minReading'])
+            yield gauge
+
+            gauge = GaugeMetricFamily(
+                "eaton_ups_input_volts_nominal",
+                'UPS input voltage (V)',
+                labels=['ups_id']
+            )
+            gauge.add_metric([ups_id], inputs_spec['voltage']['nominal'])
+            yield gauge
+
+            if inputs_status['health'] == 'ok':
+                health_value = 0
+            else:
+                health_value = 1
+            gauge = GaugeMetricFamily(
+                "eaton_ups_input_health",
+                'UPS input health status',
+                labels=['ups_id']
+            )
+            gauge.add_metric([ups_id], health_value)
+            yield gauge
+
+            ## Output metrics
             gauge = GaugeMetricFamily(
                 "eaton_ups_output_volts",
                 'UPS output voltage (V)',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], outputs_rm['voltage'])
+            gauge.add_metric([ups_id], output_measures['voltage'])
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -100,7 +134,7 @@ class UPSExporter:
                 'UPS output frequency (Hz)',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], outputs_rm['frequency'])
+            gauge.add_metric([ups_id], output_measures['frequency'])
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -108,7 +142,7 @@ class UPSExporter:
                 'UPS output current (A)',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], outputs_rm['current'])
+            gauge.add_metric([ups_id], output_measures['current'])
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -116,7 +150,7 @@ class UPSExporter:
                 'UPS output apparent power (VA)',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], outputs_rm['apparentPower'])
+            gauge.add_metric([ups_id], output_measures['apparentPower'])
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -124,7 +158,7 @@ class UPSExporter:
                 'UPS output active power (W)',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], outputs_rm['activePower'])
+            gauge.add_metric([ups_id], output_measures['activePower'])
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -132,7 +166,31 @@ class UPSExporter:
                 'UPS output power factor',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], outputs_rm['powerFactor'])
+            gauge.add_metric([ups_id], output_measures['powerFactor'])
+            yield gauge
+
+            gauge = GaugeMetricFamily(
+                "eaton_ups_output_average_energy",
+                'UPS output average energy',
+                labels=['ups_id']
+            )
+            gauge.add_metric([ups_id], output_measures['averageEnergy'])
+            yield gauge
+
+            gauge = GaugeMetricFamily(
+                "eaton_ups_output_cumulated_energy",
+                'UPS output cumulated energy',
+                labels=['ups_id']
+            )
+            gauge.add_metric([ups_id], output_measures['cumulatedEnergy'])
+            yield gauge
+
+            gauge = GaugeMetricFamily(
+                "eaton_ups_output_efficiency",
+                'UPS output efficiency',
+                labels=['ups_id']
+            )
+            gauge.add_metric([ups_id], output_measures['efficiency'])
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -141,9 +199,23 @@ class UPSExporter:
                 "the UPS's capacity in VA.",
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], int(outputs_rm['percentLoad']) / 100)
+            gauge.add_metric([ups_id], int(output_measures['percentLoad']) / 100)
             yield gauge
 
+            if outputs_status['health'] == 'ok':
+                health_value = 0
+            else:
+                health_value = 1
+            gauge = GaugeMetricFamily(
+                "eaton_ups_output_health",
+                'UPS output health status',
+                labels=['ups_id']
+            )
+            gauge.add_metric([ups_id], health_value)
+            yield gauge
+
+
+            # Battery
             gauge = GaugeMetricFamily(
                 "eaton_ups_battery_volts",
                 'UPS battery voltage (V)',
@@ -153,13 +225,11 @@ class UPSExporter:
             yield gauge
 
             gauge = GaugeMetricFamily(
-                "eaton_ups_battery_capacity_ratio",
-                'Ratio of the remaining charge vs the total battery capacity',
+                "eaton_ups_battery_state_of_charge",
+                'UPS battery state of charge (%)',
                 labels=['ups_id']
             )
-            gauge.add_metric(
-                [ups_id], int(powerbank_m['remainingChargeCapacity']) / 100
-            )
+            gauge.add_metric( [ups_id], powerbank_m['stateOfCharge'])
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -172,11 +242,15 @@ class UPSExporter:
 
             gauge = GaugeMetricFamily(
                 "eaton_ups_battery_health",
-                'UPS health status given as the '
-                'remaining lifetime (years) [uncertain]',
+                'UPS health status',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], powerbank_s['health'])
+
+            if powerbank_s['health'] == 'ok':
+                health_value = 0
+            else:
+                health_value = 1
+            gauge.add_metric([ups_id], health_value)
             yield gauge
 
     def scrape_data(self):
