@@ -1,3 +1,4 @@
 .csv
 venv/*
 .txt
+__pycache__/
