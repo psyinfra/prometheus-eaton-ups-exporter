@@ -1,0 +1,110 @@
+{
+    "@id": "/rest/mbdetnrs/1.0/powerDistributions/1",
+    "id": "1",
+    "communicationStatus": {
+        "state": "ok",
+        "since": "2023-09-01T06:48:12.000Z"
+    },
+    "identification": {
+        "uuid": "5290d9e1-3297-589c-b1ca-651f8bc0cce2",
+        "physicalName": "Eaton 9PX 1500i RT 2U Marine",
+        "friendlyName": "Eaton 9PX 1500i RT 2U Marine",
+        "partNumber": "9PX1500iRTM",
+        "referenceNumber": "9870",
+        "vendor": "EATON",
+        "model": "Eaton 9PX 1500i RT 2U Marine",
+        "serialNumber": "GA40P17007",
+        "type": "PowerDistribution",
+        "productName": "Eaton 9PX",
+        "firmwareVersion": "01.24.6755",
+        "name": "Eaton 9PX 1500i RT 2U Marine"
+    },
+    "settings": {
+        "audibleAlarm": "enabled",
+        "automaticRestartEnabled": true,
+        "automaticRestartLevel": 0,
+        "forcedRebootEnabled": true,
+        "frequencyConverterEnabled": false,
+        "nominalVoltage": 230,
+        "remoteControlEnabled": true,
+        "voltageHighDetection": 276,
+        "voltageLowDetection": 100
+    },
+    "status": {
+        "operating": "in service",
+        "health": "ok",
+        "bootloaderMode": false,
+        "communicationFault": false,
+        "compatibilityFault": false,
+        "configurationFault": false,
+        "delayBeforeSwitchOff": -1,
+        "delayBeforeSwitchOn": -1,
+        "emergencySwitchOff": false,
+        "fanFault": false,
+        "internalFailure": false,
+        "shutdownImminent": false,
+        "systemAlarm": false,
+        "temperatureOutOfRange": false,
+        "watchdogFault": false,
+        "mode": "on line"
+    },
+    "specifications": {
+        "powerCycleDuration": 10,
+        "supported": true,
+        "topology": "online",
+        "voltageRange": "high voltage",
+        "activePower": {
+            "nominal": 1500
+        },
+        "apparentPower": {
+            "nominal": 1500
+        },
+        "current": {
+            "nominal": 6.5217
+        },
+        "frequency": {
+            "nominal": 50
+        },
+        "percentLoad": {
+            "highWarningThreshold": 102
+        },
+        "voltage": {
+            "hysteresisDetection": 10,
+            "nominal": 230
+        },
+        "type": "ups"
+    },
+    "actions": {
+        "#cancelSwitchOff": "/rest/mbdetnrs/1.0/powerDistributions/1/actions/cancelSwitchOff",
+        "#cancelSwitchOn": "/rest/mbdetnrs/1.0/powerDistributions/1/actions/cancelSwitchOn",
+        "#switchOff": "/rest/mbdetnrs/1.0/powerDistributions/1/actions/switchOff",
+        "#switchOffWithAutoRestart": "/rest/mbdetnrs/1.0/powerDistributions/1/actions/switchOffWithAutoRestart",
+        "#switchOn": "/rest/mbdetnrs/1.0/powerDistributions/1/actions/switchOn",
+        "#upgrade": "/rest/mbdetnrs/1.0/powerDistributions/1/actions/upgrade"
+    },
+    "activeAlarms": {
+        "@id": "/rest/mbdetnrs/1.0/powerDistributions/1/activeAlarms"
+    },
+    "mostCriticalAlarm": null,
+    "inputs": {
+        "@id": "/rest/mbdetnrs/1.0/powerDistributions/1/inputs"
+    },
+    "outputs": {
+        "@id": "/rest/mbdetnrs/1.0/powerDistributions/1/outputs"
+    },
+    "backupSystem": {
+        "@id": "/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem"
+    },
+    "outlets": {
+        "@id": "/rest/mbdetnrs/1.0/powerDistributions/1/outlets"
+    },
+    "powerConverters": {
+        "@id": "/rest/mbdetnrs/1.0/powerDistributions/1/powerConverters"
+    },
+    "environment": {
+        "@id": "/rest/mbdetnrs/1.0/powerDistributions/1/environment"
+    },
+    "firmwareUpgrade": {
+        "@id": "/rest/mbdetnrs/1.0/powerDistributions/1/firmwareUpgrade"
+    }
+}

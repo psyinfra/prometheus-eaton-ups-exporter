@@ -153,7 +153,7 @@ class UPSScraper:
                 pass
 
             # try to login, if not authorized
-            if "Unauthorized" in request.text:
+            if "Unauthorized" in request.text or request.status_code == 401:
                 self.logger.debug('Unauthorized, try to login')
                 try:
                     self.token_type, self.access_token = self.login()

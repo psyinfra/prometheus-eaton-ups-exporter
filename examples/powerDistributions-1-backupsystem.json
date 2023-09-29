@@ -1,0 +1,6 @@
+{
+    "@id": "/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem",
+    "powerBank": {
+        "@id": "/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank"
+    }
+}

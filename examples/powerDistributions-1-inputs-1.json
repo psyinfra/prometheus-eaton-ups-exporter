@@ -1,0 +1,53 @@
+{
+    "@id": "/rest/mbdetnrs/1.0/powerDistributions/1/inputs/1",
+    "id": "1",
+    "identification": {
+        "uuid": "17d9212d-0ea3-581d-b8c5-2fa76097f865",
+        "physicalName": "Main utility",
+        "friendlyName": "Main utility"
+    },
+    "measures": {
+        "frequency": 50,
+        "voltage": 235.2
+    },
+    "status": {
+        "operating": "in service",
+        "health": "ok",
+        "frequencyOutOfRange": false,
+        "fuseFault": false,
+        "inRange": true,
+        "internalFailure": false,
+        "supplied": true,
+        "supply": true,
+        "voltageOutOfRange": false,
+        "voltageTooHigh": false,
+        "voltageTooLow": false,
+        "wiringFault": false
+    },
+    "specifications": {
+        "frequency": {
+            "highCriticalThreshold": 60,
+            "lowCriticalThreshold": 40,
+            "maxReading": 75,
+            "minReading": 35,
+            "nominal": 50
+        },
+        "voltage": {
+            "lowCriticalThreshold": 100,
+            "highCriticalThreshold": 276,
+            "maxReading": 286,
+            "minReading": 90,
+            "nominal": 230
+        }
+    },
+    "settings": {
+        "wiringFaultEnabled": false
+    },
+    "activeAlarms": {
+        "@id": "/rest/mbdetnrs/1.0/powerDistributions/1/inputs/1/activeAlarms"
+    },
+    "mostCriticalAlarm": null,
+    "phases": {
+        "@id": "/rest/mbdetnrs/1.0/powerDistributions/1/inputs/1/phases"
+    }
+}

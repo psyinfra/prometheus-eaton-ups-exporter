@@ -1,0 +1,64 @@
+{
+    "@id": "/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank",
+    "communicationStatus": null,
+    "identification": {
+        "uuid": "442a36d2-1fef-5e38-a84b-128e3179a9da",
+        "physicalName": "Battery",
+        "friendlyName": "Battery"
+    },
+    "measures": {
+        "remainingTime": 3370,
+        "stateOfCharge": 100,
+        "voltage": 52.5
+    },
+    "status": {
+        "operating": "stopped",
+        "health": "ok",
+        "criticalLowStateOfCharge": false,
+        "dcBoostFault": false,
+        "fuseFault": false,
+        "internalFailure": false,
+        "lastTestResult": "success",
+        "lastTestResultDate": "2023-09-07T09:26:54.000Z",
+        "lastSuccessfulTestDate": "2023-09-07T09:26:54.000Z",
+        "lcmInstallationDate": "2023-08-24T04:38:06.000Z",
+        "lcmReplacementDate": "2027-08-23T04:38:06.000Z",
+        "lcmExpired": false,
+        "lowStateOfCharge": false,
+        "storagePresent": "present",
+        "supplied": true,
+        "supply": false,
+        "testFailed": false,
+        "testStatus": 3
+    },
+    "specifications": {
+        "externalCount": 0,
+        "remoteControlEnabled": true,
+        "technology": "PbAc",
+        "capacityAh": {
+            "nominal": 9
+        },
+        "voltage": {
+            "nominal": 48
+        },
+        "type": "batteries"
+    },
+    "settings": {
+        "replacementAlarmEnabled": true,
+        "lowRuntimeThreshold": 180,
+        "lowStateOfChargeThreshold": 0
+    },
+    "activeAlarms": {
+        "@id": "/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank/activeAlarms"
+    },
+    "mostCriticalAlarm": null,
+    "test": {
+        "actions": {
+            "#abortTest": "/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank/test/actions/abortTest",
+            "#startTest": "/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank/test/actions/startTest"
+        }
+    },
+    "chargers": {
+        "@id": "/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank/chargers"
+    }
+}
