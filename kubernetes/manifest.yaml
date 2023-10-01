@@ -26,7 +26,7 @@ spec:
               image: adyekjaer/prometheus-eaton-ups-exporter:3
               imagePullPolicy: IfNotPresent
               command: ["python"]
-              args: ["./prometheus_eaton_ups_exporter.py", "-k", "-c", "/usr/src/app/etc/config.json"]
+              args: ["./prometheus_eaton_ups_exporter.py", "-k", "-c", "/usr/src/app/etc/config.json","-w","0.0.0.0:9795"]
               volumeMounts:
                 - mountPath: "/usr/src/app/etc"
                   name: config
