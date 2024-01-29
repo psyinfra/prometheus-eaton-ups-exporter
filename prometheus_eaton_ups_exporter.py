@@ -11,7 +11,7 @@ from prometheus_eaton_ups_exporter.scraper_globals import REQUEST_TIMEOUT
 from prometheus_eaton_ups_exporter.exporter import UPSMultiExporter
 
 DEFAULT_PORT = 9795
-DEFAULT_HOST = "127.0.0.1"
+DEFAULT_HOST = "0.0.0.0"
 
 
 class CustomFormatter(HelpFormatter):
@@ -56,7 +56,7 @@ def create_parser():
         '-w', '--web.listen-address',
         help='Interface and port to listen on, '
              'in the format of "ip_address:port".\n'
-             'The IP can be omitted to listen on all interfaces.',
+             'If the IP is omitted, the exporter listens on all interfaces.',
         default=f"{DEFAULT_HOST}:{DEFAULT_PORT}"
     )
 
@@ -104,10 +104,13 @@ def split_listen_address(listen_address):
     """Split listen address into host and port."""
     if ':' in listen_address:
         host_address, port = listen_address.split(':')
-        if port == "":
-            port = DEFAULT_PORT
     else:
         host_address = listen_address
+
+    # if host_address or port were not specified, use default values
+    if not host_address:
+        host_address = DEFAULT_HOST
+    if not port:
         port = DEFAULT_PORT
 
     return host_address, port

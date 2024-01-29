@@ -38,7 +38,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -w WEB.LISTEN_ADDRESS, --web.listen-address WEB.LISTEN_ADDRESS
                         Interface and port to listen on, in the format of "ip_address:port".
-                        The IP can be omitted to listen on all interfaces. (default: 127.0.0.1:9795)
+                        If the IP is omitted, the exporter listens on all interfaces. (default: 0.0.0.0:9795)
   -c CONFIG, --config CONFIG
                         Configuration JSON file containing UPS addresses and login info (default: None)
   -k, --insecure        Allow the exporter to connect to UPSs with self-signed SSL certificates (default: False)
@@ -50,7 +50,7 @@ optional arguments:
 ```
 
 ## Defaults:
-* Default host-address is localhost
+* Default host-address is `0.0.0.0`
 * Default port is 9795 (see also: [Prometheus default port allocations](https://github.com/prometheus/prometheus/wiki/Default-port-allocations))
 * Login timeout is set to 3 seconds
 * Other request timeouts are set to 2 seconds
