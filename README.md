@@ -68,9 +68,9 @@ optional arguments:
 
 # Testing:
 
-Install requirements with 
+Install requirements with
 
-    pip install -r test-requirements.py
+    pip install -r test-requirements.txt
 
 Runt tests with
 
