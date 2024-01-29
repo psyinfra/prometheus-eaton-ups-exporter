@@ -18,15 +18,11 @@ class CustomFormatter(HelpFormatter):
     """Custom argparse formatter to provide defaults and to split newlines."""
 
     def _split_lines(self, text, width):
-        """
-        Help message formatter which retains formatting of all help text.
-        """
+        """Help message formatter which retains formatting of all help text."""
         return text.splitlines()
 
     def _get_help_string(self, action):
-        """
-        Help message formatter which adds default values to argument help.
-        """
+        """Help message formatter which adds default values to argument help."""
         help = action.help
         if '%(default)' not in action.help:
             if action.default is not SUPPRESS:
