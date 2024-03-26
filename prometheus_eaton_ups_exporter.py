@@ -22,7 +22,8 @@ class CustomFormatter(HelpFormatter):
         return text.splitlines()
 
     def _get_help_string(self, action):
-        """Help message formatter which adds default values to argument help."""
+        """Help message formatter which adds default values to
+        argument help."""
         help = action.help
         if '%(default)' not in action.help:
             if action.default is not SUPPRESS:

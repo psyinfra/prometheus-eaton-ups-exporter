@@ -3,11 +3,30 @@ import json
 
 import urllib3
 from requests import Session, Response
-from requests.exceptions import SSLError, ConnectionError,\
-    ReadTimeout, MissingSchema, InvalidURL
-
+from requests.exceptions import (
+        SSLError,
+        ConnectionError,
+        ReadTimeout,
+        MissingSchema,
+        InvalidURL,
+        )
 from prometheus_eaton_ups_exporter import create_logger
-from prometheus_eaton_ups_exporter.scraper_globals import *
+from prometheus_eaton_ups_exporter.scraper_globals import (
+        AUTHENTICATION_FAILED,
+        CERTIFICATE_VERIFY_FAILED,
+        CONNECTION_ERROR,
+        INPUT_MEMBER_ID,
+        INVALID_URL_ERROR,
+        LOGIN_AUTH_PATH,
+        LOGIN_DATA,
+        LoginFailedException,
+        MISSING_SCHEMA_ERROR,
+        OUTPUT_MEMBER_ID,
+        REQUEST_TIMEOUT,
+        REST_API_PATH,
+        SSL_ERROR,
+        TIMEOUT_ERROR,
+        )
 
 
 class UPSScraper:
@@ -112,12 +131,12 @@ class UPSScraper:
         except MissingSchema:
             raise LoginFailedException(
                 MISSING_SCHEMA_ERROR,
-                f"Invalid URL, no schema supplied"
+                "Invalid URL, no schema supplied"
             ) from None
         except InvalidURL:
             raise LoginFailedException(
                 INVALID_URL_ERROR,
-                f"Invalid URL, no host supplied"
+                "Invalid URL, no host supplied"
             ) from None
 
     def load_page(self, url) -> Response:
