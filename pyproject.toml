@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "prometheus-eaton-ups-exporter"
+authors = [
+    {name = "Mathis Lövenich"},
+]
+description = "A Prometheus exporter for Eaton UPSs."
+version = "1.2.0"
+readme = "README.md"
+requires-python = ">=3.11"
+keywords = ["prometheus", "exporter", "eaton"]
+license = {text = "ISC"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    'prometheus_client == 0.6.0',
+    'requests >= 2.25.1',
+    'urllib3 == 1.26.3',
+]
+
+[project.urls]
+"Bug Reports" = "https://github.com/psyinfra/prometheus-eaton-ups-exporter/issues"
+"Source" = "https://github.com/psyinfra/prometheus-eaton-ups-exporter/"
+
+[project.optional-dependencies]
+tests = [
+    'flake8',
+    'pytest >= 6.2.4',
+    'vcrpy == 4.1.1',
+]
+
+[project.scripts]
+prometheus_eaton_ups_exporter = "prometheus_eaton_ups_exporter.main:main"
+
+[tool.setuptools.packages]
+find = {}  # Scanning implicit namespaces is active by default

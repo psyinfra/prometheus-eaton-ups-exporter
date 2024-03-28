@@ -3,7 +3,16 @@ import os
 import vcr
 from . import CASSETTE_DIR, scrub_body, first_ups_details
 from prometheus_eaton_ups_exporter.scraper import UPSScraper
-from prometheus_eaton_ups_exporter.scraper_globals import *
+from prometheus_eaton_ups_exporter.scraper_globals import (
+        AUTHENTICATION_FAILED,
+        CERTIFICATE_VERIFY_FAILED,
+        CONNECTION_ERROR,
+        INVALID_URL_ERROR,
+        LoginFailedException,
+        MISSING_SCHEMA_ERROR,
+        REST_API_PATH,
+        TIMEOUT_ERROR,
+        )
 
 
 def ups_scraper(address, auth, name, insecure=True):
@@ -152,7 +161,7 @@ class MockLoginFailedException:
         raise LoginFailedException(*args, **kwargs)
 
 
-def test_certificate_exception(monkeypatch, ups_scraper_conf):
+def test_certificate_exception_monkey_patch(monkeypatch, ups_scraper_conf):
     address, auth, ups_name = first_ups_details(ups_scraper_conf)
     scraper = ups_scraper(
         address,

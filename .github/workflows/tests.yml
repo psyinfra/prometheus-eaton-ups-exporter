@@ -1,0 +1,31 @@
+name: prometheus_eaton_ups_exporter tests
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12']
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: git config
+      run: |
+        git config --global user.email "eaton@exporter.com"
+        git config --global user.name "Eaton Exporter"
+    - name: Install dependencies
+      run: |
+        pip install -e ".[tests]"
+    - name: flake8 linting
+      run: |
+        flake8

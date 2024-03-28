@@ -3,6 +3,7 @@
 import sys
 import time
 import argparse
+import traceback
 
 from argparse import HelpFormatter, SUPPRESS, OPTIONAL, ZERO_OR_MORE
 
@@ -22,7 +23,8 @@ class CustomFormatter(HelpFormatter):
         return text.splitlines()
 
     def _get_help_string(self, action):
-        """Help message formatter which adds default values to argument help."""
+        """Help message formatter which adds default values to
+        argument help."""
         help = action.help
         if '%(default)' not in action.help:
             if action.default is not SUPPRESS:
@@ -116,36 +118,38 @@ def split_listen_address(listen_address):
     return host_address, port
 
 
-def run(args):
+def run(args: argparse.Namespace) -> None:
     """Execute the Prometheus Eaton UPS Exporter."""
     parser = create_parser()
+    args = parser.parse_args(args)
+
+    listen_address = args.__getattribute__('web.listen_address')
+    host_address, port = split_listen_address(listen_address)
+
+    REGISTRY.register(
+        UPSMultiExporter(
+            args.config,
+            insecure=args.insecure,
+            verbose=args.verbose,
+            threading=args.threading,
+            login_timeout=args.login_timeout
+        )
+    )
+    # Start up the server to expose the metrics.
+    print(f"Starting Prometheus Eaton UPS Exporter on {host_address}:{port}")
     try:
-        args = parser.parse_args(args)
+        start_http_server(port=int(port), addr=host_address)
+    except OSError as err:
+        if args.verbose:
+            print(traceback.format_exc())
+        else:
+            print(err)
+        sys.exit(1)
 
-        listen_address = args.__getattribute__('web.listen_address')
-        host_address, port = split_listen_address(listen_address)
-
-        REGISTRY.register(
-            UPSMultiExporter(
-                args.config,
-                insecure=args.insecure,
-                verbose=args.verbose,
-                threading=args.threading,
-                login_timeout=args.login_timeout
-            )
-        )
-
-        # Start up the server to expose the metrics.
-        start_http_server(int(port), addr=host_address)
-        print(
-            f"Starting Prometheus Eaton UPS Exporter on {host_address}:{port}"
-        )
-        # Run forever until an Error Event or Keyboard Interrupt
+    # Run forever until an Error Event or Keyboard Interrupt
+    try:
         while True:
             time.sleep(1)
-
-    except OSError as err:
-        print(err)
 
     except KeyboardInterrupt:
         print("Prometheus Eaton UPS Exporter shut down")

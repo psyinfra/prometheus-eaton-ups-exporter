@@ -5,7 +5,10 @@ import os
 import pytest
 import vcr
 from . import CASSETTE_DIR, scrub_body, first_ups_details
-from prometheus_eaton_ups_exporter.exporter import UPSMultiExporter, UPSExporter
+from prometheus_eaton_ups_exporter.exporter import (
+        UPSExporter,
+        UPSMultiExporter,
+        )
 
 
 # Create Multi Exporter
@@ -113,6 +116,3 @@ def test_collect_threading(ups_scraper_conf, threading_multi_exporter):
             assert gauge.name in names
             assert gauge.samples[0].labels['ups_id'] \
                    in list(ups_scraper_conf.keys())
-
-
-
