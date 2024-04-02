@@ -1,3 +1,7 @@
 .csv
 venv/*
 .txt
+build/
+__pycache__
+*egg-info
+.pyre
