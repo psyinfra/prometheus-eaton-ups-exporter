@@ -1,6 +1,6 @@
 import pytest
 import os
-import vcr
+import vcr  # pyre-ignore[21]
 from . import CASSETTE_DIR, scrub_body, first_ups_details
 from prometheus_eaton_ups_exporter.scraper import UPSScraper
 from prometheus_eaton_ups_exporter.scraper_globals import (
@@ -15,7 +15,10 @@ from prometheus_eaton_ups_exporter.scraper_globals import (
         )
 
 
-def ups_scraper(address, auth, name, insecure=True):
+def ups_scraper(address,
+                auth,
+                name: str,
+                insecure: bool = True) -> UPSScraper:
     return UPSScraper(
         address,
         auth,
@@ -40,7 +43,7 @@ def scraper_fixture(ups_scraper_conf):
     os.path.join(CASSETTE_DIR, "api_login.yaml"),
     before_record_request=scrub_body()
 )
-def test_login(scraper_fixture):
+def test_login(scraper_fixture) -> None:
     token_type, access_token = scraper_fixture.login()
     assert token_type == "Bearer"
 
@@ -49,7 +52,7 @@ def test_login(scraper_fixture):
     os.path.join(CASSETTE_DIR, "api_load_rest.yaml"),
     before_record_request=scrub_body()
 )
-def test_load_rest_api(scraper_fixture):
+def test_load_rest_api(scraper_fixture) -> None:
     """Tests load_page function with rest api."""
     request = scraper_fixture.load_page(
         scraper_fixture.ups_address + REST_API_PATH
@@ -69,7 +72,7 @@ def test_load_rest_api(scraper_fixture):
     os.path.join(CASSETTE_DIR, "api_measures.yaml"),
     before_record_request=scrub_body()
 )
-def test_get_measures(scraper_fixture):
+def test_get_measures(scraper_fixture) -> None:
     measures = scraper_fixture.get_measures()
     measures_keys = [
         'ups_id',
@@ -113,7 +116,7 @@ def test_get_measures(scraper_fixture):
     ]
 
 
-def test_missing_schema_exception():
+def test_missing_schema_exception() -> None:
     scraper = ups_scraper("", ("", ""), "")
     with pytest.raises(LoginFailedException) as pytest_wrapped_e:
         scraper.login()
@@ -121,7 +124,7 @@ def test_missing_schema_exception():
     assert pytest_wrapped_e.value.error_code == MISSING_SCHEMA_ERROR
 
 
-def test_invalid_url_exception():
+def test_invalid_url_exception() -> None:
     scraper = ups_scraper("https:0.0.0.0", ("", ""), "")
     with pytest.raises(LoginFailedException) as pytest_wrapped_e:
         scraper.login()
@@ -129,7 +132,7 @@ def test_invalid_url_exception():
     assert pytest_wrapped_e.value.error_code == INVALID_URL_ERROR
 
 
-def test_connection_refused_exception():
+def test_connection_refused_exception() -> None:
     scraper = ups_scraper("https://127.0.0.1", ("", ""), "")
     with pytest.raises(LoginFailedException) as pytest_wrapped_e:
         scraper.login()
@@ -143,7 +146,7 @@ def test_connection_refused_exception():
     record_mode="new_episodes"
 )
 @pytest.mark.skip("AssertionError: assert 4 == 3")
-def test_certificate_exception(ups_scraper_conf):
+def test_certificate_exception(ups_scraper_conf) -> None:
     address, auth, ups_name = first_ups_details(ups_scraper_conf)
     scraper = ups_scraper(
         address,
@@ -162,7 +165,8 @@ class MockLoginFailedException:
         raise LoginFailedException(*args, **kwargs)
 
 
-def test_certificate_exception_monkey_patch(monkeypatch, ups_scraper_conf):
+def test_certificate_exception_monkey_patch(monkeypatch,
+                                            ups_scraper_conf) -> None:
     address, auth, ups_name = first_ups_details(ups_scraper_conf)
     scraper = ups_scraper(
         address,
@@ -184,7 +188,7 @@ def test_certificate_exception_monkey_patch(monkeypatch, ups_scraper_conf):
     assert pytest_wrapped_e.value.error_code == CERTIFICATE_VERIFY_FAILED
 
 
-def test_login_timeout_exception(monkeypatch, ups_scraper_conf):
+def test_login_timeout_exception(monkeypatch, ups_scraper_conf) -> None:
     address, _, ups_name = first_ups_details(ups_scraper_conf)
     scraper = ups_scraper(
         address,
@@ -204,7 +208,7 @@ def test_login_timeout_exception(monkeypatch, ups_scraper_conf):
     assert pytest_wrapped_e.value.error_code == TIMEOUT_ERROR
 
 
-def test_auth_failed_exception(monkeypatch, ups_scraper_conf):
+def test_auth_failed_exception(monkeypatch, ups_scraper_conf) -> None:
     address, _, ups_name = first_ups_details(ups_scraper_conf)
     scraper = ups_scraper(
         address,

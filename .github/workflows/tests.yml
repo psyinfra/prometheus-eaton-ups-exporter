@@ -29,6 +29,9 @@ jobs:
     - name: flake8 linting
       run: |
         flake8
+    - name: Pyre type-checking
+      run: |
+        pyre --noninteractive check
     - name: Test with pytest
       run: |
         pytest -vv

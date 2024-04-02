@@ -3,7 +3,7 @@ Testing the Exporter using the UPSExporter and UPSMultiExporter.
 """
 import os
 import pytest
-import vcr
+import vcr  # pyre-ignore[21]
 from . import CASSETTE_DIR, scrub_body, first_ups_details
 from prometheus_eaton_ups_exporter.exporter import (
         UPSExporter,
@@ -13,7 +13,7 @@ from prometheus_eaton_ups_exporter.exporter import (
 
 # Create Multi Exporter
 @pytest.fixture(scope="function")
-def single_exporter(ups_scraper_conf):
+def single_exporter(ups_scraper_conf) -> UPSExporter:
     address, auth, ups_name = first_ups_details(ups_scraper_conf)
     return UPSExporter(
         address,
@@ -26,7 +26,7 @@ def single_exporter(ups_scraper_conf):
 
 # Create Multi Exporter
 @pytest.fixture(scope="function")
-def multi_exporter(ups_scraper_conf):
+def multi_exporter(ups_scraper_conf) -> UPSMultiExporter:
     return UPSMultiExporter(
         ups_scraper_conf,
         insecure=True,
@@ -36,7 +36,7 @@ def multi_exporter(ups_scraper_conf):
 
 # Create Multi Exporter
 @pytest.fixture(scope="function")
-def threading_multi_exporter(ups_scraper_conf):
+def threading_multi_exporter(ups_scraper_conf) -> UPSMultiExporter:
     return UPSMultiExporter(
         ups_scraper_conf,
         insecure=True,
@@ -49,7 +49,7 @@ def threading_multi_exporter(ups_scraper_conf):
     os.path.join(CASSETTE_DIR, "single_exporter.yaml"),
     before_record_request=scrub_body()
 )
-def test_single_collect(ups_scraper_conf, single_exporter):
+def test_single_collect(ups_scraper_conf, single_exporter) -> None:
     names = [
         'eaton_ups_input_volts', 'eaton_ups_input_hertz',
         'eaton_ups_input_amperes', 'eaton_ups_output_volts',
@@ -74,7 +74,7 @@ def test_single_collect(ups_scraper_conf, single_exporter):
     os.path.join(CASSETTE_DIR, "multi_exporter.yaml"),
     before_record_request=scrub_body()
 )
-def test_multi_collect(ups_scraper_conf, multi_exporter):
+def test_multi_collect(ups_scraper_conf, multi_exporter) -> None:
     names = [
         'eaton_ups_input_volts', 'eaton_ups_input_hertz',
         'eaton_ups_input_amperes', 'eaton_ups_output_volts',
@@ -96,7 +96,7 @@ def test_multi_collect(ups_scraper_conf, multi_exporter):
         assert gauge_labels == labels
 
 
-def test_collect_threading(ups_scraper_conf, threading_multi_exporter):
+def test_collect_threading(ups_scraper_conf, threading_multi_exporter) -> None:
     names = [
         'eaton_ups_input_volts', 'eaton_ups_input_hertz',
         'eaton_ups_input_amperes', 'eaton_ups_output_volts',

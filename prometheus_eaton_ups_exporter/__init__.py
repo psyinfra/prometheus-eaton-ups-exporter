@@ -6,7 +6,8 @@ import logging
 logging.basicConfig(level=logging.ERROR, format='ERROR: %(message)s')
 
 
-def create_logger(name, disabled=False):
+def create_logger(name: str,
+                  disabled: bool = False) -> logging.Logger:
     """Create logger for debug and error levels."""
     logger = logging.Logger(name)
     logger.setLevel(logging.DEBUG)
