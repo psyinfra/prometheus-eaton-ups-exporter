@@ -1,8 +1,8 @@
 import os
 import json
 
-CASSETTE_DIR = os.path.join(
-    os.getcwd(), "tests", "fixtures", "cassettes"
+CASSETTE_DIR: str = os.path.join(
+    __file__.replace("__init__.py", ""), "fixtures", "cassettes"
 )
 
 
