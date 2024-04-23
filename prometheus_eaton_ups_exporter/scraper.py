@@ -1,7 +1,6 @@
 """REST API web scraper for Eaton UPS measure data."""
 import json
 
-import urllib3
 from requests import Session, Response
 from requests.exceptions import (
         ConnectionError,
@@ -10,6 +9,8 @@ from requests.exceptions import (
         ReadTimeout,
         SSLError,
         )
+# pyre-ignore[21]: pyre thinks urllib3 is not part of requests
+from requests.packages import urllib3
 from prometheus_eaton_ups_exporter import create_logger
 from prometheus_eaton_ups_exporter.scraper_globals import (
         AUTHENTICATION_FAILED,
@@ -62,12 +63,12 @@ class UPSScraper:
         self.session = Session()
         self.logger = create_logger(__name__, not verbose)
 
-        self.session.verify = not insecure  # ignore self signed certificate
+        # ignore self signed certificate
+        self.session.verify = not insecure
+        # disable warnings created because of ignoring certificates
         if not self.session.verify:
-            # disable warnings created because of ignoring certificates
-            urllib3.disable_warnings(
-                urllib3.exceptions.InsecureRequestWarning
-            )
+            # pyre-ignore[16]: pyre thinks urllib3 is not part of requests
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
         self.token_type, self.access_token = None, None
 

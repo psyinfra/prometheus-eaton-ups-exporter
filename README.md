@@ -58,7 +58,6 @@ optional arguments:
 
 ## Requirements:
 - requests
-- urllib3
 - [prometheus_client](https://github.com/prometheus/client_python)
 
 # Installation:
