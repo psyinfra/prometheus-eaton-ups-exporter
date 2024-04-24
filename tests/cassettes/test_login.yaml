@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"grant_type": "password", "scope": "GUIAccess", "username": "username",
-      "password": "password"}'
+      "password": password}'
     headers:
       Accept:
       - '*/*'
@@ -12,12 +12,12 @@ interactions:
       Content-Length:
       - '110'
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: POST
-    uri: https://127.0.0.1:4430/rest/mbdetnrs/1.0/oauth2/token
+    uri: https://address.to.ups1/rest/mbdetnrs/1.0/oauth2/token
   response:
     body:
-      string: '{"expires_in": 899,"token_type": "Bearer","access_token": "YmRmYWZlMjkxMjVhMjg4Mzlh","user_profile":
+      string: '{"expires_in": 899,"token_type": "Bearer","access_token": "ODAwNjZkZmNhZWFjNTNjYzc2","user_profile":
         "viewers","user_permissions": "[role-alarm-viewer,role-power-viewer,role-sensor-viewer,role-session-configure-self,role-system-info-viewer,role-user-configure-self,role-cli-access,role-system-info-viewer]"}
 
 
@@ -35,7 +35,7 @@ interactions:
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Mon, 13 Sep 2021 11:10:10 GMT
+      - Wed, 24 Apr 2024 09:34:47 GMT
       Keep-Alive:
       - timeout=30s, max=999
       Pragma:

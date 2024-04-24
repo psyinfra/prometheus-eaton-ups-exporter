@@ -11,9 +11,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: GET
-    uri: https://127.0.0.1:4430/rest/mbdetnrs/1.0/powerDistributions/1
+    uri: https://address.to.ups1/rest/mbdetnrs/1.0/powerDistributions/1
   response:
     body:
       string: '<html><body><h1>Error</h1><p>Unauthorized</p></body></html>
@@ -27,7 +27,7 @@ interactions:
       Content-Type:
       - text/html; charset=UTF-8
       Date:
-      - Thu, 16 Sep 2021 07:23:21 GMT
+      - Wed, 24 Apr 2024 09:34:49 GMT
       Keep-Alive:
       - timeout=30s, max=999
       Server:
@@ -37,7 +37,7 @@ interactions:
       message: Unauthorized
 - request:
     body: '{"grant_type": "password", "scope": "GUIAccess", "username": "username",
-      "password": "password"}'
+      "password": password}'
     headers:
       Accept:
       - '*/*'
@@ -48,12 +48,12 @@ interactions:
       Content-Length:
       - '110'
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: POST
-    uri: https://127.0.0.1:4430/rest/mbdetnrs/1.0/oauth2/token
+    uri: https://address.to.ups1/rest/mbdetnrs/1.0/oauth2/token
   response:
     body:
-      string: '{"expires_in": 899,"token_type": "Bearer","access_token": "MGMwOWRhOGE0ODU0YzBmYzM5","user_profile":
+      string: '{"expires_in": 899,"token_type": "Bearer","access_token": "YTg2MzkwZGU1MTkyNWVmM2Zi","user_profile":
         "viewers","user_permissions": "[role-alarm-viewer,role-power-viewer,role-sensor-viewer,role-session-configure-self,role-system-info-viewer,role-user-configure-self,role-cli-access,role-system-info-viewer]"}
 
 
@@ -71,9 +71,9 @@ interactions:
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Thu, 16 Sep 2021 07:23:22 GMT
+      - Wed, 24 Apr 2024 09:34:51 GMT
       Keep-Alive:
-      - timeout=30s, max=998
+      - timeout=30s, max=999
       Pragma:
       - no-cache
       Server:
@@ -95,27 +95,37 @@ interactions:
       Accept-Encoding:
       - gzip, deflate
       Authorization:
-      - Bearer MGMwOWRhOGE0ODU0YzBmYzM5
+      - Bearer YTg2MzkwZGU1MTkyNWVmM2Zi
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: GET
-    uri: https://127.0.0.1:4430/rest/mbdetnrs/1.0/powerDistributions/1
+    uri: https://address.to.ups1/rest/mbdetnrs/1.0/powerDistributions/1
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA61Uy47aMBRdw1egrHnkQYB0NajTlmooRGVAFVVVOckNuJPYwbGDotH8+9jEBFDV
-        xWS6iZxz7zk+9yE/t1vGHY6MDx1jwCDngzSIgBOWD6y+OcjoEdg9zjnDgeCYEgkbXUmpGOczEI5j
-        HCKVIfHndqtlCKFzwAHHA6cXeW7Ucy3L6QUTb9wLIseyPTOe2HGgZFpGASSiTHE+TR+XiwpMaQTJ
-        CUOcko7rdyzXNatYDgyjZCHSAE60L5Y1fhiObNOu4rzMQOGuf+FkiPEL4zoSY5YeEYMNsLyqwzDt
-        vjXsm6Y9qlIISuEfXkJKOAq5ilZAQut+aAQTDixGIbyl2e3Wi+pxnkH4V4t1fZbOkRZivBPsJofQ
-        FBOUfGZwEEDCUuKu2b2KbGjC0U7p2M5NYBpyXICvTKlLLPM2mslOyrnXcfdW1gcWyvCcIrUFlulq
-        kyLLz9bUaOXZq+c8h+I0a6uaHs1oQnflVYU5R1zUfJqBqpXsVMboxNkDSvhe1agZmGSC14y3LfpA
-        k7UUKlhDHcXUIlTwdxg6s+viCmByp5rXd+afN2iP2K65Xk3XcgEKn0S2KnMOaUPJG4mzbJmhvKlH
-        TdZSDEL1cjUv+UrgMuEELhNOQb01+V1IBVGvg9O9QuX/T/nbUpmNtkHdNPi9mj35q5W/3qTOukhh
-        8gNt7aOhNJWj98oTXj7OvG/eZvbx8H24XOymc1hP/5v8w/Z+fRj75ToWf9xlVpAtG3/V7uXnl2xr
-        +6X9Cq/sJAmnBgAA
+      string: "{\n\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1\",\n\t\"id\":
+        \"1\",\n\t\"identification\": {\n\t\t\"uuid\": \"1e3e39e3-d95d-5113-b897-bd31290f82fb\",\n\t\t\"vendor\":
+        \"EATON\",\n\t\t\"model\": \"Eaton 5P 1550\",\n\t\t\"serialNumber\": \"G117K46202\",\n\t\t\"type\":
+        \"5P1550\",\n\t\t\"partNumber\": \"5P1550\",\n\t\t\"firmwareVersion\": \"02.14.0026\",\n\t\t\"name\":
+        \"Eaton 5P 1550\",\n\t\t\"contact\": \"\",\n\t\t\"location\": \"\",\n\t\t\"interface\":
+        \"/rest/mbdetnrs/1.0/powerDistributions/1\"\n\t},\n\t\"specification\": {\n\t\t\"type\":
+        1\n\t},\n\t\"configuration\": {\n\t\t\"nominalFrequency\": 50,\n\t\t\"nominalVoltage\":
+        230,\n\t\t\"nominalActivePower\": 1100,\n\t\t\"nominalApparentPower\": 1550,\n\t\t\"nominalPercentLoad\":
+        105\n\t},\n\t\"ups\": {\n\t\t\"mode\": 9,\n\t\t\"modeLevel\": 1,\n\t\t\"topology\":
+        1\n\t},\n\t\"status\": {\n\t\t\"operating\": 16,\n\t\t\"health\": 5\n\t},\n\t\"inputs\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/inputs\"\n\t},\n\t\"avr\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/avr\"\n\t},\n\t\"outputs\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/outputs\"\n\t},\n\t\"inverters\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/inverters\"\n\t},\n\t\"chargers\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/chargers\"\n\t},\n\t\"backupSystem\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem\"\n\t},\n\t\"bypass\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/bypass\"\n\t},\n\t\"rectifiers\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/rectifiers\"\n\t},\n\t\"outlets\":
+        {\n\t\t\"members@count\": 3,\n\t\t\"members\": [\n\t\t\t{\n\t\t\t\t\"@id\":
+        \"/rest/mbdetnrs/1.0/powerDistributions/1/outlets/_SHkPSSPUVm3Uvme8XaZ2w\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"@id\":
+        \"/rest/mbdetnrs/1.0/powerDistributions/1/outlets/ntyTH9M9VHCqR4ONgALeUA\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"@id\":
+        \"/rest/mbdetnrs/1.0/powerDistributions/1/outlets/KZDUq7PyUfuj5OpvnZr7Iw\"\n\t\t\t}\n\t\t]\n\t}\n}\n"
     headers:
       Cache-Control:
       - no-store
@@ -131,9 +141,9 @@ interactions:
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Thu, 16 Sep 2021 07:23:22 GMT
+      - Wed, 24 Apr 2024 09:34:51 GMT
       Keep-Alive:
-      - timeout=30s, max=997
+      - timeout=30s, max=999
       Pragma:
       - no-cache
       Server:
@@ -155,18 +165,18 @@ interactions:
       Accept-Encoding:
       - gzip, deflate
       Authorization:
-      - Bearer MGMwOWRhOGE0ODU0YzBmYzM5
+      - Bearer YTg2MzkwZGU1MTkyNWVmM2Zi
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: GET
-    uri: https://127.0.0.1:4430/rest/mbdetnrs/1.0/powerDistributions/1/inputs/1
+    uri: https://address.to.ups1/rest/mbdetnrs/1.0/powerDistributions/1/inputs/1
   response:
     body:
       string: "{\n\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/inputs/1\",\n\t\"id\":
         \"1\",\n\t\"measures\": {\n\t\t\"realtime\": {\n\t\t\t\"frequency\": 50,\n\t\t\t\"voltage\":
-        229.8,\n\t\t\t\"current\": 0.6\n\t\t}\n\t},\n\t\"status\": {\n\t\t\"operating\":
+        228.2,\n\t\t\t\"current\": 0.1\n\t\t}\n\t},\n\t\"status\": {\n\t\t\"operating\":
         16,\n\t\t\"health\": 5,\n\t\t\"state\": 2\n\t},\n\t\"phases\": {\n\t\t\"@id\":
         \"/rest/mbdetnrs/1.0/powerDistributions/1/inputs/1/phases\"\n\t}\n}\n"
     headers:
@@ -182,9 +192,9 @@ interactions:
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Thu, 16 Sep 2021 07:23:22 GMT
+      - Wed, 24 Apr 2024 09:34:52 GMT
       Keep-Alive:
-      - timeout=30s, max=996
+      - timeout=30s, max=999
       Pragma:
       - no-cache
       Server:
@@ -206,19 +216,107 @@ interactions:
       Accept-Encoding:
       - gzip, deflate
       Authorization:
-      - Bearer MGMwOWRhOGE0ODU0YzBmYzM5
+      - Bearer YTg2MzkwZGU1MTkyNWVmM2Zi
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: GET
-    uri: https://127.0.0.1:4430/rest/mbdetnrs/1.0/powerDistributions/1/outputs/1
+    uri: https://address.to.ups1/rest/mbdetnrs/1.0/powerDistributions/1/outputs/1
+  response:
+    body:
+      string: "{\"classCode\":1,\n \"errorCode\":204\n}\n"
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '35'
+      Content-Type:
+      - text/html; charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:52 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Server:
+      - Tntnet
+      WWW-Authenticate:
+      - Bearer realm="genepy"
+    status:
+      code: 401
+      message: ''
+- request:
+    body: '{"grant_type": "password", "scope": "GUIAccess", "username": "username",
+      "password": password}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '110'
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://address.to.ups1/rest/mbdetnrs/1.0/oauth2/token
+  response:
+    body:
+      string: '{"expires_in": 898,"token_type": "Bearer","access_token": "NGZhZWQ4ODE5MzY3OTU1MmNk","user_profile":
+        "viewers","user_permissions": "[role-alarm-viewer,role-power-viewer,role-sensor-viewer,role-session-configure-self,role-system-info-viewer,role-user-configure-self,role-cli-access,role-system-info-viewer]"}
+
+
+        '
+    headers:
+      Cache-Control:
+      - no-store
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '309'
+      Content-Security-Policy:
+      - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
+        'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:55 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Pragma:
+      - no-cache
+      Server:
+      - Tntnet
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '1'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer NGZhZWQ4ODE5MzY3OTU1MmNk
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://address.to.ups1/rest/mbdetnrs/1.0/powerDistributions/1/outputs/1
   response:
     body:
       string: "{\n\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/outputs/1\",\n\t\"id\":
         \"1\",\n\t\"measures\": {\n\t\t\"realtime\": {\n\t\t\t\"frequency\": 50,\n\t\t\t\"voltage\":
-        229.8,\n\t\t\t\"current\": 0.5,\n\t\t\t\"activePower\": 99,\n\t\t\t\"apparentPower\":
-        115,\n\t\t\t\"powerFactor\": 86,\n\t\t\t\"percentLoad\": 9\n\t\t}\n\t},\n\t\"status\":
+        228.2,\n\t\t\t\"current\": 0,\n\t\t\t\"activePower\": 0,\n\t\t\t\"apparentPower\":
+        0,\n\t\t\t\"powerFactor\": 0,\n\t\t\t\"percentLoad\": 0\n\t\t}\n\t},\n\t\"status\":
         {\n\t\t\"operating\": 16,\n\t\t\"health\": 5,\n\t\t\"state\": 2\n\t},\n\t\"phases\":
         {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/outputs/1/phases\"\n\t}\n}\n"
     headers:
@@ -227,16 +325,16 @@ interactions:
       Connection:
       - Keep-Alive
       Content-Length:
-      - '413'
+      - '407'
       Content-Security-Policy:
       - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
         'self'
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Thu, 16 Sep 2021 07:23:23 GMT
+      - Wed, 24 Apr 2024 09:34:55 GMT
       Keep-Alive:
-      - timeout=30s, max=995
+      - timeout=30s, max=999
       Pragma:
       - no-cache
       Server:
@@ -258,13 +356,13 @@ interactions:
       Accept-Encoding:
       - gzip, deflate
       Authorization:
-      - Bearer MGMwOWRhOGE0ODU0YzBmYzM5
+      - Bearer NGZhZWQ4ODE5MzY3OTU1MmNk
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: GET
-    uri: https://127.0.0.1:4430/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem
+    uri: https://address.to.ups1/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem
   response:
     body:
       string: "{\n\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem\",\n\t\"powerBank\":
@@ -282,9 +380,9 @@ interactions:
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Thu, 16 Sep 2021 07:23:23 GMT
+      - Wed, 24 Apr 2024 09:34:55 GMT
       Keep-Alive:
-      - timeout=30s, max=994
+      - timeout=30s, max=999
       Pragma:
       - no-cache
       Server:
@@ -306,26 +404,26 @@ interactions:
       Accept-Encoding:
       - gzip, deflate
       Authorization:
-      - Bearer MGMwOWRhOGE0ODU0YzBmYzM5
+      - Bearer NGZhZWQ4ODE5MzY3OTU1MmNk
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.26.0
+      - python-requests/2.31.0
     method: GET
-    uri: https://127.0.0.1:4430/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank
+    uri: https://address.to.ups1/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank
   response:
     body:
       string: "{\n\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank\",\n\t\"specification\":
         {\n\t\t\"technology\": \"batteries\",\n\t\t\"nominalVoltage\": 36,\n\t\t\"nominalChargeCapacity\":
         32400,\n\t\t\"capacityUnit\": 0\n\t},\n\t\"configuration\": {\n\t\t\"lowChargeCapacityLimit\":
         20,\n\t\t\"deepDischargeProtectionEnabled\": true\n\t},\n\t\"measures\": {\n\t\t\"voltage\":
-        39.1,\n\t\t\"remainingChargeCapacity\": 100,\n\t\t\"remainingTime\": 4785\n\t},\n\t\"status\":
+        38.8,\n\t\t\"remainingChargeCapacity\": 100,\n\t\t\"remainingTime\": 15284\n\t},\n\t\"status\":
         {\n\t\t\"operating\": 5,\n\t\t\"health\": 5,\n\t\t\"state\": 1,\n\t\t\"present\":
         true,\n\t\t\"fault\": false,\n\t\t\"warning\": false,\n\t\t\"low\": false,\n\t\t\"criticallyLow\":
         false\n\t},\n\t\"test\": {\n\t\t\"configuration\": {\n\t\t\t\"period\": 2592000\n\t\t},\n\t\t\"result\":
-        {\n\t\t\t\"level\": 1,\n\t\t\t\"timeStamp\": 1631314181,\n\t\t\t\"value\":
-        1\n\t\t},\n\t\t\"status\": 4\n\t},\n\t\"lcm\": {\n\t\t\"replaceDate\": 1709280519,\n\t\t\"health\":
-        5,\n\t\t\"expired\": false\n\t},\n\t\"entities\": {\n\t\t\"members@count\":
+        {\n\t\t\t\"level\": 1,\n\t\t\t\"timeStamp\": 1712304878,\n\t\t\t\"value\":
+        1\n\t\t},\n\t\t\"status\": 4\n\t},\n\t\"lcm\": {\n\t\t\"replaceDate\": 1709270908,\n\t\t\"health\":
+        15,\n\t\t\"expired\": true\n\t},\n\t\"entities\": {\n\t\t\"members@count\":
         1,\n\t\t\"members\": [\n\t\t\t{\n\t\t\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank/entities/S2VQRv4BWEKo-lgmRsRDVQ\"\n\t\t\t}\n\t\t]\n\t}\n}\n"
     headers:
       Cache-Control:
@@ -333,16 +431,16 @@ interactions:
       Connection:
       - Keep-Alive
       Content-Length:
-      - '970'
+      - '971'
       Content-Security-Policy:
       - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
         'self'
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Thu, 16 Sep 2021 07:23:23 GMT
+      - Wed, 24 Apr 2024 09:34:56 GMT
       Keep-Alive:
-      - timeout=30s, max=993
+      - timeout=30s, max=999
       Pragma:
       - no-cache
       Server:

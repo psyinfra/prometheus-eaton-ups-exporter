@@ -1,7 +1,5 @@
 import pytest
-import os
-import vcr  # pyre-ignore[21]
-from . import CASSETTE_DIR, scrub_body, first_ups_details
+from . import first_ups_details
 from prometheus_eaton_ups_exporter.scraper import UPSScraper
 from prometheus_eaton_ups_exporter.scraper_globals import (
         AUTHENTICATION_FAILED,
@@ -39,19 +37,13 @@ def scraper_fixture(ups_scraper_conf):
     return ups_scraper(address, auth, ups_name)
 
 
-@vcr.use_cassette(
-    os.path.join(CASSETTE_DIR, "api_login.yaml"),
-    before_record_request=scrub_body()
-)
+@pytest.mark.vcr()
 def test_login(scraper_fixture) -> None:
     token_type, access_token = scraper_fixture.login()
     assert token_type == "Bearer"
 
 
-@vcr.use_cassette(
-    os.path.join(CASSETTE_DIR, "api_load_rest.yaml"),
-    before_record_request=scrub_body()
-)
+@pytest.mark.vcr()
 def test_load_rest_api(scraper_fixture) -> None:
     """Tests load_page function with rest api."""
     request = scraper_fixture.load_page(
@@ -68,10 +60,7 @@ def test_load_rest_api(scraper_fixture) -> None:
     assert response_keys == list(json_response.keys())
 
 
-@vcr.use_cassette(
-    os.path.join(CASSETTE_DIR, "api_measures.yaml"),
-    before_record_request=scrub_body()
-)
+@pytest.mark.vcr()
 def test_get_measures(scraper_fixture) -> None:
     measures = scraper_fixture.get_measures()
     measures_keys = [
@@ -140,11 +129,7 @@ def test_connection_refused_exception() -> None:
     assert pytest_wrapped_e.value.error_code == CONNECTION_ERROR
 
 
-@vcr.use_cassette(
-    os.path.join(CASSETTE_DIR, "certificate_exception.yaml"),
-    before_record_request=scrub_body(),
-    record_mode="new_episodes"
-)
+@pytest.mark.vcr()
 @pytest.mark.skip("AssertionError: assert 4 == 3")
 def test_certificate_exception(ups_scraper_conf) -> None:
     address, auth, ups_name = first_ups_details(ups_scraper_conf)

@@ -1,9 +1,4 @@
-import os
 import json
-
-CASSETTE_DIR: str = os.path.join(
-    __file__.replace("__init__.py", ""), "fixtures", "cassettes"
-)
 
 
 def first_ups_details(conf):

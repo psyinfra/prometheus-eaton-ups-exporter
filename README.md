@@ -76,5 +76,5 @@ Runt tests with
     pytest tests
 
 #### Test-Requirements:
-- [vcrpy](https://vcrpy.readthedocs.io/)
 - pytest
+- pytest-vcr
