@@ -130,7 +130,10 @@ def test_connection_refused_exception() -> None:
 
 
 @pytest.mark.vcr()
-@pytest.mark.skip("AssertionError: assert 4 == 3")
+@pytest.mark.skip("Login-failure is not recorded by pytest-vcr")
+# This test does not create a vcr casette because the login fails (which is
+# what is tested). Therefor, this test needs a valid ups-address and can be run
+# locally with success, but not on git.
 def test_certificate_exception(ups_scraper_conf) -> None:
     address, auth, ups_name = first_ups_details(ups_scraper_conf)
     scraper = ups_scraper(
