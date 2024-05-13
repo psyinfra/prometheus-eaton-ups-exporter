@@ -17,9 +17,8 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
-    'prometheus_client == 0.6.0',
-    'requests >= 2.25.1',
-    'urllib3 == 1.26.3',
+    'prometheus_client',
+    'requests',
 ]
 
 [project.urls]
@@ -29,8 +28,9 @@ dependencies = [
 [project.optional-dependencies]
 tests = [
     'flake8',
-    'pytest >= 6.2.4',
-    'vcrpy == 4.1.1',
+    'pyre-check',
+    'pytest == 7.2.1',
+    'pytest-vcr',
 ]
 
 [project.scripts]

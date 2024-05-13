@@ -58,7 +58,6 @@ optional arguments:
 
 ## Requirements:
 - requests
-- urllib3
 - [prometheus_client](https://github.com/prometheus/client_python)
 
 # Installation:
@@ -77,5 +76,5 @@ Runt tests with
     pytest tests
 
 #### Test-Requirements:
-- [vcrpy](https://vcrpy.readthedocs.io/)
 - pytest
+- pytest-vcr

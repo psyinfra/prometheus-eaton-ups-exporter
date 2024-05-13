@@ -1,7 +1,6 @@
 """REST API web scraper for Eaton UPS measure data."""
 import json
 
-import urllib3
 from requests import Session, Response
 from requests.exceptions import (
         ConnectionError,
@@ -10,6 +9,8 @@ from requests.exceptions import (
         ReadTimeout,
         SSLError,
         )
+# pyre-ignore[21]: pyre thinks urllib3 is not part of requests
+from requests.packages import urllib3
 from prometheus_eaton_ups_exporter import create_logger
 from prometheus_eaton_ups_exporter.scraper_globals import (
         AUTHENTICATION_FAILED,
@@ -27,6 +28,7 @@ from prometheus_eaton_ups_exporter.scraper_globals import (
         SSL_ERROR,
         TIMEOUT_ERROR,
         )
+from typing import Tuple
 
 
 class UPSScraper:
@@ -48,12 +50,12 @@ class UPSScraper:
         Login timeout for authentication
     """
     def __init__(self,
-                 ups_address,
-                 authentication,
-                 name=None,
-                 insecure=False,
-                 verbose=False,
-                 login_timeout=3):
+                 ups_address: str,
+                 authentication: Tuple[str, str],
+                 name: str | None = None,
+                 insecure: bool = False,
+                 verbose: bool = False,
+                 login_timeout: int = 3) -> None:
         self.ups_address = ups_address
         self.username, self.password = authentication
         self.name = name
@@ -61,16 +63,16 @@ class UPSScraper:
         self.session = Session()
         self.logger = create_logger(__name__, not verbose)
 
-        self.session.verify = not insecure  # ignore self signed certificate
+        # ignore self signed certificate
+        self.session.verify = not insecure
+        # disable warnings created because of ignoring certificates
         if not self.session.verify:
-            # disable warnings created because of ignoring certificates
-            urllib3.disable_warnings(
-                urllib3.exceptions.InsecureRequestWarning
-            )
+            # pyre-ignore[16]: pyre thinks urllib3 is not part of requests
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
         self.token_type, self.access_token = None, None
 
-    def login(self) -> (str, str):
+    def login(self) -> Tuple[str, str]:
         """
         Login to the UPS Web UI.
 
@@ -139,7 +141,8 @@ class UPSScraper:
                 "Invalid URL, no host supplied"
             ) from None
 
-    def load_page(self, url) -> Response:
+    def load_page(self,
+                  url: bytes | str) -> Response:
         """
         Load a webpage of the UPS Web UI or API.
 
@@ -209,6 +212,7 @@ class UPSScraper:
             "ups_powerbank": powerbank
             }
         """
+        measurements = dict()
         try:
             power_dist_request = self.load_page(
                 self.ups_address+REST_API_PATH
@@ -242,20 +246,21 @@ class UPSScraper:
             )
             powerbank = powerbank_request.json()
 
-            return {
+            measurements = {
                 "ups_id": self.name,
                 "ups_inputs": inputs,
                 "ups_outputs": outputs,
                 "ups_powerbank": powerbank
             }
+
         except LoginFailedException as err:
             self.logger.error(err)
             print(f"{err.__class__.__name__} - ({self.ups_address}): "
                   f"{err.message}")
-            return None
         except json.decoder.JSONDecodeError as err:
             self.logger.debug("This needs to be solved by a developer")
             self.logger.error(err)
-            return None
         except Exception:
             raise
+
+        return measurements

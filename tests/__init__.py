@@ -1,9 +1,4 @@
-import os
 import json
-
-CASSETTE_DIR = os.path.join(
-    os.getcwd(), "tests", "fixtures", "cassettes"
-)
 
 
 def first_ups_details(conf):

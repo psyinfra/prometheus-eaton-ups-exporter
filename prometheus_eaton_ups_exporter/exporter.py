@@ -8,12 +8,13 @@ from prometheus_client.core import GaugeMetricFamily
 from prometheus_eaton_ups_exporter import create_logger
 from prometheus_eaton_ups_exporter.scraper import UPSScraper
 
+from typing import Generator, Tuple
+
 NORMAL_EXECUTION = 0
 
 
 class UPSExporter:
-    """
-    Prometheus single exporter.
+    """Prometheus single exporter.
 
     :param ups_address: str
         Address to a UPS, either an IP address or a DNS hostname
@@ -23,18 +24,18 @@ class UPSExporter:
         Whether to connect to UPSs with self-signed SSL certificates
     :param verbose: bool
         Allow logging output for development.
-    :param login_timeout: float
+    :param login_timeout: int
         Login timeout for authentication
     """
     def __init__(
             self,
-            ups_address,
-            authentication,
-            name=None,
-            insecure=False,
-            verbose=False,
-            login_timeout=3
-    ):
+            ups_address: str,
+            authentication: Tuple[str, str],
+            name: str | None = None,
+            insecure: bool = False,
+            verbose: bool = False,
+            login_timeout: int = 3
+    ) -> None:
         self.logger = create_logger(
             f"{__name__}.{self.__class__.__name__}", not verbose
         )
@@ -47,8 +48,8 @@ class UPSExporter:
             login_timeout=login_timeout
         )
 
-    def collect(self):
-        """Export UPS metrics on request"""
+    def collect(self) -> Generator[GaugeMetricFamily, None, None]:
+        """Export UPS metrics on request."""
         ups_data = self.scrape_data()
         for measures in ups_data:
             if not measures:
@@ -180,8 +181,7 @@ class UPSExporter:
             yield gauge
 
     def scrape_data(self):
-        """
-        Scrape measure data.
+        """Scrape measure data.
 
         :return: measures
         """
@@ -189,8 +189,7 @@ class UPSExporter:
 
 
 class UPSMultiExporter(UPSExporter):
-    """
-    Prometheus exporter for multiple UPSs.
+    """Prometheus exporter for multiple UPSs.
 
     Collects metrics from multiple UPSs at the same time. If threading is
     enabled, multiple threads will be used to collect sensor readings which is
@@ -206,18 +205,18 @@ class UPSMultiExporter(UPSExporter):
         This is surely the best way to increase the speed
     :param verbose: bool
         Allow logging output for development
-    :param login_timeout: float
+    :param login_timeout: int
         Login timeout for authentication
     """
 
     def __init__(
             self,
-            config,
-            insecure=False,
-            threading=False,
-            verbose=False,
-            login_timeout=3
-    ):
+            config: str,
+            insecure: bool = False,
+            threading: bool = False,
+            verbose: bool = False,
+            login_timeout: int = 3
+    ) -> None:
         self.logger = create_logger(
             f"{__name__}.{self.__class__.__name__}", not verbose
         )
@@ -228,7 +227,7 @@ class UPSMultiExporter(UPSExporter):
         self.ups_devices = self.get_ups_devices(config)
 
     @staticmethod
-    def get_devices(config):
+    def get_devices(config: str | dict) -> dict:
         """Take a config file path or config dict of UPSs."""
         if isinstance(config, str):
             with open(config) as json_file:
@@ -239,9 +238,9 @@ class UPSMultiExporter(UPSExporter):
             raise AttributeError("Only config path (str) or dict accepted")
         return devices
 
-    def get_ups_devices(self, config) -> list:
-        """
-        Creates multiple UPSScraper.
+    def get_ups_devices(self,
+                        config: str | dict) -> list:
+        """Creates multiple UPSScraper.
 
         :param config: str | dict
             Path to a JSON-based config file or a config dict
@@ -263,8 +262,7 @@ class UPSMultiExporter(UPSExporter):
         ]
 
     def scrape_data(self):
-        """
-        Scrape measure data.
+        """Scrape measure data.
 
         :return: measures
         """

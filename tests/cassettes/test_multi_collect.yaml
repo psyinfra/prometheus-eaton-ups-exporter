@@ -1,0 +1,1103 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - None None
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://address.to.ups1/rest/mbdetnrs/1.0/powerDistributions/1
+  response:
+    body:
+      string: '<html><body><h1>Error</h1><p>Unauthorized</p></body></html>
+
+        '
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '60'
+      Content-Type:
+      - text/html; charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:33 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Server:
+      - Tntnet
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: '{"grant_type": "password", "scope": "GUIAccess", "username": "username",
+      "password": password}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '110'
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://address.to.ups1/rest/mbdetnrs/1.0/oauth2/token
+  response:
+    body:
+      string: '{"expires_in": 899,"token_type": "Bearer","access_token": "MjE2ZmI4OWI3ZWZlYzRlODU0","user_profile":
+        "viewers","user_permissions": "[role-alarm-viewer,role-power-viewer,role-sensor-viewer,role-session-configure-self,role-system-info-viewer,role-user-configure-self,role-cli-access,role-system-info-viewer]"}
+
+
+        '
+    headers:
+      Cache-Control:
+      - no-store
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '309'
+      Content-Security-Policy:
+      - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
+        'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:34 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Pragma:
+      - no-cache
+      Server:
+      - Tntnet
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '1'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer MjE2ZmI4OWI3ZWZlYzRlODU0
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://address.to.ups1/rest/mbdetnrs/1.0/powerDistributions/1
+  response:
+    body:
+      string: "{\n\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1\",\n\t\"id\":
+        \"1\",\n\t\"identification\": {\n\t\t\"uuid\": \"1e3e39e3-d95d-5113-b897-bd31290f82fb\",\n\t\t\"vendor\":
+        \"EATON\",\n\t\t\"model\": \"Eaton 5P 1550\",\n\t\t\"serialNumber\": \"G117K46202\",\n\t\t\"type\":
+        \"5P1550\",\n\t\t\"partNumber\": \"5P1550\",\n\t\t\"firmwareVersion\": \"02.14.0026\",\n\t\t\"name\":
+        \"Eaton 5P 1550\",\n\t\t\"contact\": \"\",\n\t\t\"location\": \"\",\n\t\t\"interface\":
+        \"/rest/mbdetnrs/1.0/powerDistributions/1\"\n\t},\n\t\"specification\": {\n\t\t\"type\":
+        1\n\t},\n\t\"configuration\": {\n\t\t\"nominalFrequency\": 50,\n\t\t\"nominalVoltage\":
+        230,\n\t\t\"nominalActivePower\": 1100,\n\t\t\"nominalApparentPower\": 1550,\n\t\t\"nominalPercentLoad\":
+        105\n\t},\n\t\"ups\": {\n\t\t\"mode\": 9,\n\t\t\"modeLevel\": 1,\n\t\t\"topology\":
+        1\n\t},\n\t\"status\": {\n\t\t\"operating\": 16,\n\t\t\"health\": 5\n\t},\n\t\"inputs\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/inputs\"\n\t},\n\t\"avr\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/avr\"\n\t},\n\t\"outputs\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/outputs\"\n\t},\n\t\"inverters\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/inverters\"\n\t},\n\t\"chargers\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/chargers\"\n\t},\n\t\"backupSystem\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem\"\n\t},\n\t\"bypass\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/bypass\"\n\t},\n\t\"rectifiers\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/rectifiers\"\n\t},\n\t\"outlets\":
+        {\n\t\t\"members@count\": 3,\n\t\t\"members\": [\n\t\t\t{\n\t\t\t\t\"@id\":
+        \"/rest/mbdetnrs/1.0/powerDistributions/1/outlets/_SHkPSSPUVm3Uvme8XaZ2w\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"@id\":
+        \"/rest/mbdetnrs/1.0/powerDistributions/1/outlets/ntyTH9M9VHCqR4ONgALeUA\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"@id\":
+        \"/rest/mbdetnrs/1.0/powerDistributions/1/outlets/KZDUq7PyUfuj5OpvnZr7Iw\"\n\t\t\t}\n\t\t]\n\t}\n}\n"
+    headers:
+      Cache-Control:
+      - no-store
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '582'
+      Content-Security-Policy:
+      - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
+        'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:34 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Pragma:
+      - no-cache
+      Server:
+      - Tntnet
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '1'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer MjE2ZmI4OWI3ZWZlYzRlODU0
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://address.to.ups1/rest/mbdetnrs/1.0/powerDistributions/1/inputs/1
+  response:
+    body:
+      string: "{\n\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/inputs/1\",\n\t\"id\":
+        \"1\",\n\t\"measures\": {\n\t\t\"realtime\": {\n\t\t\t\"frequency\": 49.9,\n\t\t\t\"voltage\":
+        227.6,\n\t\t\t\"current\": 0.1\n\t\t}\n\t},\n\t\"status\": {\n\t\t\"operating\":
+        16,\n\t\t\"health\": 5,\n\t\t\"state\": 2\n\t},\n\t\"phases\": {\n\t\t\"@id\":
+        \"/rest/mbdetnrs/1.0/powerDistributions/1/inputs/1/phases\"\n\t}\n}\n"
+    headers:
+      Cache-Control:
+      - no-store
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '323'
+      Content-Security-Policy:
+      - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
+        'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:34 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Pragma:
+      - no-cache
+      Server:
+      - Tntnet
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '1'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer MjE2ZmI4OWI3ZWZlYzRlODU0
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://address.to.ups1/rest/mbdetnrs/1.0/powerDistributions/1/outputs/1
+  response:
+    body:
+      string: "{\n\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/outputs/1\",\n\t\"id\":
+        \"1\",\n\t\"measures\": {\n\t\t\"realtime\": {\n\t\t\t\"frequency\": 49.9,\n\t\t\t\"voltage\":
+        228.5,\n\t\t\t\"current\": 0,\n\t\t\t\"activePower\": 0,\n\t\t\t\"apparentPower\":
+        0,\n\t\t\t\"powerFactor\": 0,\n\t\t\t\"percentLoad\": 0\n\t\t}\n\t},\n\t\"status\":
+        {\n\t\t\"operating\": 16,\n\t\t\"health\": 5,\n\t\t\"state\": 2\n\t},\n\t\"phases\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/outputs/1/phases\"\n\t}\n}\n"
+    headers:
+      Cache-Control:
+      - no-store
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '409'
+      Content-Security-Policy:
+      - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
+        'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:35 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Pragma:
+      - no-cache
+      Server:
+      - Tntnet
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '1'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer MjE2ZmI4OWI3ZWZlYzRlODU0
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://address.to.ups1/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem
+  response:
+    body:
+      string: "{\n\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem\",\n\t\"powerBank\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank\"\n\t}\n}\n"
+    headers:
+      Cache-Control:
+      - no-store
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '161'
+      Content-Security-Policy:
+      - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
+        'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:35 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Pragma:
+      - no-cache
+      Server:
+      - Tntnet
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '1'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer MjE2ZmI4OWI3ZWZlYzRlODU0
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://address.to.ups1/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank
+  response:
+    body:
+      string: "{\n\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank\",\n\t\"specification\":
+        {\n\t\t\"technology\": \"batteries\",\n\t\t\"nominalVoltage\": 36,\n\t\t\"nominalChargeCapacity\":
+        32400,\n\t\t\"capacityUnit\": 0\n\t},\n\t\"configuration\": {\n\t\t\"lowChargeCapacityLimit\":
+        20,\n\t\t\"deepDischargeProtectionEnabled\": true\n\t},\n\t\"measures\": {\n\t\t\"voltage\":
+        38.8,\n\t\t\"remainingChargeCapacity\": 100,\n\t\t\"remainingTime\": 15284\n\t},\n\t\"status\":
+        {\n\t\t\"operating\": 5,\n\t\t\"health\": 5,\n\t\t\"state\": 1,\n\t\t\"present\":
+        true,\n\t\t\"fault\": false,\n\t\t\"warning\": false,\n\t\t\"low\": false,\n\t\t\"criticallyLow\":
+        false\n\t},\n\t\"test\": {\n\t\t\"configuration\": {\n\t\t\t\"period\": 2592000\n\t\t},\n\t\t\"result\":
+        {\n\t\t\t\"level\": 1,\n\t\t\t\"timeStamp\": 1712304878,\n\t\t\t\"value\":
+        1\n\t\t},\n\t\t\"status\": 4\n\t},\n\t\"lcm\": {\n\t\t\"replaceDate\": 1709270908,\n\t\t\"health\":
+        15,\n\t\t\"expired\": true\n\t},\n\t\"entities\": {\n\t\t\"members@count\":
+        1,\n\t\t\"members\": [\n\t\t\t{\n\t\t\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank/entities/S2VQRv4BWEKo-lgmRsRDVQ\"\n\t\t\t}\n\t\t]\n\t}\n}\n"
+    headers:
+      Cache-Control:
+      - no-store
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '971'
+      Content-Security-Policy:
+      - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
+        'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:36 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Pragma:
+      - no-cache
+      Server:
+      - Tntnet
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '1'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - None None
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://address.to.ups2/rest/mbdetnrs/1.0/powerDistributions/1
+  response:
+    body:
+      string: '<html><body><h1>Error</h1><p>Unauthorized</p></body></html>
+
+        '
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '60'
+      Content-Type:
+      - text/html; charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:36 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Server:
+      - Tntnet
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: '{"grant_type": "password", "scope": "GUIAccess", "username": "username",
+      "password": password}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '110'
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://address.to.ups2/rest/mbdetnrs/1.0/oauth2/token
+  response:
+    body:
+      string: '{"expires_in": 898,"token_type": "Bearer","access_token": "MmMzNTBlM2NiNjBlY2EzOGE5","user_profile":
+        "viewers","user_permissions": "[role-alarm-viewer,role-power-viewer,role-sensor-viewer,role-session-configure-self,role-system-info-viewer,role-user-configure-self,role-cli-access,role-system-info-viewer]"}
+
+
+        '
+    headers:
+      Cache-Control:
+      - no-store
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '309'
+      Content-Security-Policy:
+      - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
+        'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:38 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Pragma:
+      - no-cache
+      Server:
+      - Tntnet
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '1'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer MmMzNTBlM2NiNjBlY2EzOGE5
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://address.to.ups2/rest/mbdetnrs/1.0/powerDistributions/1
+  response:
+    body:
+      string: "{\n\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1\",\n\t\"id\":
+        \"1\",\n\t\"identification\": {\n\t\t\"uuid\": \"4e0f9ee6-a743-5d21-bea6-a5dd7b59b8a1\",\n\t\t\"vendor\":
+        \"EATON\",\n\t\t\"model\": \"Eaton 5P 1550\",\n\t\t\"serialNumber\": \"G117K45017\",\n\t\t\"type\":
+        \"5P1550\",\n\t\t\"partNumber\": \"5P1550\",\n\t\t\"firmwareVersion\": \"02.14.0026\",\n\t\t\"name\":
+        \"Eaton 5P 1550\",\n\t\t\"contact\": \"\",\n\t\t\"location\": \"\",\n\t\t\"interface\":
+        \"/rest/mbdetnrs/1.0/powerDistributions/1\"\n\t},\n\t\"specification\": {\n\t\t\"type\":
+        1\n\t},\n\t\"configuration\": {\n\t\t\"nominalFrequency\": 50,\n\t\t\"nominalVoltage\":
+        230,\n\t\t\"nominalActivePower\": 1100,\n\t\t\"nominalApparentPower\": 1550,\n\t\t\"nominalPercentLoad\":
+        105\n\t},\n\t\"ups\": {\n\t\t\"mode\": 9,\n\t\t\"modeLevel\": 1,\n\t\t\"topology\":
+        1\n\t},\n\t\"status\": {\n\t\t\"operating\": 16,\n\t\t\"health\": 5\n\t},\n\t\"inputs\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/inputs\"\n\t},\n\t\"avr\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/avr\"\n\t},\n\t\"outputs\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/outputs\"\n\t},\n\t\"inverters\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/inverters\"\n\t},\n\t\"chargers\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/chargers\"\n\t},\n\t\"backupSystem\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem\"\n\t},\n\t\"bypass\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/bypass\"\n\t},\n\t\"rectifiers\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/rectifiers\"\n\t},\n\t\"outlets\":
+        {\n\t\t\"members@count\": 3,\n\t\t\"members\": [\n\t\t\t{\n\t\t\t\t\"@id\":
+        \"/rest/mbdetnrs/1.0/powerDistributions/1/outlets/-42qpTLgWgi2aZTwNh9MGw\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"@id\":
+        \"/rest/mbdetnrs/1.0/powerDistributions/1/outlets/L2q_IUCRVoSzmLVeLSIK4g\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"@id\":
+        \"/rest/mbdetnrs/1.0/powerDistributions/1/outlets/gY16mQp7ViKuQqgI7WlA9g\"\n\t\t\t}\n\t\t]\n\t}\n}\n"
+    headers:
+      Cache-Control:
+      - no-store
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '579'
+      Content-Security-Policy:
+      - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
+        'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:38 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Pragma:
+      - no-cache
+      Server:
+      - Tntnet
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '1'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer MmMzNTBlM2NiNjBlY2EzOGE5
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://address.to.ups2/rest/mbdetnrs/1.0/powerDistributions/1/inputs/1
+  response:
+    body:
+      string: "{\n\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/inputs/1\",\n\t\"id\":
+        \"1\",\n\t\"measures\": {\n\t\t\"realtime\": {\n\t\t\t\"frequency\": 49.9,\n\t\t\t\"voltage\":
+        230.1,\n\t\t\t\"current\": 0.1\n\t\t}\n\t},\n\t\"status\": {\n\t\t\"operating\":
+        16,\n\t\t\"health\": 5,\n\t\t\"state\": 2\n\t},\n\t\"phases\": {\n\t\t\"@id\":
+        \"/rest/mbdetnrs/1.0/powerDistributions/1/inputs/1/phases\"\n\t}\n}\n"
+    headers:
+      Cache-Control:
+      - no-store
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '323'
+      Content-Security-Policy:
+      - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
+        'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:38 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Pragma:
+      - no-cache
+      Server:
+      - Tntnet
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '1'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer MmMzNTBlM2NiNjBlY2EzOGE5
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://address.to.ups2/rest/mbdetnrs/1.0/powerDistributions/1/outputs/1
+  response:
+    body:
+      string: "{\n\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/outputs/1\",\n\t\"id\":
+        \"1\",\n\t\"measures\": {\n\t\t\"realtime\": {\n\t\t\t\"frequency\": 49.9,\n\t\t\t\"voltage\":
+        230.1,\n\t\t\t\"current\": 0,\n\t\t\t\"activePower\": 0,\n\t\t\t\"apparentPower\":
+        0,\n\t\t\t\"powerFactor\": 0,\n\t\t\t\"percentLoad\": 0\n\t\t}\n\t},\n\t\"status\":
+        {\n\t\t\"operating\": 16,\n\t\t\"health\": 5,\n\t\t\"state\": 2\n\t},\n\t\"phases\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/outputs/1/phases\"\n\t}\n}\n"
+    headers:
+      Cache-Control:
+      - no-store
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '409'
+      Content-Security-Policy:
+      - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
+        'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:39 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Pragma:
+      - no-cache
+      Server:
+      - Tntnet
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '1'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer MmMzNTBlM2NiNjBlY2EzOGE5
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://address.to.ups2/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem
+  response:
+    body:
+      string: "{\n\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem\",\n\t\"powerBank\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank\"\n\t}\n}\n"
+    headers:
+      Cache-Control:
+      - no-store
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '161'
+      Content-Security-Policy:
+      - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
+        'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:39 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Pragma:
+      - no-cache
+      Server:
+      - Tntnet
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '1'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer MmMzNTBlM2NiNjBlY2EzOGE5
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://address.to.ups2/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank
+  response:
+    body:
+      string: "{\n\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank\",\n\t\"specification\":
+        {\n\t\t\"technology\": \"batteries\",\n\t\t\"nominalVoltage\": 36,\n\t\t\"nominalChargeCapacity\":
+        32400,\n\t\t\"capacityUnit\": 0\n\t},\n\t\"configuration\": {\n\t\t\"lowChargeCapacityLimit\":
+        20,\n\t\t\"deepDischargeProtectionEnabled\": true\n\t},\n\t\"measures\": {\n\t\t\"voltage\":
+        38.9,\n\t\t\"remainingChargeCapacity\": 100,\n\t\t\"remainingTime\": 15284\n\t},\n\t\"status\":
+        {\n\t\t\"operating\": 5,\n\t\t\"health\": 10,\n\t\t\"state\": 3,\n\t\t\"present\":
+        true,\n\t\t\"fault\": false,\n\t\t\"warning\": false,\n\t\t\"low\": false,\n\t\t\"criticallyLow\":
+        false\n\t},\n\t\"test\": {\n\t\t\"configuration\": {\n\t\t\t\"period\": 2592000\n\t\t},\n\t\t\"result\":
+        {\n\t\t\t\"level\": 1,\n\t\t\t\"timeStamp\": 1712480537,\n\t\t\t\"value\":
+        1\n\t\t},\n\t\t\"status\": 4\n\t},\n\t\"lcm\": {\n\t\t\"replaceDate\": 1709268280,\n\t\t\"health\":
+        15,\n\t\t\"expired\": true\n\t},\n\t\"entities\": {\n\t\t\"members@count\":
+        1,\n\t\t\"members\": [\n\t\t\t{\n\t\t\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank/entities/1oCpTRPFVq28wuvUx1EkFA\"\n\t\t\t}\n\t\t]\n\t}\n}\n"
+    headers:
+      Cache-Control:
+      - no-store
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '972'
+      Content-Security-Policy:
+      - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
+        'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:39 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Pragma:
+      - no-cache
+      Server:
+      - Tntnet
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '1'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - None None
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://address.to.ups2/rest/mbdetnrs/1.0/powerDistributions/1
+  response:
+    body:
+      string: '<html><body><h1>Error</h1><p>Unauthorized</p></body></html>
+
+        '
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '60'
+      Content-Type:
+      - text/html; charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:40 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Server:
+      - Tntnet
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: '{"grant_type": "password", "scope": "GUIAccess", "username": "username",
+      "password": password}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '110'
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://address.to.ups2/rest/mbdetnrs/1.0/oauth2/token
+  response:
+    body:
+      string: '{"expires_in": 899,"token_type": "Bearer","access_token": "ZDdhNTkzMzYwMzhiOWFhNmYy","user_profile":
+        "viewers","user_permissions": "[role-alarm-viewer,role-power-viewer,role-sensor-viewer,role-session-configure-self,role-system-info-viewer,role-user-configure-self,role-cli-access,role-system-info-viewer]"}
+
+
+        '
+    headers:
+      Cache-Control:
+      - no-store
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '309'
+      Content-Security-Policy:
+      - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
+        'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:41 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Pragma:
+      - no-cache
+      Server:
+      - Tntnet
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '1'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer ZDdhNTkzMzYwMzhiOWFhNmYy
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://address.to.ups2/rest/mbdetnrs/1.0/powerDistributions/1
+  response:
+    body:
+      string: "{\n\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1\",\n\t\"id\":
+        \"1\",\n\t\"identification\": {\n\t\t\"uuid\": \"94d25b82-d428-57c1-b71f-9e9ea2cbc1b6\",\n\t\t\"vendor\":
+        \"EATON\",\n\t\t\"model\": \"Eaton 5P 1550\",\n\t\t\"serialNumber\": \"G117L35116\",\n\t\t\"type\":
+        \"5P1550\",\n\t\t\"partNumber\": \"5P1550\",\n\t\t\"firmwareVersion\": \"02.14.0026\",\n\t\t\"name\":
+        \"Eaton 5P 1550\",\n\t\t\"contact\": \"\",\n\t\t\"location\": \"\",\n\t\t\"interface\":
+        \"/rest/mbdetnrs/1.0/powerDistributions/1\"\n\t},\n\t\"specification\": {\n\t\t\"type\":
+        1\n\t},\n\t\"configuration\": {\n\t\t\"nominalFrequency\": 50,\n\t\t\"nominalVoltage\":
+        230,\n\t\t\"nominalActivePower\": 1100,\n\t\t\"nominalApparentPower\": 1550,\n\t\t\"nominalPercentLoad\":
+        105\n\t},\n\t\"ups\": {\n\t\t\"mode\": 9,\n\t\t\"modeLevel\": 1,\n\t\t\"topology\":
+        1\n\t},\n\t\"status\": {\n\t\t\"operating\": 16,\n\t\t\"health\": 5\n\t},\n\t\"inputs\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/inputs\"\n\t},\n\t\"avr\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/avr\"\n\t},\n\t\"outputs\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/outputs\"\n\t},\n\t\"inverters\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/inverters\"\n\t},\n\t\"chargers\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/chargers\"\n\t},\n\t\"backupSystem\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem\"\n\t},\n\t\"bypass\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/bypass\"\n\t},\n\t\"rectifiers\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/rectifiers\"\n\t},\n\t\"outlets\":
+        {\n\t\t\"members@count\": 3,\n\t\t\"members\": [\n\t\t\t{\n\t\t\t\t\"@id\":
+        \"/rest/mbdetnrs/1.0/powerDistributions/1/outlets/rVluig55X7Kw52UKhwI4hg\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"@id\":
+        \"/rest/mbdetnrs/1.0/powerDistributions/1/outlets/fGRVkUZdWDKue4BTLhhQFA\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"@id\":
+        \"/rest/mbdetnrs/1.0/powerDistributions/1/outlets/HoKlYN3RX4qoLCd_B6bDFg\"\n\t\t\t}\n\t\t]\n\t}\n}\n"
+    headers:
+      Cache-Control:
+      - no-store
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '581'
+      Content-Security-Policy:
+      - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
+        'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:41 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Pragma:
+      - no-cache
+      Server:
+      - Tntnet
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '1'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer ZDdhNTkzMzYwMzhiOWFhNmYy
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://address.to.ups2/rest/mbdetnrs/1.0/powerDistributions/1/inputs/1
+  response:
+    body:
+      string: "{\n\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/inputs/1\",\n\t\"id\":
+        \"1\",\n\t\"measures\": {\n\t\t\"realtime\": {\n\t\t\t\"frequency\": 49.9,\n\t\t\t\"voltage\":
+        229.2,\n\t\t\t\"current\": 0.8\n\t\t}\n\t},\n\t\"status\": {\n\t\t\"operating\":
+        16,\n\t\t\"health\": 5,\n\t\t\"state\": 2\n\t},\n\t\"phases\": {\n\t\t\"@id\":
+        \"/rest/mbdetnrs/1.0/powerDistributions/1/inputs/1/phases\"\n\t}\n}\n"
+    headers:
+      Cache-Control:
+      - no-store
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '323'
+      Content-Security-Policy:
+      - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
+        'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:42 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Pragma:
+      - no-cache
+      Server:
+      - Tntnet
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '1'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer ZDdhNTkzMzYwMzhiOWFhNmYy
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://address.to.ups2/rest/mbdetnrs/1.0/powerDistributions/1/outputs/1
+  response:
+    body:
+      string: "{\n\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/outputs/1\",\n\t\"id\":
+        \"1\",\n\t\"measures\": {\n\t\t\"realtime\": {\n\t\t\t\"frequency\": 49.9,\n\t\t\t\"voltage\":
+        229.2,\n\t\t\t\"current\": 0.7,\n\t\t\t\"activePower\": 132,\n\t\t\t\"apparentPower\":
+        160,\n\t\t\t\"powerFactor\": 82,\n\t\t\t\"percentLoad\": 12\n\t\t}\n\t},\n\t\"status\":
+        {\n\t\t\"operating\": 16,\n\t\t\"health\": 5,\n\t\t\"state\": 2\n\t},\n\t\"phases\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/outputs/1/phases\"\n\t}\n}\n"
+    headers:
+      Cache-Control:
+      - no-store
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '417'
+      Content-Security-Policy:
+      - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
+        'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:42 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Pragma:
+      - no-cache
+      Server:
+      - Tntnet
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '1'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer ZDdhNTkzMzYwMzhiOWFhNmYy
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://address.to.ups2/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem
+  response:
+    body:
+      string: "{\n\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem\",\n\t\"powerBank\":
+        {\n\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank\"\n\t}\n}\n"
+    headers:
+      Cache-Control:
+      - no-store
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '161'
+      Content-Security-Policy:
+      - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
+        'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:42 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Pragma:
+      - no-cache
+      Server:
+      - Tntnet
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '1'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - Bearer ZDdhNTkzMzYwMzhiOWFhNmYy
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://address.to.ups2/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank
+  response:
+    body:
+      string: "{\n\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank\",\n\t\"specification\":
+        {\n\t\t\"technology\": \"batteries\",\n\t\t\"nominalVoltage\": 36,\n\t\t\"nominalChargeCapacity\":
+        32400,\n\t\t\"capacityUnit\": 0\n\t},\n\t\"configuration\": {\n\t\t\"lowChargeCapacityLimit\":
+        20,\n\t\t\"deepDischargeProtectionEnabled\": true\n\t},\n\t\"measures\": {\n\t\t\"voltage\":
+        38.8,\n\t\t\"remainingChargeCapacity\": 100,\n\t\t\"remainingTime\": 3588\n\t},\n\t\"status\":
+        {\n\t\t\"operating\": 5,\n\t\t\"health\": 5,\n\t\t\"state\": 1,\n\t\t\"present\":
+        true,\n\t\t\"fault\": false,\n\t\t\"warning\": false,\n\t\t\"low\": false,\n\t\t\"criticallyLow\":
+        false\n\t},\n\t\"test\": {\n\t\t\"configuration\": {\n\t\t\t\"period\": 2592000\n\t\t},\n\t\t\"result\":
+        {\n\t\t\t\"level\": 1,\n\t\t\t\"timeStamp\": 1712305671,\n\t\t\t\"value\":
+        1\n\t\t},\n\t\t\"status\": 4\n\t},\n\t\"lcm\": {\n\t\t\"replaceDate\": 1739890778,\n\t\t\"health\":
+        5,\n\t\t\"expired\": false\n\t},\n\t\"entities\": {\n\t\t\"members@count\":
+        1,\n\t\t\"members\": [\n\t\t\t{\n\t\t\t\t\"@id\": \"/rest/mbdetnrs/1.0/powerDistributions/1/backupSystem/powerBank/entities/jd0cQu5tXmuvphvbQ2z3Mw\"\n\t\t\t}\n\t\t]\n\t}\n}\n"
+    headers:
+      Cache-Control:
+      - no-store
+      Connection:
+      - Keep-Alive
+      Content-Length:
+      - '970'
+      Content-Security-Policy:
+      - connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors
+        'self'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 24 Apr 2024 09:34:43 GMT
+      Keep-Alive:
+      - timeout=30s, max=999
+      Pragma:
+      - no-cache
+      Server:
+      - Tntnet
+      Strict-Transport-Security:
+      - max-age=31536000
+      X-Content-Type-Options:
+      - nosniff
+      X-XSS-Protection:
+      - '1'
+    status:
+      code: 200
+      message: OK
+version: 1
