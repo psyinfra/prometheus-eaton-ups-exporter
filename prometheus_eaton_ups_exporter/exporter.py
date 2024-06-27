@@ -92,7 +92,7 @@ class UPSExporter:
                 'UPS input current (A)',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], inputs_rm.get('current',0))
+            gauge.add_metric([ups_id], inputs_rm.get('current', 0))
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -166,7 +166,8 @@ class UPSExporter:
                 labels=['ups_id']
             )
             gauge.add_metric(
-                [ups_id], int(powerbank_m.get('remainingChargeCapacity',0)) / 100
+                [ups_id],
+                int(powerbank_m.get('remainingChargeCapacity', 0)) / 100
             )
             yield gauge
 
