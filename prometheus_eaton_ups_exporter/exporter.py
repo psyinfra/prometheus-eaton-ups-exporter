@@ -59,8 +59,15 @@ class UPSExporter:
             inputs = measures.get('ups_inputs')
             outputs = measures.get('ups_outputs')
             powerbank_details = measures.get('ups_powerbank')
-            inputs_rm = inputs['measures']['realtime']
-            outputs_rm = outputs['measures']['realtime']
+
+            inputs_rm = inputs['measures']
+            if 'realtime' in inputs['measures']:
+                inputs_rm = inputs['measures']['realtime']
+
+            outputs_rm = outputs['measures']
+            if 'realtime' in outputs['measures']:
+                outputs_rm = outputs['measures']['realtime']
+
             powerbank_m = powerbank_details['measures']
             powerbank_s = powerbank_details['status']
 
@@ -85,7 +92,7 @@ class UPSExporter:
                 'UPS input current (A)',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], inputs_rm['current'])
+            gauge.add_metric([ups_id], inputs_rm.get('current',0))
             yield gauge
 
             gauge = GaugeMetricFamily(
@@ -159,7 +166,7 @@ class UPSExporter:
                 labels=['ups_id']
             )
             gauge.add_metric(
-                [ups_id], int(powerbank_m['remainingChargeCapacity']) / 100
+                [ups_id], int(powerbank_m.get('remainingChargeCapacity',0)) / 100
             )
             yield gauge
 
@@ -177,7 +184,11 @@ class UPSExporter:
                 'remaining lifetime (years) [uncertain]',
                 labels=['ups_id']
             )
-            gauge.add_metric([ups_id], powerbank_s['health'])
+            health_val = powerbank_s['health']
+            health = 0
+            if isinstance(health_val, int):
+                health = health_val
+            gauge.add_metric([ups_id], health)
             yield gauge
 
     def scrape_data(self):

@@ -167,7 +167,7 @@ class UPSScraper:
 
             # Session might be expired, connect again
             try:
-                if "errorCode" in request.json():
+                if "errorCode" in request.json() or "code" in request.json():
                     self.logger.debug('Session expired, reconnect')
                     self.token_type, self.access_token = self.login()
                     return self.load_page(url)
