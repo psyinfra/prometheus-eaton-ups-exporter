@@ -25,10 +25,11 @@ jobs:
         git config --global user.name "Eaton Exporter"
     - name: Install dependencies
       run: |
-        pip install -e ".[tests]"
-    - name: flake8 linting
+        pip install uv
+        uv pip install --system -e ".[tests]"
+    - name: linting
       run: |
-        flake8
+        uvx ruff check
     - name: Pyre type-checking
       run: |
         pyre --noninteractive check
