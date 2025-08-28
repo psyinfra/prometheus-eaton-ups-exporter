@@ -27,7 +27,6 @@ dependencies = [
 
 [project.optional-dependencies]
 tests = [
-    'flake8',
     'pyre-check',
     'pytest == 7.2.1',
     'pytest-vcr',
