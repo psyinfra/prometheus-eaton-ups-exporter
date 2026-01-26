@@ -1,3 +1,9 @@
+# Migrated to Codeberg
+
+This project is no longer developed on GitHub and has been migrated to Codeberg:
+
+https://codeberg.org/psyinfra/prometheus-eaton-ups-exporter
+
 # Eaton UPS Prometheus Exporter
 
 ## Description
