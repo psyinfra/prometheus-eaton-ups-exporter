@@ -2,45 +2,6 @@
 Testing the Exporter using the UPSExporter and UPSMultiExporter.
 """
 import pytest
-from . import first_ups_details
-from prometheus_eaton_ups_exporter.exporter import (
-        UPSExporter,
-        UPSMultiExporter,
-        )
-
-
-# Create Multi Exporter
-@pytest.fixture(scope="function")
-def single_exporter(ups_scraper_conf) -> UPSExporter:
-    address, auth, ups_name = first_ups_details(ups_scraper_conf)
-    return UPSExporter(
-        address,
-        auth,
-        ups_name,
-        insecure=True,
-        verbose=True
-    )
-
-
-# Create Multi Exporter
-@pytest.fixture(scope="function")
-def multi_exporter(ups_scraper_conf) -> UPSMultiExporter:
-    return UPSMultiExporter(
-        ups_scraper_conf,
-        insecure=True,
-        verbose=True
-    )
-
-
-# Create Multi Exporter
-@pytest.fixture(scope="function")
-def threading_multi_exporter(ups_scraper_conf) -> UPSMultiExporter:
-    return UPSMultiExporter(
-        ups_scraper_conf,
-        insecure=True,
-        verbose=True,
-        threading=True
-    )
 
 
 @pytest.mark.vcr()

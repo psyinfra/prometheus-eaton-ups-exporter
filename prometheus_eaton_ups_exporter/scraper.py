@@ -2,6 +2,8 @@
 import json
 
 from requests import Session, Response
+import httpx
+
 from requests.exceptions import (
         ConnectionError,
         InvalidURL,
@@ -55,7 +57,7 @@ class UPSScraper:
                  name: str | None = None,
                  insecure: bool = False,
                  verbose: bool = False,
-                 login_timeout: int = 3) -> None:
+                 login_timeout: int = 10) -> None:
         self.ups_address = ups_address
         self.username, self.password = authentication
         self.name = name
@@ -72,7 +74,7 @@ class UPSScraper:
 
         self.token_type, self.access_token = None, None
 
-    def login(self) -> Tuple[str, str]:
+    async def login(self) -> Tuple[str, str]:
         """
         Login to the UPS Web UI.
 
@@ -87,10 +89,11 @@ class UPSScraper:
             data["username"] = self.username
             data["password"] = self.password
 
-            login_request = self.session.post(
+            login_request = httpx.post(
                 self.ups_address + LOGIN_AUTH_PATH,
                 data=json.dumps(data),  # needs to be JSON encoded
-                timeout=self.login_timeout
+                timeout=self.login_timeout,
+                verify=False
             )
             login_response = login_request.json()
 
@@ -141,8 +144,8 @@ class UPSScraper:
                 "Invalid URL, no host supplied"
             ) from None
 
-    def load_page(self,
-                  url: bytes | str) -> Response:
+    async def load_page(self,
+                        url: bytes | str) -> Response:
         """
         Load a webpage of the UPS Web UI or API.
 
@@ -159,18 +162,18 @@ class UPSScraper:
         }
 
         try:
-            request = self.session.get(
+            request = httpx.get(
                 url,
                 headers=headers,
-                timeout=REQUEST_TIMEOUT
+                timeout=REQUEST_TIMEOUT,
+                verify=False
             )
-
             # Session might be expired, connect again
             try:
                 if "errorCode" in request.json() or "code" in request.json():
                     self.logger.debug('Session expired, reconnect')
-                    self.token_type, self.access_token = self.login()
-                    return self.load_page(url)
+                    self.token_type, self.access_token = await self.login()
+                    return await self.load_page(url)
             except ValueError:
                 pass
 
@@ -178,8 +181,8 @@ class UPSScraper:
             if "Unauthorized" in request.text:
                 self.logger.debug('Unauthorized, try to login')
                 try:
-                    self.token_type, self.access_token = self.login()
-                    return self.load_page(url)
+                    self.token_type, self.access_token = await self.login()
+                    return await self.load_page(url)
                 except LoginFailedException as err:
                     if err.error_code == TIMEOUT_ERROR:
                         raise LoginFailedException(
@@ -194,14 +197,14 @@ class UPSScraper:
         except ConnectionError:
             self.logger.debug('Connection Error try to login again')
             try:
-                self.token_type, self.access_token = self.login()
-                return self.load_page(url)
+                self.token_type, self.access_token = await self.login()
+                return await self.load_page(url)
             except LoginFailedException:
                 raise
         except LoginFailedException:
             raise
 
-    def get_measures(self) -> dict:
+    async def get_measures(self) -> dict:
         """
         Get most relevant UPS metrics.
 
@@ -214,7 +217,7 @@ class UPSScraper:
         """
         measurements = dict()
         try:
-            power_dist_request = self.load_page(
+            power_dist_request = await self.load_page(
                 self.ups_address+REST_API_PATH
             )
             power_dist_overview = power_dist_request.json()
@@ -225,23 +228,23 @@ class UPSScraper:
             ups_inputs_api = power_dist_overview['inputs']['@id']
             ups_ouptups_api = power_dist_overview['outputs']['@id']
 
-            inputs_request = self.load_page(
+            inputs_request = await self.load_page(
                 self.ups_address + ups_inputs_api + f'/{INPUT_MEMBER_ID}'
             )
             inputs = inputs_request.json()
 
-            outputs_request = self.load_page(
+            outputs_request = await self.load_page(
                 self.ups_address + ups_ouptups_api + f'/{OUTPUT_MEMBER_ID}'
             )
             outputs = outputs_request.json()
 
             ups_backup_sys_api = power_dist_overview['backupSystem']['@id']
-            backup_request = self.load_page(
+            backup_request = await self.load_page(
                 self.ups_address + ups_backup_sys_api
             )
             backup = backup_request.json()
             ups_powerbank_api = backup['powerBank']['@id']
-            powerbank_request = self.load_page(
+            powerbank_request = await self.load_page(
                 self.ups_address + ups_powerbank_api
             )
             powerbank = powerbank_request.json()

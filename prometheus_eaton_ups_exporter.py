@@ -16,7 +16,7 @@ from argparse import (
 
 from prometheus_client import start_http_server, REGISTRY
 from prometheus_eaton_ups_exporter.scraper_globals import REQUEST_TIMEOUT
-from prometheus_eaton_ups_exporter.exporter import UPSMultiExporter
+from prometheus_eaton_ups_exporter.exporter import UPSExporter
 
 DEFAULT_PORT = 9795
 DEFAULT_HOST = "0.0.0.0"
@@ -134,11 +134,10 @@ def run(args: Namespace) -> None:
     host_address, port = split_listen_address(listen_address)
 
     REGISTRY.register(
-        UPSMultiExporter(
+        UPSExporter(
             args.config,
             insecure=args.insecure,
             verbose=args.verbose,
-            threading=args.threading,
             login_timeout=args.login_timeout
         )
     )

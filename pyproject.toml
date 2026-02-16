@@ -17,9 +17,11 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
+    'httpx',
     'prometheus_client',
     'requests',
 ]
+
 
 [project.urls]
 "Bug Reports" = "https://github.com/psyinfra/prometheus-eaton-ups-exporter/issues"
@@ -29,6 +31,7 @@ dependencies = [
 tests = [
     'pyre-check',
     'pytest == 7.2.1',
+    'pytest-asyncio',
     'pytest-vcr',
 ]
 

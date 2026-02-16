@@ -1,14 +1,13 @@
 """Create and run a Prometheus Exporter for an Eaton UPS."""
+import asyncio
 import json
 
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from concurrent.futures._base import TimeoutError
 from prometheus_client.core import GaugeMetricFamily
 
 from prometheus_eaton_ups_exporter import create_logger
 from prometheus_eaton_ups_exporter.scraper import UPSScraper
 
-from typing import Generator, Tuple
+from typing import Generator
 
 NORMAL_EXECUTION = 0
 
@@ -29,9 +28,7 @@ class UPSExporter:
     """
     def __init__(
             self,
-            ups_address: str,
-            authentication: Tuple[str, str],
-            name: str | None = None,
+            config: str,
             insecure: bool = False,
             verbose: bool = False,
             login_timeout: int = 3
@@ -39,18 +36,14 @@ class UPSExporter:
         self.logger = create_logger(
             f"{__name__}.{self.__class__.__name__}", not verbose
         )
-        self.ups_scraper = UPSScraper(
-            ups_address,
-            authentication,
-            name,
-            insecure=insecure,
-            verbose=verbose,
-            login_timeout=login_timeout
-        )
+        self.insecure = insecure
+        self.verbose = verbose
+        self.login_timeout = login_timeout
+        self.upss = self.get_ups_devices(config)
 
     def collect(self) -> Generator[GaugeMetricFamily, None, None]:
         """Export UPS metrics on request."""
-        ups_data = self.scrape_data()
+        ups_data = asyncio.run(self.scrape_data())
         for measures in ups_data:
             if not measures:
                 continue
@@ -192,52 +185,6 @@ class UPSExporter:
             gauge.add_metric([ups_id], health)
             yield gauge
 
-    def scrape_data(self):
-        """Scrape measure data.
-
-        :return: measures
-        """
-        yield self.ups_scraper.get_measures()
-
-
-class UPSMultiExporter(UPSExporter):
-    """Prometheus exporter for multiple UPSs.
-
-    Collects metrics from multiple UPSs at the same time. If threading is
-    enabled, multiple threads will be used to collect sensor readings which is
-    considerably faster.
-
-    :param config: str
-        Path to the configuration file, containing UPS ip/hostname, username,
-        and password combinations for all UPSs to be monitored
-    :param insecure: bool
-        Whether to connect to UPSs with self-signed SSL certificates
-    :param threading: bool
-        Whether to use multiple threads to scrape the data 'parallel'.
-        This is surely the best way to increase the speed
-    :param verbose: bool
-        Allow logging output for development
-    :param login_timeout: int
-        Login timeout for authentication
-    """
-
-    def __init__(
-            self,
-            config: str,
-            insecure: bool = False,
-            threading: bool = False,
-            verbose: bool = False,
-            login_timeout: int = 3
-    ) -> None:
-        self.logger = create_logger(
-            f"{__name__}.{self.__class__.__name__}", not verbose
-        )
-        self.insecure = insecure
-        self.threading = threading
-        self.verbose = verbose
-        self.login_timeout = login_timeout
-        self.ups_devices = self.get_ups_devices(config)
-
     @staticmethod
     def get_devices(config: str | dict) -> dict:
         """Take a config file path or config dict of UPSs."""
@@ -260,7 +207,6 @@ class UPSMultiExporter(UPSExporter):
             List of UPSScrapers
         """
         devices = self.get_devices(config)
-
         return [
             UPSScraper(
                 value['address'],
@@ -273,24 +219,9 @@ class UPSMultiExporter(UPSExporter):
             for key, value in devices.items()
         ]
 
-    def scrape_data(self):
+    async def scrape_data(self):
         """Scrape measure data.
 
         :return: measures
         """
-        if self.threading:
-            with ThreadPoolExecutor() as executor:
-                futures = [
-                    executor.submit(ups.get_measures)
-                    for ups in self.ups_devices
-                ]
-                try:
-                    for future in as_completed(futures, self.login_timeout+1):
-                        yield future.result()
-                except TimeoutError as err:
-                    self.logger.exception(err)
-                    yield None
-
-        else:
-            for ups in self.ups_devices:
-                yield ups.get_measures()
+        return await asyncio.gather(*[ups.get_measures() for ups in self.upss])

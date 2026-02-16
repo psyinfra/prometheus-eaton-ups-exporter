@@ -37,16 +37,18 @@ def scraper_fixture(ups_scraper_conf):
     return ups_scraper(address, auth, ups_name)
 
 
+@pytest.mark.asyncio
 @pytest.mark.vcr()
-def test_login(scraper_fixture) -> None:
-    token_type, access_token = scraper_fixture.login()
+async def test_login(scraper_fixture) -> None:
+    token_type, access_token = await scraper_fixture.login()
     assert token_type == "Bearer"
 
 
+@pytest.mark.asyncio
 @pytest.mark.vcr()
-def test_load_rest_api(scraper_fixture) -> None:
+async def test_load_rest_api(scraper_fixture) -> None:
     """Tests load_page function with rest api."""
-    request = scraper_fixture.load_page(
+    request = await scraper_fixture.load_page(
         scraper_fixture.ups_address + REST_API_PATH
     )
     # Todo
@@ -60,9 +62,10 @@ def test_load_rest_api(scraper_fixture) -> None:
     assert response_keys == list(json_response.keys())
 
 
+@pytest.mark.asyncio
 @pytest.mark.vcr()
-def test_get_measures(scraper_fixture) -> None:
-    measures = scraper_fixture.get_measures()
+async def test_get_measures(scraper_fixture) -> None:
+    measures = await scraper_fixture.get_measures()
     measures_keys = [
         'ups_id',
         'ups_inputs',
